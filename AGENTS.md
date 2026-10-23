@@ -35,6 +35,7 @@ Para cada unidade relevante, siga:
 - Decisão mais recente: frontend Vercel, API/worker Docker, Neon remoto e Redis local. Recursos remotos serão criados manualmente pelo usuário. Seguir SPEC-003 e `docs/operations/hybrid-development.md`. Essa decisão substitui restrições anteriores somente para o modo híbrido explícito; não autoriza usar dados/credenciais produtivos nem abrir túnel público sem autenticação.
 
 - Docker Compose é o caminho reproduzível para executar a base local. Use `docker compose up -d --build --wait --wait-timeout 180` e `scripts/verify-local.ps1`.
+- Para desenvolvimento com Neon, usar `docker compose -p fasemarketplace-hybrid -f compose.hybrid.yaml up -d --build --wait --wait-timeout 180` e `scripts/verify-hybrid.ps1`. A web em 4273 usa API híbrida/Neon; 4173 continua completamente local. Não herdar o ambiente do backend no serviço web. SPEC-004 registra essa entrega, sem deploy externo.
 - API e worker NestJS são processos separados em `apps/backend`; a SPA React/Vite fica em `apps/web`. Regras e persistência de negócio pertencem ao backend. No desenvolvimento, o Vite encaminha `/api` ao NestJS; produção precisará de roteamento equivalente definido na etapa de hospedagem. PostgreSQL 17 e Redis 7.4 estão preparados; BullMQ, ORM, migrations e jobs de marketplace ainda não foram implementados.
 - Os serviços locais devem usar dados sintéticos e estar acessíveis somente por interfaces locais. PostgreSQL, Redis e outros serviços internos não devem publicar portas para redes externas sem uma necessidade documentada.
 - Integrações Mercado Livre e Shopee devem ser simuladas por padrão no desenvolvimento. Não carregue tokens reais, não use contas reais e não altere anúncios, pedidos ou estoque externos durante desenvolvimento local.
@@ -44,6 +45,8 @@ Para cada unidade relevante, siga:
 - PostHog observa uso/erros, conforme `docs/specs/SPEC-002-posthog.md` e `docs/operations/posthog.md`. Padrão `off`; modo `console` é local. Não enviar a conta/projeto não confirmado nem usar token produtivo localmente. Novos eventos e propriedades passam pelo contrato de `packages/telemetry`; nunca enviar payloads, mensagens originais de erro ou dados pessoais. Replay/autocapture/Self-driving continuam desligados. O override `compose.posthog.yaml` é opt-in para saída do worker e não deve ser aplicado no fluxo local padrão.
 
 ## Preview e Produção
+
+SPEC-005 prepara gateway opt-in `compose.preview.yaml` e Function Vercel somente para GET diagnóstico. Não há túnel ou deploy ativo. Ativação externa e escolha do túnel são manuais; consultar `docs/operations/protected-preview.md`. Nunca usar PREVIEW_BRIDGE_KEY em VITE_, enviar ao navegador ou imprimir config completa. A Function exige Preview e ativação explícita; verificar Deployment Protection antes de ativar. Não expor a API/Vite diretamente no túnel.
 
 Vercel e Neon foram escolhidos para o desenho híbrido da SPEC-003; o usuário fará a criação manual. Preview publicado, autenticação/túnel, promoção para Produção, backup, recuperação e rollback permanecem pendentes. Preparar arquivos não comprova provisionamento ou deploy. Não publicar releases automaticamente.
 

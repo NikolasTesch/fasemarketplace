@@ -32,6 +32,7 @@ O `.env` é ignorado pelo Git; `.env.example` contém somente campos vazios e va
 | `NEON_DATABASE_URL` | Neon > development > Connect > pooling | URI privada com `sslmode=verify-full` |
 | `NEON_DEVELOPMENT_HOST` | Host da mesma URI | Somente o hostname pooled development |
 | `HYBRID_API_PORT` | Configuração local | `4274`; somente loopback |
+| `HYBRID_WEB_PORT` | Configuração local | `4273`; interface conectada à API híbrida |
 | `WEB_ALLOWED_ORIGINS` | URL final do frontend | Origem HTTPS exata, sem barra final; múltiplas separadas por vírgula |
 | `VITE_API_BASE_URL` | Futuro acesso HTTPS protegido à API | Preencher no painel Vercel, conforme etapa 4; campo raiz serve como referência |
 
@@ -44,10 +45,15 @@ Somente após preencher os dois campos Neon:
 ```powershell
 docker compose -p fasemarketplace-hybrid -f compose.hybrid.yaml up -d --build --wait --wait-timeout 180
 docker compose -p fasemarketplace-hybrid -f compose.hybrid.yaml ps
+pwsh -NoProfile -File scripts/verify-hybrid.ps1
 Invoke-RestMethod http://127.0.0.1:4274/health/ready
 ```
 
 Este é um Compose independente: **não** combinar `-f compose.yaml -f compose.hybrid.yaml`. Ele usa projeto/volume Redis próprios e não remove os volumes do Compose local. Pode coexistir com o ambiente local (portas diferentes); parar os serviços que não estiver usando.
+
+A interface híbrida está em **http://127.0.0.1:4273**. Ela usa `/api` na mesma origem, encaminhado pelo Vite à API do próprio projeto híbrido; o navegador não recebe a conexão Neon. A tela identifica o modo híbrido e permite atualizar o diagnóstico. A interface em 4173 permanece no PostgreSQL local. Portanto, para validar o fluxo com Neon, usar **4273**.
+
+Não é necessário preencher `VITE_API_BASE_URL` nem `WEB_ALLOWED_ORIGINS` para esse teste local: o proxy trata a chamada na mesma origem. Os campos continuam destinados ao futuro frontend hospedado.
 
 ```powershell
 docker compose -p fasemarketplace-hybrid -f compose.hybrid.yaml stop
@@ -58,6 +64,8 @@ Não há reset, migration de negócio ou cópia de dados nesse processo. Para vo
 No híbrido, o healthcheck da API testa liveness sem consultar Neon. O worker consulta dependências na inicialização e a cada 10 minutos, permitindo suspensão do banco entre usos. A saúde Docker não comprova disponibilidade contínua do banco: `/health/ready` é a verificação sob demanda. Recarregar repetidamente a tela ou consultar o banco continuamente consome compute; o plano gratuito possui limites. Esse heartbeat é apenas bootstrap, não uma política para futuros jobs comerciais.
 
 ## 4. Vercel: preparar o frontend
+
+**Atualização SPEC-005:** existe agora uma Function de diagnóstico e gateway autenticado preparados para ativação manual. Preferir o [guia de Preview protegido](protected-preview.md): manter `VITE_API_BASE_URL` vazio para `/api` na Vercel, com segredo apenas no servidor. As instruções anteriores de origem externa direta abaixo são alternativas e não devem ser usadas com a ponte. Nenhum túnel ou deploy foi iniciado.
 
 O código inclui `vercel.json` para build da SPA, sem Functions. A publicação ainda depende de repositório GitHub, acesso/plano e transporte protegido à API. O plano Hobby da Vercel restringe uso comercial; verificar elegibilidade antes de publicar este projeto, sem contratar plano automaticamente.
 
@@ -101,7 +109,19 @@ Redis não exige cadastro em plataforma: a instância local já está definida. 
 
 - Lint, typecheck, 42 testes e build passaram em imagem Docker de verificação.
 - Compose híbrido validado com valores sintéticos, projeto `fasemarketplace-hybrid`, Redis/volume separados e API somente loopback.
-- Banco Neon real, HTTPS externo, CORS contra origem publicada e deploy Vercel **não foram testados**, pois os recursos ainda serão criados manualmente.
+- HTTPS externo, CORS contra origem publicada e deploy Vercel continuam pendentes.
+
+### Conexão Neon validada em 23/10/2026
+
+O usuário preencheu a conexão manualmente. Endpoint conferido pela API Neon: projeto `autumn-shadow-97219766`, branch `br-fancy-waterfall-b6tbiwl1`, criada com o nome `develpment` (grafia atual no painel). O endpoint é distinto do associado a `production`. O projeto escolhido no arquivo está na organização pessoal; existe outro projeto homônimo na organização Vercel, que não foi usado nem alterado. PostgreSQL remoto foi criado na versão 18; local permanece 17. Considerar essa diferença ao especificar futuras migrations.
+
+A configuração passou a aceitar o formato de hostname Neon com rótulo de cluster `c-2`. A query TLS do `.env` foi ajustada para `sslmode=verify-full`, preservando credenciais, host e banco. Credenciais não foram registradas na documentação.
+
+Compose híbrido iniciado: API, Redis e worker saudáveis. `http://127.0.0.1:4274/health/ready` retornou `ready`, PostgreSQL e Redis disponíveis, modo `mock`. Somente sondagens de conexão/SELECT 1; nenhuma migration, tabela ou dado de negócio criado. Lint, typecheck, 43 testes e build passaram no container. O Compose totalmente local continua saudável e seus volumes foram preservados; a web em 4173 continua ligada à API totalmente local.
+
+### Frontend híbrido — SPEC-004
+
+Web adicionada ao Compose híbrido em loopback 4273, sem herdar ambiente do backend. Smoke `scripts/verify-hybrid.ps1` verifica saúde dos quatro serviços, ausência de credenciais no ambiente configurado da web, isolamento de portas e prontidão através do proxy. Testado no navegador: renderização React, identificação híbrida, atualização manual, resposta 503 simulada e recuperação; nenhuma requisição externa originada pelo navegador com telemetria off. O proxy da API acessa Neon pelo servidor. O modo totalmente local em 4173 também foi verificado. Deploy Vercel e túnel permanecem pendentes.
 
 ## Referências
 
