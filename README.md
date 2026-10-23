@@ -1,6 +1,10 @@
 # FaseMarketplace
 
+Configuração por ambiente: [matriz e explicação dos arquivos env](docs/operations/environment-configuration.md). Production Docker isolada foi aprovada na [SPEC-006](docs/specs/SPEC-006-production-docker.md); consulte [operação produtiva](docs/operations/production-docker.md) para estado, comandos e limites. Preparação técnica não significa promoção de código para `main`.
+
 Configuração manual de **Vercel + API/worker Docker + Neon**: [guia híbrido](docs/operations/hybrid-development.md). O `.env` mantém os valores locais e acrescenta campos Neon vazios. `compose.hybrid.yaml` é independente; não aplicá-lo como override. Recursos externos e publicação ainda dependem da configuração manual descrita no guia.
+
+**Preview Vercel de development configurado**, com ponte autenticada de diagnóstico e túnel temporário, conforme [operação e limitações](docs/operations/protected-preview.md). A chave privada permanece somente no servidor. O frontend usa `/api` na própria Vercel. O Preview depende do Docker e do túnel ativos; não é um backend produtivo hospedado.
 
 Hub de estoque próprio e integração com Mercado Livre e Shopee, em preparação para o MVP. A base técnica local está implementada; cadastro, estoque, autenticação e integrações de negócio ainda não existem.
 
@@ -33,6 +37,15 @@ Se as portas estiverem ocupadas, altere `WEB_PORT` / `API_PORT` no `.env` e recr
 O Compose não precisa de Node instalado no Windows. Para executar npm diretamente no host, use Node 24.15 ou superior da linha 24. O runtime Docker efetivo é registrado em [local-development.md](docs/operations/local-development.md).
 
 ## Desenvolvimento e verificações
+
+Para a interface conectada ao **Neon de desenvolvimento**, após configurar os campos Neon no `.env`:
+
+```powershell
+docker compose -p fasemarketplace-hybrid -f compose.hybrid.yaml up -d --build --wait --wait-timeout 180
+pwsh -NoProfile -File scripts/verify-hybrid.ps1
+```
+
+Abra **http://127.0.0.1:4273** (API em 4274). O endereço 4173 continua no ambiente totalmente local. A web híbrida usa proxy interno e não recebe credenciais do banco. Não preencher novos campos de API pública para esse teste; publicação e acesso HTTPS externo continuam pendentes. Consulte a [SPEC-004](docs/specs/SPEC-004-hybrid-frontend.md).
 
 Arquivos de `apps/*/src` são montados somente para leitura nos containers; você os edita no host e os processos usam watch com polling de 500 ms, necessário para os bind mounts Windows/Docker Desktop desta máquina. Polling aumenta o trabalho de verificação de arquivos, mas fica limitado às árvores observadas pelos processos. Mudanças em dependências, configurações ou Dockerfile exigem novo build.
 
@@ -81,6 +94,9 @@ PostHog está integrado ao React, API e worker para eventos explícitos e erros 
 - [SPEC-000](docs/specs/SPEC-000-local-bootstrap.md): escopo deste bootstrap.
 - [SPEC-001](docs/specs/SPEC-001-react-vite.md): decisão atual e migração para React com Vite.
 - [SPEC-002](docs/specs/SPEC-002-posthog.md): análise de uso e diagnóstico técnico com PostHog.
+- [SPEC-003](docs/specs/SPEC-003-hybrid-development.md): configuração Docker + Neon de desenvolvimento.
+- [SPEC-004](docs/specs/SPEC-004-hybrid-frontend.md): interface local conectada à API híbrida e ao Neon.
+- [SPEC-005](docs/specs/SPEC-005-protected-preview.md): ponte autenticada de diagnóstico para Preview.
 - [Operação local](docs/operations/local-development.md): configuração, diagnóstico e evidências.
 - [Design](docs/design.md): referência visual da empresa.
 - [AGENTS.md](AGENTS.md): regras para trabalhar no projeto.

@@ -1,11 +1,11 @@
 # Fluxo de desenvolvimento e entrega
 
-**Estado:** bootstrap local autorizado em 23/10/2026; fluxo remoto continua como proposta.  
-**Escopo:** Docker e Git locais implementados conforme [SPEC-000](../specs/SPEC-000-local-bootstrap.md). Este documento não configura CI/CD, hospedagem nem integrações externas.
+**Estado:** Docker local e Preview protegido configurados; backend Production Docker isolado ativo/validado pela [SPEC-006](../specs/SPEC-006-production-docker.md), com ponte Vercel preparada/desligada até promoção explícita.
+**Escopo:** fluxo de entrega. A [matriz de ambientes](environment-configuration.md) registra configuração atual e proposta; backup, autenticação e operação de negócio continuam pendentes.
 
 ## Objetivo
 
-**Decisão posterior (23/10/2026):** o usuário escolheu Vercel + Docker + Neon e criação manual dos recursos. A [SPEC-003](../specs/SPEC-003-hybrid-development.md) e o [guia](hybrid-development.md) substituem restrições anteriores quanto a preparar configuração híbrida de desenvolvimento. Não houve deploy nem operação produtiva; autenticação, acesso HTTPS e gates de release continuam pendentes.
+**Decisões posteriores (23/10/2026):** o usuário escolheu Vercel + Docker + Neon, ativou o Preview protegido (SPEC-005) e aprovou backend Production em outra stack Docker (SPEC-006). O diagnóstico HTTPS está validado, mas autenticação de produto, promoção produtiva do código e gates de operação real continuam pendentes.
 
 Adotar o ciclo usado no Fasemento — validar localmente, integrar em `development`, homologar em Preview e promover a `main`/Produção após aprovação — com proteções ajustadas ao risco do FaseMarketplace. O sistema poderá alterar estoque e anúncios em serviços externos; por isso, chamadas reais devem ficar fora do caminho local padrão e exigir uma etapa de homologação separada.
 
@@ -14,11 +14,11 @@ Adotar o ciclo usado no Fasemento — validar localmente, integrar em `developme
 O usuário autorizou a preparação do ambiente local e escolheu React + Vite + NestJS com TypeScript (SPEC-001). Existem Compose, API, worker, web e a base `development` publicada em `origin`. A publicação do repositório não configura deployments ou recursos remotos da aplicação. A sequência é:
 
 1. Validar a infraestrutura local conforme README e SPEC-000.
-2. Avançar em funcionalidades por specs pequenas, resolvendo regras de domínio antes do código.
+2. Concluir primeiro os ambientes e a promoção explicitamente aprovada; depois avançar em funcionalidades por specs pequenas, resolvendo regras de domínio antes do código.
 3. Manter a arquitetura, base teórica e apresentação alinhadas ao que está implementado e ao que segue proposto.
 4. Definir isolamento de Preview, promoção, backup e recuperação antes de configurar ambientes hospedados, mediante autorização específica.
 
-Não criar agora recursos de Preview/Produção, workflows executáveis do GitHub Actions ou credenciais remotas. Esses detalhes dependem das etapas posteriores deste fluxo.
+A autorização posterior permite preparar Production técnica conforme SPEC-006. Isso não autoriza funcionalidades, workflows adicionais, promoção automática para main ou operações reais de marketplace.
 
 ## Ciclo proposto por mudança
 
@@ -30,8 +30,8 @@ Após o usuário autorizar a implementação e o Git estar configurado:
 4. **Validar localmente em Docker:** executar migrações e fixtures sintéticas no banco descartável/local, verificar API e worker, persistência, reinicialização e falhas relevantes. As integrações externas usam simuladores por padrão.
 5. **Revisar:** conferir diff, regras de domínio, segurança, idempotência e evidência para cada critério de aceite.
 6. **Integrar em `development`:** abrir PR da branch da tarefa para `development`; merge requer autorização/aprovação explícita e os checks configurados. Não desenvolver diretamente em `development` ou `main`.
-7. **Homologar em Preview protegido:** etapa futura, só depois de definida a separação de dados, credenciais, storage, callbacks e efeitos externos. A aprovação local não vale como aprovação de Preview.
-8. **Promover para Produção:** etapa futura, de `development` para `main` por PR/release revisado e aprovado. A aprovação de código ou Preview não autoriza escrita externa, migração ou publicação em marketplace por si só.
+7. **Homologar em Preview protegido:** usar o ambiente existente para diagnóstico; funcionalidades futuras precisam validar seus próprios dados, credenciais, callbacks e efeitos. A aprovação local não vale como aprovação de Preview.
+8. **Promover para Produção:** de `development` para `main` por PR/release revisado e aprovado. A aprovação de configuração ou Preview não autoriza escrita externa, migração ou publicação em marketplace por si só.
 
 Proposta herdada do fluxo existente: manter no máximo um PR de promoção aberto para `main` por vez; PRs de tarefa para `development` podem seguir o limite que vier a ser aprovado para este repositório. Confirmar a política quando o GitHub for configurado.
 

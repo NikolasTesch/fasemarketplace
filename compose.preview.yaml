@@ -1,0 +1,40 @@
+# Gateway by default; temporary tunnel requires the explicit tunnel profile.
+# Use with -p fasemarketplace-hybrid -f compose.hybrid.yaml -f compose.preview.yaml
+services:
+  preview-gateway:
+    image: fasemarketplace-hybrid-dev
+    build: { context: ., target: development }
+    init: true
+    restart: "no"
+    command: [node, server/preview-gateway.mjs]
+    environment:
+      PREVIEW_BRIDGE_KEY: ${PREVIEW_BRIDGE_KEY:?Set a private random bridge key}
+    ports: ["127.0.0.1:${PREVIEW_BRIDGE_PORT:-4374}:3002"]
+    networks: [frontend]
+    depends_on:
+      api: { condition: service_healthy }
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+    healthcheck:
+      # TCP probe checks process availability without keeping Neon awake.
+      test: [CMD, node, -e, "const s=require('net').connect(3002,'127.0.0.1',()=>{s.end();process.exit(0)});s.on('error',()=>process.exit(1));s.setTimeout(2000,()=>process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  preview-tunnel:
+    image: cloudflare/cloudflared@sha256:faa8e0a1475f137c910be6025f43c8e4092fdd35461b31e19fd1390657a1ff39
+    profiles: [tunnel]
+    restart: "no"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    command: [tunnel, --no-autoupdate, --url, "http://preview-gateway:3002", --protocol, http2]
+    networks: [frontend]
+    depends_on:
+      preview-gateway: { condition: service_healthy }
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }

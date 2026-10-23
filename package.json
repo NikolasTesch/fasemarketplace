@@ -10,8 +10,8 @@
     "dev:worker": "npm run dev:worker --workspace @fasemarketplace/backend",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces",
-    "lint": "eslint packages/telemetry/index.js apps/backend/src apps/web/src apps/web/vite.config.ts",
-    "test": "npm run test --workspaces --if-present"
+    "lint": "eslint packages/telemetry/index.js apps/backend/src apps/web/src apps/web/vite.config.ts server/*.mjs api/**/*.mjs",
+    "test": "npm run test --workspaces --if-present && node --test server/test/*.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
