@@ -1,5 +1,7 @@
 # FaseMarketplace
 
+Configuração por ambiente: [matriz e explicação dos arquivos env](docs/operations/environment-configuration.md). Production Docker isolada foi aprovada na [SPEC-006](docs/specs/SPEC-006-production-docker.md); consulte [operação produtiva](docs/operations/production-docker.md) para estado, comandos e limites. Preparação técnica não significa promoção de código para `main`.
+
 Configuração manual de **Vercel + API/worker Docker + Neon**: [guia híbrido](docs/operations/hybrid-development.md). O `.env` mantém os valores locais e acrescenta campos Neon vazios. `compose.hybrid.yaml` é independente; não aplicá-lo como override. Recursos externos e publicação ainda dependem da configuração manual descrita no guia.
 
 **Preview Vercel de development configurado**, com ponte autenticada de diagnóstico e túnel temporário, conforme [operação e limitações](docs/operations/protected-preview.md). A chave privada permanece somente no servidor. O frontend usa `/api` na própria Vercel. O Preview depende do Docker e do túnel ativos; não é um backend produtivo hospedado.

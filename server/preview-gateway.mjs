@@ -7,7 +7,7 @@ import console from 'node:console';
 import { validKey, jsonResponse, fetchReadiness } from './preview-contract.mjs';
 
 export function createGateway({ key, fetchImpl = globalThis.fetch }) {
-  if (!validKey(key)) throw new Error('A valid private preview bridge key is required');
+  if (!validKey(key)) throw new Error('A valid private diagnostic bridge key is required');
   const expected = Buffer.from(`Bearer ${key}`);
   let active = 0;
   const server = createServer(async (request, response) => {
@@ -38,9 +38,10 @@ export function createGateway({ key, fetchImpl = globalThis.fetch }) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
-    const server = createGateway({ key: process.env.PREVIEW_BRIDGE_KEY });
-    server.on('error', () => { console.error('Preview gateway unavailable'); process.exitCode = 1; });
+    const key = process.env.APP_ENV === 'production' ? process.env.PRODUCTION_BRIDGE_KEY : process.env.PREVIEW_BRIDGE_KEY;
+    const server = createGateway({ key });
+    server.on('error', () => { console.error('Diagnostic gateway unavailable'); process.exitCode = 1; });
     server.listen(3002, '0.0.0.0');
     for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { server.close(); server.closeAllConnections(); });
-  } catch { console.error('Preview gateway configuration invalid'); process.exitCode = 1; }
+  } catch { console.error('Diagnostic gateway configuration invalid'); process.exitCode = 1; }
 }
