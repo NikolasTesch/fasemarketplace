@@ -1,6 +1,8 @@
 # FaseMarketplace
 
-Configuração por ambiente: [matriz e explicação dos arquivos env](docs/operations/environment-configuration.md). Production Docker isolada foi aprovada na [SPEC-006](docs/specs/SPEC-006-production-docker.md); consulte [operação produtiva](docs/operations/production-docker.md) para estado, comandos e limites. Preparação técnica não significa promoção de código para `main`.
+**Production ativa para diagnóstico:** [fasemarketplace.vercel.app](https://fasemarketplace.vercel.app). Publicação, isolamento e validação registrados na [ativação inicial](docs/operations/production-release-2026-10-23.md). API/worker continuam no Docker do computador; funcionalidades de negócio ainda não existem.
+
+Configuração por ambiente: [matriz e explicação dos arquivos env](docs/operations/environment-configuration.md). Production Docker isolada foi aprovada na [SPEC-006](docs/specs/SPEC-006-production-docker.md); consulte [operação produtiva](docs/operations/production-docker.md) para estado, comandos e limites. A promoção desta entrega foi autorizada e validada; futuras publicações seguem os gates do projeto.
 
 Configuração manual de **Vercel + API/worker Docker + Neon**: [guia híbrido](docs/operations/hybrid-development.md). O `.env` mantém os valores locais e acrescenta campos Neon vazios. `compose.hybrid.yaml` é independente; não aplicá-lo como override. Recursos externos e publicação ainda dependem da configuração manual descrita no guia.
 

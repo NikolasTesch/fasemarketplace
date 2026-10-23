@@ -1,7 +1,7 @@
 # SPEC-006 — Production técnica em Docker separado
 
 **Data:** 23/10/2026.
-**Estado:** desenho aprovado pelo usuário e implementação validada no Docker. Backend produtivo ativo; ponte Vercel Production preparada/desligada, aguardando promoção explícita do código. Evidências em [operação produtiva](../operations/production-docker.md).
+**Estado:** implementada, publicada e ativada após autorização explícita. Backend Docker e frontend/Function Production Vercel validados. [Registro da ativação](../operations/production-release-2026-10-23.md) e [operação produtiva](../operations/production-docker.md).
 
 ## Objetivo e decisão
 
@@ -46,6 +46,6 @@ Esses são identificadores públicos de infraestrutura, não credenciais. Branch
 
 ## Situação atual
 
-Antes desta implementação, backend e Function recusavam Production e apenas Preview/development tinha sete variáveis. Agora há outra stack Docker saudável, role Neon exclusiva limitada, `.env.production` privado e túnel autenticado próprios. Sete variáveis produtivas foram cadastradas no escopo Production com ativação desligada. O frontend Production ainda serve o bootstrap anterior: nenhum commit, push, merge ou deploy foi feito nesta entrega. Development da Vercel permanece sem variáveis porque o fluxo local usa Docker.
+Antes desta implementação, backend e Function recusavam Production e apenas Preview/development tinha sete variáveis. Agora há outra stack Docker saudável, role Neon exclusiva limitada, `.env.production` privado e túnel autenticado próprios. Sete variáveis produtivas foram cadastradas e a ponte ativada após publicação/revisão autorizadas. O frontend Production consulta sua API exclusiva; Preview permanece isolado e protegido. Development da Vercel permanece sem variáveis porque o fluxo local usa Docker.
 
 Consultar a [matriz de configuração](../operations/environment-configuration.md).
