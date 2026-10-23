@@ -40,7 +40,7 @@ export function readLocalConfig(env: NodeJS.ProcessEnv = process.env) {
       const url = new URL(env.DATABASE_URL ?? '');
       const host = env.NEON_DEVELOPMENT_HOST ?? '';
       if (env.NEON_BRANCH !== 'development' ||
-          !/^ep-[a-z0-9-]+-pooler\.[a-z0-9-]+\.(aws|azure)\.neon\.tech$/.test(host) ||
+          !/^ep-[a-z0-9-]+-pooler\.(?:c-[0-9]+\.)?[a-z0-9-]+\.(aws|azure)\.neon\.tech$/.test(host) ||
           url.protocol !== 'postgresql:' || url.hostname !== host ||
           (url.port && url.port !== '5432') || !url.username || !url.password ||
           !/^\/[^/]+$/.test(url.pathname) || url.hash ||

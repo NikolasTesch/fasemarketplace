@@ -56,6 +56,13 @@ test('Neon requires explicit development opt-in and verified TLS', () => {
   assert.equal(readLocalConfig(valid).workerCheckIntervalMs, 5000);
 });
 
+test('accepts Neon pooled endpoints with a proxy cluster label', () => {
+  const host = 'ep-synthetic-123-pooler.c-2.sa-east-1.aws.neon.tech';
+  const input = { ...neon, NEON_DEVELOPMENT_HOST: host,
+    DATABASE_URL: neon.DATABASE_URL.replace(neon.NEON_DEVELOPMENT_HOST, host) };
+  assert.equal(readLocalConfig(input).databaseUrl, input.DATABASE_URL);
+});
+
 for (const override of [
   { DATABASE_PROVIDER: 'unknown' }, { NEON_BRANCH: 'production' },
   { NEON_DEVELOPMENT_HOST: '' }, { APP_ENV: 'production' }, { MARKETPLACE_MODE: 'real' },
