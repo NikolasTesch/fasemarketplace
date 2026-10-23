@@ -2,6 +2,10 @@
 
 ## O que está preparado
 
+**Atualização de 23/10/2026:** o usuário autorizou merge e montagem do Preview. PR #1 integrado em development; projeto Vercel fasemarketplace já existente vinculado e deploy Preview verificado. A configuração da ponte foi ativada apenas no Preview da branch development, com chave do tipo Secret. Requisições anônimas à raiz/API foram redirecionadas para autenticação Vercel (302), túnel recusou chamadas sem chave (401), e chamada autorizada à Function retornou ready para Neon/Redis. As seções de preparação abaixo descrevem também como repetir e desativar o fluxo.
+
+Endereço de acesso: [Preview de development](https://fasemarketplace-git-development-nikolasdtesch-4933s-projects.vercel.app). Entrar com sua conta Vercel autorizada. A main e o deploy produtivo existente não foram promovidos.
+
 A Vercel fornece o endereço do frontend `*.vercel.app`. Para alcançar o Docker, existe uma ponte preparada no código:
 
 ```text
@@ -57,6 +61,16 @@ O projeto ainda precisa cumprir as condições do plano Vercel escolhido. Hobby 
 
 ## 3. Se optar pelo túnel temporário
 
+O túnel desta ativação roda no Docker, sem instalação no Windows. Para iniciar/reiniciar explicitamente o serviço gerenciado:
+
+```powershell
+docker compose -p fasemarketplace-hybrid -f compose.hybrid.yaml -f compose.preview.yaml --profile tunnel up -d preview-tunnel
+```
+
+Consultar a URL nos logs **somente do túnel**, atualizar `PREVIEW_BRIDGE_ORIGIN` no `.env` local e na Vercel (Preview, branch development), verificar 401 sem chave e fazer novo deploy Preview. O perfil padrão sem `--profile tunnel` não abre um túnel novo. Imagem cloudflared fixada por digest; nenhum segredo é enviado ao container do túnel. Não usar `down --volumes`.
+
+A alternativa abaixo é para execução manual fora do Docker; não executar as duas simultaneamente sem necessidade.
+
 Instalar `cloudflared` no Windows seguindo o download oficial. Não é necessário comprar domínio ou abrir portas do roteador. Com o gateway local já verificado, iniciar manualmente:
 
 ```powershell
@@ -79,11 +93,17 @@ Não criar `VERCEL_ENV` manualmente para contornar a restrição: a Vercel forne
 
 Fazer novo deploy **Preview** e validar: visitante não autenticado bloqueado, usuário autorizado vê a tela e diagnóstico disponível, navegador chama somente `/api` da Vercel e não recebe a chave nem cookies/headers do gateway. Verificar também que apagar/invalidar a chave bloqueia o diagnóstico e que desligar o túnel resulta em indisponível, sem dados internos.
 
-Essas verificações externas **ainda não foram executadas** nesta entrega. Testes locais não demonstram configuração correta de Deployment Protection, TLS externo ou empacotamento da Function na Vercel.
+Na primeira ativação, empacotamento da Function, TLS externo, bloqueio anônimo e prontidão autorizada foram verificados. Ao mudar URL, chave, aliases ou configuração de proteção, repetir as verificações; um deploy Ready sozinho não comprova acesso funcional/protegido.
 
 ## Parada e rotação
 
-Parar o túnel com Ctrl+C. Na Vercel, mudar `PREVIEW_BRIDGE_ENABLED=false` e fazer novo deploy. A função nunca deve ser usada em Produção nesta fase. Para parar só o gateway:
+Para parar o túnel gerenciado no Docker:
+
+```powershell
+docker compose -p fasemarketplace-hybrid -f compose.hybrid.yaml -f compose.preview.yaml --profile tunnel stop preview-tunnel
+```
+
+Na alternativa de terminal, parar com Ctrl+C. Na Vercel, mudar `PREVIEW_BRIDGE_ENABLED=false` e fazer novo deploy se quiser desativar a ponte. A função nunca deve ser usada em Produção nesta fase. Para parar só o gateway:
 
 ```powershell
 docker compose -p fasemarketplace-hybrid -f compose.hybrid.yaml -f compose.preview.yaml stop preview-gateway
@@ -93,7 +113,7 @@ Quando uma URL temporária mudar, atualizar a origem e invalidar a anterior. Se 
 
 ## Evidência local desta entrega
 
-Lint, typecheck dos workspaces, 50 testes e build passaram em imagem Docker de verificação. Gateway real rejeitou chamada sem chave (401) e retornou prontidão API/Neon/Redis com chave (200). Smokes híbrido e totalmente local passaram; revisão independente sem achados importantes. Nenhum túnel ou deploy ativo. O código permanece sem commit/publicação nesta entrega.
+Lint, typecheck dos workspaces, 50 testes e build passaram em imagem Docker de verificação antes do merge. Gateway real rejeitou chamada sem chave (401) e retornou prontidão API/Neon/Redis com chave (200). Smokes híbrido e totalmente local passaram; revisão independente sem achados importantes. A ativação externa posterior foi autorizada pelo usuário, integrada via PR #1 e verificada conforme atualização no início deste guia. Testes de integração não criaram dados de negócio.
 
 ## Referências
 

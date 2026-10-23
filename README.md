@@ -2,7 +2,7 @@
 
 Configuração manual de **Vercel + API/worker Docker + Neon**: [guia híbrido](docs/operations/hybrid-development.md). O `.env` mantém os valores locais e acrescenta campos Neon vazios. `compose.hybrid.yaml` é independente; não aplicá-lo como override. Recursos externos e publicação ainda dependem da configuração manual descrita no guia.
 
-Ponte autenticada de diagnóstico para futuro **Preview Vercel sem domínio próprio**: [ativação manual](docs/operations/protected-preview.md). Gateway e Function preparados e desativados externamente; nenhum túnel ou deploy automático. A chave privada permanece somente no servidor. O frontend usa `/api` na própria Vercel.
+**Preview Vercel de development configurado**, com ponte autenticada de diagnóstico e túnel temporário, conforme [operação e limitações](docs/operations/protected-preview.md). A chave privada permanece somente no servidor. O frontend usa `/api` na própria Vercel. O Preview depende do Docker e do túnel ativos; não é um backend produtivo hospedado.
 
 Hub de estoque próprio e integração com Mercado Livre e Shopee, em preparação para o MVP. A base técnica local está implementada; cadastro, estoque, autenticação e integrações de negócio ainda não existem.
 

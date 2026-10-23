@@ -46,9 +46,9 @@ Para cada unidade relevante, siga:
 
 ## Preview e Produção
 
-SPEC-005 prepara gateway opt-in `compose.preview.yaml` e Function Vercel somente para GET diagnóstico. Não há túnel ou deploy ativo. Ativação externa e escolha do túnel são manuais; consultar `docs/operations/protected-preview.md`. Nunca usar PREVIEW_BRIDGE_KEY em VITE_, enviar ao navegador ou imprimir config completa. A Function exige Preview e ativação explícita; verificar Deployment Protection antes de ativar. Não expor a API/Vite diretamente no túnel.
+SPEC-005 implementa gateway opt-in `compose.preview.yaml` e Function Vercel somente para GET diagnóstico. Em 23/10/2026 o usuário autorizou merge em development e configuração do Preview: proteção de acesso e prontidão externa foram verificadas. O túnel temporário Docker usa perfil explícito `tunnel`; sua URL muda ao reiniciar. Consultar `docs/operations/protected-preview.md`. Nunca usar PREVIEW_BRIDGE_KEY em VITE_, enviar ao navegador ou imprimir config completa. A Function exige Preview e ativação explícita; verificar Deployment Protection antes de ativar. Não expor a API/Vite diretamente no túnel.
 
-Vercel e Neon foram escolhidos para o desenho híbrido da SPEC-003; o usuário fará a criação manual. Preview publicado, autenticação/túnel, promoção para Produção, backup, recuperação e rollback permanecem pendentes. Preparar arquivos não comprova provisionamento ou deploy. Não publicar releases automaticamente.
+Preview de development está configurado no projeto Vercel fasemarketplace do time nikolasdtesch-4933s-projects. Production usa main e não foi promovida nesta entrega. Autenticação de produto, promoção produtiva, backup/recuperação e rollback continuam pendentes. Não inferir autorização para futuras publicações, merge em main ou escritas de negócio a partir desta ativação de Preview.
 
 Não escolha provedor de hospedagem, banco remoto, domínio, armazenamento de objetos, broker hospedado ou plataforma de deploy sem decisão aprovada. Nomes de branches, projetos ou ambientes não provam o destino efetivo de dados.
 

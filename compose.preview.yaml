@@ -1,4 +1,4 @@
-# Optional local gateway only. No tunnel is started by this file.
+# Gateway by default; temporary tunnel requires the explicit tunnel profile.
 # Use with -p fasemarketplace-hybrid -f compose.hybrid.yaml -f compose.preview.yaml
 services:
   preview-gateway:
@@ -23,3 +23,18 @@ services:
       timeout: 3s
       retries: 3
       start_period: 10s
+
+  preview-tunnel:
+    image: cloudflare/cloudflared@sha256:faa8e0a1475f137c910be6025f43c8e4092fdd35461b31e19fd1390657a1ff39
+    profiles: [tunnel]
+    restart: "no"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    command: [tunnel, --no-autoupdate, --url, "http://preview-gateway:3002", --protocol, http2]
+    networks: [frontend]
+    depends_on:
+      preview-gateway: { condition: service_healthy }
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
