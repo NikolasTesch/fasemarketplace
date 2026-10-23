@@ -1,11 +1,11 @@
 # Fluxo de desenvolvimento e entrega
 
-**Estado:** Docker local e Preview protegido configurados; backend Production Docker isolado ativo/validado pela [SPEC-006](../specs/SPEC-006-production-docker.md), com ponte Vercel preparada/desligada até promoção explícita.
+**Estado:** Docker local e Preview protegido configurados; backend Production Docker isolado ativo/validado pela [SPEC-006](../specs/SPEC-006-production-docker.md), com ponte Vercel ativada após promoção explícita; ver [registro da publicação](production-release-2026-10-23.md).
 **Escopo:** fluxo de entrega. A [matriz de ambientes](environment-configuration.md) registra configuração atual e proposta; backup, autenticação e operação de negócio continuam pendentes.
 
 ## Objetivo
 
-**Decisões posteriores (23/10/2026):** o usuário escolheu Vercel + Docker + Neon, ativou o Preview protegido (SPEC-005) e aprovou backend Production em outra stack Docker (SPEC-006). O diagnóstico HTTPS está validado, mas autenticação de produto, promoção produtiva do código e gates de operação real continuam pendentes.
+**Decisões posteriores (23/10/2026):** o usuário escolheu Vercel + Docker + Neon, ativou o Preview protegido (SPEC-005) e aprovou backend Production em outra stack Docker (SPEC-006). O diagnóstico HTTPS está validado, mas a promoção técnica foi concluída com autorização; autenticação de produto e gates de operação real continuam pendentes.
 
 Adotar o ciclo usado no Fasemento — validar localmente, integrar em `development`, homologar em Preview e promover a `main`/Produção após aprovação — com proteções ajustadas ao risco do FaseMarketplace. O sistema poderá alterar estoque e anúncios em serviços externos; por isso, chamadas reais devem ficar fora do caminho local padrão e exigir uma etapa de homologação separada.
 
