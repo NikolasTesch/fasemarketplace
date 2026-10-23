@@ -1,0 +1,24 @@
+{
+  "name": "@fasemarketplace/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --host 0.0.0.0 --port 3000 --strictPort",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview --host 0.0.0.0 --port 3000 --strictPort"
+  },
+  "dependencies": {
+    "@fasemarketplace/telemetry": "*",
+    "posthog-js": "1.438.21",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "vite": "8.3.5"
+  }
+}

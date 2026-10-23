@@ -1,0 +1,122 @@
+name: fasemarketplace-local
+
+x-node: &node
+  image: ${COMPOSE_PROJECT_NAME:-fasemarketplace-local}-dev
+  build:
+    context: .
+    target: development
+  init: true
+  restart: "no"
+  environment: &local-env
+    APP_ENV: ${APP_ENV:?Copy .env.example to .env}
+    MARKETPLACE_MODE: ${MARKETPLACE_MODE:?Use mock locally}
+    DATABASE_URL: ${DATABASE_URL:?Set the local Docker database URL}
+    REDIS_URL: ${REDIS_URL:?Set the local Docker Redis URL}
+    # Windows bind mounts do not reliably forward native file events.
+    CHOKIDAR_USEPOLLING: "true"
+    CHOKIDAR_INTERVAL: "500"
+    TELEMETRY_MODE: ${TELEMETRY_MODE:-off}
+    TELEMETRY_ENVIRONMENT: local
+    APP_RELEASE: ${APP_RELEASE:-development}
+    POSTHOG_PROJECT_TOKEN: ${POSTHOG_PROJECT_TOKEN:-}
+    POSTHOG_HOST: ${POSTHOG_HOST:-}
+  networks: [local]
+  depends_on:
+    postgres: { condition: service_healthy }
+    redis: { condition: service_healthy }
+  volumes:
+    - ./apps/backend/src:/workspace/apps/backend/src:ro
+    - ./apps/web/src:/workspace/apps/web/src:ro
+    - ./packages/telemetry:/workspace/packages/telemetry:ro
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  postgres:
+    image: postgres:17-alpine@sha256:eee6c6e1b0894fa4fe0075eb054af9fd1cf39a35321c2d4110626cfe506411fb
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a local-only password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [local]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+  redis:
+    image: redis:7.4-alpine@sha256:57e4255cc971b1c8d6f8a6ca283ac01bc3ecdd914273ef6bfaede87aaecd6541
+    command: [redis-server, --appendonly, "yes", --appendfsync, everysec, --maxmemory-policy, noeviction]
+    volumes: [redis_data:/data]
+    networks: [local]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  api:
+    <<: *node
+    networks: [local, frontend]
+    command: [npm, run, dev:api]
+    ports: ["127.0.0.1:${API_PORT:-4174}:3001"]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3001/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+      start_period: 15s
+
+  worker:
+    <<: *node
+    environment:
+      <<: *local-env
+      # This process stays on the internal network unless an explicit override is used.
+      TELEMETRY_MODE: ${WORKER_TELEMETRY_MODE:-off}
+    command: [npm, run, dev:worker]
+    healthcheck:
+      test: [CMD, node, -e, "try{const t=Number(require('fs').readFileSync('/tmp/fasemarketplace-worker-ready','utf8'));process.exit(Date.now()-t<20000?0:1)}catch{process.exit(1)}"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+
+  web:
+    <<: *node
+    networks: [frontend]
+    command: [npm, run, dev:web]
+    environment:
+      NODE_ENV: development
+      VITE_TELEMETRY_MODE: ${TELEMETRY_MODE:-off}
+      VITE_TELEMETRY_ENVIRONMENT: local
+      VITE_APP_RELEASE: ${APP_RELEASE:-development}
+      VITE_POSTHOG_PROJECT_TOKEN: ${POSTHOG_PROJECT_TOKEN:-}
+      VITE_POSTHOG_HOST: ${POSTHOG_HOST:-}
+    volumes:
+      - ./apps/web/src:/workspace/apps/web/src:ro
+      - ./apps/web/index.html:/workspace/apps/web/index.html:ro
+      - ./packages/telemetry:/workspace/packages/telemetry:ro
+    ports: ["127.0.0.1:${WEB_PORT:-4173}:3000"]
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+      start_period: 15s
+
+networks:
+  local:
+    internal: true
+  frontend:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

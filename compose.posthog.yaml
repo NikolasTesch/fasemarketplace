@@ -1,0 +1,9 @@
+# Optional: only after confirming a development PostHog project/token.
+# Gives the worker outbound connectivity, without publishing any port.
+services:
+  worker:
+    networks: [local, telemetry_egress]
+
+networks:
+  telemetry_egress:
+    driver: bridge

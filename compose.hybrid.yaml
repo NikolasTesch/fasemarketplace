@@ -1,0 +1,68 @@
+# Independent Compose file: do NOT merge with compose.yaml.
+# Starts only Redis, API and worker. The frontend may run on Vercel or locally.
+name: fasemarketplace-hybrid
+
+x-backend: &backend
+  image: fasemarketplace-hybrid-dev
+  build: { context: ., target: development }
+  init: true
+  restart: "no"
+  environment: &hybrid-env
+    APP_ENV: local
+    MARKETPLACE_MODE: mock
+    DATABASE_PROVIDER: neon
+    DATABASE_URL: ${NEON_DATABASE_URL:?Fill NEON_DATABASE_URL with the development branch connection}
+    NEON_DEVELOPMENT_HOST: ${NEON_DEVELOPMENT_HOST:?Confirm the development pooled host}
+    NEON_BRANCH: development
+    REDIS_URL: redis://redis:6379
+    TELEMETRY_MODE: off
+  networks: [local, egress]
+  depends_on:
+    redis: { condition: service_healthy }
+  volumes:
+    - ./apps/backend/src:/workspace/apps/backend/src:ro
+    - ./packages/telemetry:/workspace/packages/telemetry:ro
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  redis:
+    image: redis:7.4-alpine@sha256:57e4255cc971b1c8d6f8a6ca283ac01bc3ecdd914273ef6bfaede87aaecd6541
+    command: [redis-server, --appendonly, "yes", --appendfsync, everysec, --maxmemory-policy, noeviction]
+    volumes: [redis_data:/data]
+    networks: [local]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+  api:
+    <<: *backend
+    command: [npm, run, dev:api]
+    environment:
+      <<: *hybrid-env
+      WEB_ALLOWED_ORIGINS: ${WEB_ALLOWED_ORIGINS:-}
+    ports: ["127.0.0.1:${HYBRID_API_PORT:-4274}:3001"]
+    # Liveness avoids keeping Neon awake just for a Docker health probe.
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3001/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 4s
+      retries: 3
+      start_period: 20s
+  worker:
+    <<: *backend
+    command: [npm, run, dev:worker]
+    healthcheck:
+      test: [CMD, node, -e, "try{const t=Number(require('fs').readFileSync('/tmp/fasemarketplace-worker-ready','utf8'));process.exit(Date.now()-t<1260000?0:1)}catch{process.exit(1)}"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+networks:
+  local: { internal: true }
+  egress: { driver: bridge }
+volumes:
+  redis_data:

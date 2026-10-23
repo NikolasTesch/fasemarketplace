@@ -1,0 +1,11 @@
+{
+  "name": "@fasemarketplace/telemetry",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": { "types": "./index.d.ts", "default": "./index.js" } },
+  "scripts": {
+    "typecheck": "tsc --noEmit --strict --skipLibCheck --module nodenext --moduleResolution nodenext index.d.ts",
+    "test": "node --test test/*.test.js"
+  }
+}
