@@ -4,13 +4,13 @@
 
 Desenho [SPEC-006](../specs/SPEC-006-production-docker.md) aprovado pelo usuário. Stack `fasemarketplace-production` iniciada e validada: API/worker compilados, Redis exclusivo, gateway autenticado e túnel independente. O banco é a branch Neon `production`, distinta de `development`. Nenhuma funcionalidade ou escrita de negócio foi executada.
 
-A configuração Vercel Production é preparada com ponte **desligada** até a promoção explícita do código para `main`. O frontend produtivo publicado ainda é o bootstrap anterior. Portanto, backend Docker ativo não significa que a interface Production já o utiliza.
+A promoção foi autorizada e concluída: [Production na Vercel](https://fasemarketplace.vercel.app) usa a ponte exclusiva e seu diagnóstico foi validado no navegador. O [registro da ativação inicial](production-release-2026-10-23.md) identifica commits, deployment e imagem. As evidências de preparação ao final deste documento são históricas, anteriores à publicação.
 
 ## Arquivo privado
 
 `.env.production` já foi preparado neste checkout e está ignorado pelo Git. Não sobrescrevê-lo com o exemplo. Para outro checkout, copiar `.env.production.example` e preencher:
 
-- `PRODUCTION_IMAGE` e `APP_RELEASE`: identificador da imagem/release conferida. A imagem de validação desta entrega tem sufixo `0a09273-spec006-worktree`: contém alterações ainda não commitadas, não é uma release do commit `0a09273` sem alterações. Antes da promoção, construir/identificar a imagem a partir do commit aprovado e registrar seu digest.
+- `PRODUCTION_IMAGE` e `APP_RELEASE`: identificador da imagem/release conferida. A ativação usa imagem do commit `8dabca82c3ed067e5e11600118252120a20a3f8e`, com revisão OCI correspondente, e release `2026-10-23-spec006`. A imagem anterior com sufixo `0a09273-spec006-worktree` serviu apenas à preparação e não é a imagem ativa. Mudanças futuras de runtime devem construir/identificar a imagem a partir do commit aprovado e registrar seu digest.
 - `NEON_PRODUCTION_DATABASE_URL`: URI privada da role `fasemarketplace_production_app`, banco `neondb`, host aprovado e query apenas `?sslmode=verify-full`. O exemplo não contém senha. Não colar a URI em mensagens ou variáveis VITE_.
 - `NEON_PRODUCTION_HOST`: hostname pooled aprovado na spec, sem protocolo/caminho. A aplicação também o confere contra o endpoint produtivo fixado no código; mudar de endpoint exige uma alteração revisada.
 - `PRODUCTION_BRIDGE_KEY`: chave aleatória exclusiva de 32 bytes em base64url. API/worker não recebem esta chave; somente gateway e Function a utilizam.
@@ -60,7 +60,7 @@ docker compose --env-file .env.production -p fasemarketplace-production -f compo
 
 Não usar `down -v`, reset, seed ou limpeza de volumes. Para reverter a publicação, usar a imagem/deployment anterior e desativar a ponte se necessário, preservando banco/Redis. Não há migrações nesta entrega; uma futura migração exige procedimento próprio de backup, ensaio e recuperação.
 
-## Evidências e limites
+## Evidências históricas da preparação e limites
 
 - Lint, typecheck, 55 testes e build passaram no target Docker `verify`. Testes novos recusam endpoint/role/TLS incorretos e fallback entre pontes. O teste de worker depende de Linux; no host Windows ocorreu timeout, e na execução reproduzível Docker ele passou.
 - Smoke produtivo passou com todos os serviços saudáveis. Gateway recusou ausência de chave, chave inválida e chave de Preview; túnel autenticado retornou `ready`. Gateway de Preview recusou chave produtiva.

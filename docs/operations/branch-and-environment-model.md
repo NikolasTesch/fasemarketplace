@@ -1,6 +1,6 @@
 # Modelo de branches e ambientes
 
-**Estado:** local e Preview de `development` configurados; backend Production Docker separado ativo/validado pela [SPEC-006](../specs/SPEC-006-production-docker.md). Consultar a [matriz atual](environment-configuration.md). Ponte Vercel preparada/desligada; a promoção de código para `main` ainda não foi feita nesta entrega.
+**Estado:** local e Preview de `development` configurados; backend Production Docker separado ativo/validado pela [SPEC-006](../specs/SPEC-006-production-docker.md). Consultar a [matriz atual](environment-configuration.md). Ponte Vercel ativada e código promovido para `main` com autorização explícita; consultar [registro da ativação](production-release-2026-10-23.md).
 **Estado do checkout:** base `development` para integração; remoto GitHub `origin` configurado. A publicação do código não provisiona ambientes nem recursos de aplicação. Compose e aplicações de bootstrap presentes.
 
 ## Princípios
@@ -22,7 +22,7 @@ Em 23/10/2026 o usuário escolheu frontend Vercel, API/worker Docker e PostgreSQ
 | Branch de tarefa | `codex/<nome>` parte da `development` atualizada e contém uma unidade revisável | A criar para cada unidade |
 | Integração | `development` recebe tarefas revisadas e aprovadas | Base inicial do bootstrap |
 | Preview | Vercel/development → ponte autenticada → Docker híbrido → Neon development | Configurado; túnel temporário e Docker precisam estar ativos |
-| Produção | Vercel/main → ponte exclusiva → Docker Production → Neon production/Redis exclusivo | Backend validado e variáveis cadastradas; ponte desligada, promoção para main pendente |
+| Produção | Vercel/main → ponte exclusiva → Docker Production → Neon production/Redis exclusivo | Ativo; diagnóstico publicado validado, modo mock, recursos exclusivos |
 
 `development` é a base de integração publicada em `origin`; criar branches de tarefa a partir dela após atualizá-la. `main` é a branch de Production na Vercel. Não promover alterações nem criar recursos somente por esses nomes: conferir configuração efetiva e aprovação da entrega.
 

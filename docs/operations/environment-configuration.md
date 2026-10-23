@@ -1,6 +1,6 @@
 # Configuração dos ambientes
 
-**Estado de 23/10/2026:** local e Preview existentes; Production Docker aprovada e validada na [SPEC-006](../specs/SPEC-006-production-docker.md). Backend produtivo ativo; ponte Vercel Production preparada/desligada até promoção explícita do código. [Evidências e comandos](production-docker.md).
+**Estado de 23/10/2026:** local, Preview e Production ativos. Código promovido para main com autorização do usuário; ponte Vercel Production ativada e validada no navegador. [Registro da publicação](production-release-2026-10-23.md) e [comandos](production-docker.md).
 
 ## Quais ambientes existem
 
@@ -10,7 +10,7 @@
 | Desenvolvimento híbrido | `.env` + `compose.hybrid.yaml`, projeto `fasemarketplace-hybrid` | Neon development + Redis híbrido | Existente |
 | Vercel Preview de Git `development` | Settings → Environment Variables → Preview, branch `development` | Function encaminha diagnóstico ao Docker híbrido | Configurado e validado na entrega anterior |
 | Vercel Development | Escopo usado por ferramentas locais como `vercel dev` | Não deve acessar Production | Sem variáveis; não é necessário ao fluxo Docker atual |
-| Vercel Production de Git `main` | Settings → Environment Variables → Production | Ponte exclusiva ao Docker Production preparada | Bootstrap anterior publicado; variáveis cadastradas, ponte desligada |
+| Vercel Production de Git `main` | Settings → Environment Variables → Production | Ponte exclusiva ao Docker Production | Ativo; diagnóstico publicado 200/ready, modo mock |
 | Docker Production | `.env.production` + `compose.production.yaml`, projeto `fasemarketplace-production` | Neon production + Redis exclusivo | Ativo e validado; túnel autenticado próprio |
 
 `development` é uma branch Git e também o nome escolhido para uma branch Neon. O ambiente **Development da Vercel é outra configuração**: não é o Preview publicado da branch Git. Não precisamos preenchê-lo com segredos para o Docker funcionar.
@@ -20,20 +20,20 @@
 | Variável | Preview / branch Git development | Production | Localização |
 | --- | --- | --- | --- |
 | `VITE_DEVELOPMENT_MODE` | `preview` | `production` | Vercel; pública, entra no bundle |
-| `VITE_APP_RELEASE` | `development` | `pending-main-release`; trocar pela release na promoção | Vercel; pública |
+| `VITE_APP_RELEASE` | `development` | `2026-10-23-spec006` | Vercel; pública |
 | `VITE_TELEMETRY_MODE` | `off` | `off` | Vercel; pública |
 | `VITE_TELEMETRY_ENVIRONMENT` | `preview` | `production` | Vercel; pública |
 | `VITE_API_BASE_URL` | Ausente/vazia: usa `/api` | Ausente/vazia: usa `/api` | Vercel; pública |
 | `PREVIEW_BRIDGE_ENABLED` | `true` | Ausente | Function Preview |
 | `PREVIEW_BRIDGE_ORIGIN` | URL atual do túnel híbrido | Ausente | Function Preview |
 | `PREVIEW_BRIDGE_KEY` | Segredo exclusivo existente | Ausente | Function Preview + gateway híbrido |
-| `PRODUCTION_BRIDGE_ENABLED` | Ausente | Inicialmente `false`; `true` após validação | Function Production, após implementação |
-| `PRODUCTION_BRIDGE_ORIGIN` | Ausente | URL do túnel produtivo exclusivo | Function Production, após implementação |
-| `PRODUCTION_BRIDGE_KEY` | Ausente | Novo segredo exclusivo | Function Production + gateway produtivo, após implementação |
+| `PRODUCTION_BRIDGE_ENABLED` | Ausente | `true`; desativar somente no escopo Production quando necessário | Function Production |
+| `PRODUCTION_BRIDGE_ORIGIN` | Ausente | URL atual do túnel produtivo exclusivo | Function Production |
+| `PRODUCTION_BRIDGE_KEY` | Ausente | Segredo exclusivo sensível | Function Production + gateway produtivo |
 | Conexão PostgreSQL/Neon | Não cadastrar na Vercel | Não cadastrar na Vercel | API/worker Docker do ambiente correspondente |
 | Conexão Redis | Não cadastrar na Vercel | Não cadastrar na Vercel | API/worker Docker do ambiente correspondente |
 
-Preview/development mantém suas sete variáveis (quatro `VITE_` e três `PREVIEW_BRIDGE_`). Production recebeu outras sete (quatro `VITE_` e três `PRODUCTION_BRIDGE_`), com chave exclusiva sensível e ativação `false`. Configurar variáveis não altera o deployment anterior; falta publicar o código revisado e ativar a ponte na promoção aprovada.
+Preview/development mantém suas sete variáveis (quatro `VITE_` e três `PREVIEW_BRIDGE_`). Production recebeu outras sete (quatro `VITE_` e três `PRODUCTION_BRIDGE_`), com chave exclusiva sensível e ativação `true`. O novo deployment foi validado. Configurar variáveis não altera deployments anteriores; alterações futuras exigem nova implantação no escopo correto.
 
 ## Arquivos env, passo a passo
 

@@ -1,6 +1,6 @@
 # Arquitetura — Hub de estoque e integração com marketplaces
 
-**Estado técnico posterior (23/10/2026):** React/Vite + NestJS; Docker local e híbrido com Neon development; Preview Vercel protegido com Function de diagnóstico. Production Docker separada aprovada na [SPEC-006](docs/specs/SPEC-006-production-docker.md), backend ativo e configuração Vercel preparada/desligada até promoção explícita. A [matriz atual](docs/operations/environment-configuration.md) e o [guia produtivo](docs/operations/production-docker.md) substituem os trechos históricos abaixo sobre infraestrutura ainda não escolhida. O domínio de negócio continua uma proposta sem funcionalidades implementadas.
+**Estado técnico posterior (23/10/2026):** React/Vite + NestJS; Docker local e híbrido com Neon development; Preview Vercel protegido com Function de diagnóstico. Production Docker separada aprovada na [SPEC-006](docs/specs/SPEC-006-production-docker.md), backend e configuração Vercel ativos após promoção explícita; ver [ativação inicial](docs/operations/production-release-2026-10-23.md). A [matriz atual](docs/operations/environment-configuration.md) e o [guia produtivo](docs/operations/production-docker.md) substituem os trechos históricos abaixo sobre infraestrutura ainda não escolhida. O domínio de negócio continua uma proposta sem funcionalidades implementadas.
 
 **Versão:** 0.2 — proposta consolidada com decisões do piloto  
 **Data:** 23/10/2026  
