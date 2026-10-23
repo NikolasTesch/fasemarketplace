@@ -13,8 +13,10 @@ export function readBrowserOrigins(env: NodeJS.ProcessEnv = process.env) {
 }
 
 export function readLocalConfig(env: NodeJS.ProcessEnv = process.env) {
-  if (env.APP_ENV !== 'local' || env.MARKETPLACE_MODE !== 'mock') {
-    throw new Error('Local bootstrap requires APP_ENV=local and MARKETPLACE_MODE=mock');
+  const production = env.APP_ENV === 'production';
+  const productionHost = 'ep-round-cell-b66do3rp-pooler.c-2.sa-east-1.aws.neon.tech';
+  if ((!production && env.APP_ENV !== 'local') || env.MARKETPLACE_MODE !== 'mock') {
+    throw new Error('Bootstrap requires an explicit environment and MARKETPLACE_MODE=mock');
   }
 
   function localUrl(key: string, protocol: string, host: string, port: string) {
@@ -32,22 +34,25 @@ export function readLocalConfig(env: NodeJS.ProcessEnv = process.env) {
   }
 
   const provider = env.DATABASE_PROVIDER ?? 'local';
+  if (production && provider !== 'neon') throw new Error('Production requires the approved Neon endpoint');
   let databaseUrl: string;
   if (provider === 'local') {
     databaseUrl = localUrl('DATABASE_URL', 'postgresql:', 'postgres', '5432');
   } else if (provider === 'neon') {
     try {
       const url = new URL(env.DATABASE_URL ?? '');
-      const host = env.NEON_DEVELOPMENT_HOST ?? '';
-      if (env.NEON_BRANCH !== 'development' ||
+      const host = (production ? env.NEON_PRODUCTION_HOST : env.NEON_DEVELOPMENT_HOST) ?? '';
+      if (env.NEON_BRANCH !== (production ? 'production' : 'development') ||
+          (production ? host !== productionHost : host === productionHost) ||
           !/^ep-[a-z0-9-]+-pooler\.(?:c-[0-9]+\.)?[a-z0-9-]+\.(aws|azure)\.neon\.tech$/.test(host) ||
           url.protocol !== 'postgresql:' || url.hostname !== host ||
           (url.port && url.port !== '5432') || !url.username || !url.password ||
           !/^\/[^/]+$/.test(url.pathname) || url.hash ||
+          (production && (url.username !== 'fasemarketplace_production_app' || url.pathname !== '/neondb')) ||
           url.searchParams.toString() !== 'sslmode=verify-full') throw new Error('invalid');
       databaseUrl = env.DATABASE_URL!;
     } catch {
-      throw new Error('Neon requires a confirmed pooled development endpoint and sslmode=verify-full');
+      throw new Error('Neon requires the confirmed pooled endpoint for this environment and sslmode=verify-full');
     }
   } else {
     throw new Error('DATABASE_PROVIDER must be local or neon');

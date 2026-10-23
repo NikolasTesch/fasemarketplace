@@ -1,0 +1,106 @@
+# Independent stack: never merge with development files. Always use --env-file and -p.
+name: fasemarketplace-production
+
+x-runtime: &runtime
+  image: ${PRODUCTION_IMAGE:?Set a release-specific production image}
+  build: { context: ., target: production }
+  init: true
+  restart: "no"
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+x-backend: &backend
+  <<: *runtime
+  environment: &production-env
+    APP_ENV: production
+    NODE_ENV: production
+    APP_RELEASE: ${APP_RELEASE:?Set the release identifier}
+    MARKETPLACE_MODE: mock
+    DATABASE_PROVIDER: neon
+    DATABASE_URL: ${NEON_PRODUCTION_DATABASE_URL:?Set the exclusive production connection}
+    NEON_PRODUCTION_HOST: ${NEON_PRODUCTION_HOST:?Confirm production host}
+    NEON_BRANCH: production
+    REDIS_URL: redis://redis:6379
+    TELEMETRY_MODE: off
+    TELEMETRY_ENVIRONMENT: production
+  networks: [local, egress]
+  depends_on:
+    redis: { condition: service_healthy }
+
+services:
+  redis:
+    image: redis:7.4-alpine@sha256:57e4255cc971b1c8d6f8a6ca283ac01bc3ecdd914273ef6bfaede87aaecd6541
+    restart: "no"
+    command: [redis-server, --appendonly, "yes", --appendfsync, everysec, --maxmemory-policy, noeviction]
+    volumes: [redis_data:/data]
+    networks: [local]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+  api:
+    <<: *backend
+    command: [node, apps/backend/dist/main.js]
+    networks: [local, egress, frontend]
+    ports: ["127.0.0.1:${PRODUCTION_API_PORT:-4474}:3001"]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3001/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 4s
+      retries: 3
+      start_period: 20s
+  worker:
+    <<: *backend
+    command: [node, apps/backend/dist/worker.js]
+    healthcheck:
+      test: [CMD, node, -e, "try{const t=Number(require('fs').readFileSync('/tmp/fasemarketplace-worker-ready','utf8'));process.exit(Date.now()-t<1260000?0:1)}catch{process.exit(1)}"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+  production-gateway:
+    <<: *runtime
+    command: [node, server/preview-gateway.mjs]
+    environment:
+      APP_ENV: production
+      PRODUCTION_BRIDGE_KEY: ${PRODUCTION_BRIDGE_KEY:?Set a new exclusive production key}
+    networks: [frontend]
+    ports: ["127.0.0.1:${PRODUCTION_BRIDGE_PORT:-4475}:3002"]
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: [CMD, node, -e, "const s=require('net').connect(3002,'127.0.0.1',()=>{s.end();process.exit(0)});s.on('error',()=>process.exit(1));s.setTimeout(2000,()=>process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+  production-tunnel:
+    image: cloudflare/cloudflared@sha256:faa8e0a1475f137c910be6025f43c8e4092fdd35461b31e19fd1390657a1ff39
+    profiles: [tunnel]
+    restart: "no"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    command: [tunnel, --no-autoupdate, --url, "http://production-gateway:3002", --protocol, http2]
+    networks: [frontend]
+    depends_on:
+      production-gateway: { condition: service_healthy }
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+networks:
+  local: { internal: true }
+  egress: { driver: bridge }
+  frontend: { driver: bridge }
+volumes:
+  redis_data:

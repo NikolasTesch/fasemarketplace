@@ -63,39 +63,19 @@ Não há reset, migration de negócio ou cópia de dados nesse processo. Para vo
 
 No híbrido, o healthcheck da API testa liveness sem consultar Neon. O worker consulta dependências na inicialização e a cada 10 minutos, permitindo suspensão do banco entre usos. A saúde Docker não comprova disponibilidade contínua do banco: `/health/ready` é a verificação sob demanda. Recarregar repetidamente a tela ou consultar o banco continuamente consome compute; o plano gratuito possui limites. Esse heartbeat é apenas bootstrap, não uma política para futuros jobs comerciais.
 
-## 4. Vercel: preparar o frontend
+## 4. Vercel: frontend e Function
 
-**Atualização SPEC-005:** existe agora uma Function de diagnóstico e gateway autenticado preparados para ativação manual. Preferir o [guia de Preview protegido](protected-preview.md): manter `VITE_API_BASE_URL` vazio para `/api` na Vercel, com segredo apenas no servidor. As instruções anteriores de origem externa direta abaixo são alternativas e não devem ser usadas com a ponte. Nenhum túnel ou deploy foi iniciado.
+O Preview da branch Git `development` está configurado conforme [guia protegido](protected-preview.md). Configuração completa por escopo e explicação dos arquivos env: [matriz de ambientes](environment-configuration.md).
 
-O código inclui `vercel.json` para build da SPA, sem Functions. A publicação ainda depende de repositório GitHub, acesso/plano e transporte protegido à API. O plano Hobby da Vercel restringe uso comercial; verificar elegibilidade antes de publicar este projeto, sem contratar plano automaticamente.
+Na Vercel: Root Directory na raiz do repositório; Framework Vite; install `npm ci`; build `npm run build --workspace @fasemarketplace/web`; output `apps/web/dist`. Production Branch é `main`.
 
-Ao importar o repositório no painel Vercel:
+Manter `VITE_API_BASE_URL` ausente/vazio: a SPA consulta `/api` na própria Vercel e a Function encaminha somente o diagnóstico ao gateway autenticado. Não apontar o navegador diretamente ao túnel nem cadastrar conexões Neon/Redis em Vercel. As variáveis `PREVIEW_BRIDGE_*` são exclusivas de Preview/development; a chave nunca recebe prefixo VITE_.
 
-- Root Directory: **raiz do repositório**, não `apps/web`.
-- Framework: **Vite**.
-- Install: `npm ci`.
-- Build: `npm run build --workspace @fasemarketplace/web`.
-- Output: `apps/web/dist`.
-- Production Branch futura: `main`; base de integração atual: `development`. A publicação do código não cria Preview nem Production.
+## 5. Acesso remoto e Production
 
-Em **Settings > Environment Variables**, escopo **Preview**, cadastrar:
+O acesso remoto de Preview usa túnel temporário exclusivo para o gateway, conforme SPEC-005. A API híbrida permanece em loopback 4274, o gateway em 4374. Não abrir portas do roteador ou publicar PostgreSQL/Redis. CORS não substitui autenticação. Reiniciar o túnel pode mudar a origem e exigir novo deploy de Preview.
 
-| Nome | Valor |
-|---|---|
-| `VITE_API_BASE_URL` | Origem HTTPS protegida da API local, sem barra final e sem `/api` |
-| `VITE_TELEMETRY_MODE` | `off` inicialmente |
-| `VITE_TELEMETRY_ENVIRONMENT` | `preview` |
-| `VITE_APP_RELEASE` | `development` inicialmente |
-
-Sem `VITE_API_BASE_URL`, a SPA tenta `/api` na própria origem, que só possui proxy no Vite local. A URL nunca deve ser `localhost`, IP privado, conexão Neon ou senha. No Vercel, variáveis VITE_ são incorporadas ao build e precisam de novo deploy quando mudam.
-
-Para Produção, não preencher a API de desenvolvimento: backend produtivo, autenticação, conexão/banco, backups e gates ainda não existem. Não habilitar deploy produtivo automático antes de definir esses pontos.
-
-## 5. Acesso remoto à API: pendente
-
-A API híbrida escuta somente em `127.0.0.1:4274`. Para outros computadores acessarem o frontend publicado, será necessário um túnel HTTPS autenticado ou acesso privado equivalente à máquina. Provedor/domínio e autenticação precisam ser definidos antes de abrir o acesso. CORS (`WEB_ALLOWED_ORIGINS`) permite a origem do navegador, mas não impede chamadas diretas e não substitui autenticação.
-
-Não abrir portas do roteador, PostgreSQL ou Redis. Não cadastrar tokens secretos em VITE_. A máquina precisa permanecer ligada e os containers ativos. Não configurar um túnel público irrestrito nesta etapa.
+O usuário aprovou outra stack Docker para Production, com Neon production, Redis e credenciais exclusivos. Consultar [SPEC-006](../specs/SPEC-006-production-docker.md) e [operação produtiva](production-docker.md). Não reaproveitar o Compose híbrido, conexão development ou chave Preview. A promoção para main continua uma etapa explícita após revisão; a configuração do backend não publica o frontend automaticamente.
 
 ## 6. PostHog
 
@@ -105,7 +85,7 @@ Na Vercel, após criar o projeto PostHog de desenvolvimento, preencher `VITE_POS
 
 Redis não exige cadastro em plataforma: a instância local já está definida. Não criar Redis remoto agora.
 
-## Evidências desta etapa
+## Evidências históricas da SPEC-003 (estado posterior na matriz de ambientes)
 
 - Lint, typecheck, 42 testes e build passaram em imagem Docker de verificação.
 - Compose híbrido validado com valores sintéticos, projeto `fasemarketplace-hybrid`, Redis/volume separados e API somente loopback.
@@ -113,7 +93,7 @@ Redis não exige cadastro em plataforma: a instância local já está definida. 
 
 ### Conexão Neon validada em 23/10/2026
 
-O usuário preencheu a conexão manualmente. Endpoint conferido pela API Neon: projeto `autumn-shadow-97219766`, branch `br-fancy-waterfall-b6tbiwl1`, criada com o nome `develpment` (grafia atual no painel). O endpoint é distinto do associado a `production`. O projeto escolhido no arquivo está na organização pessoal; existe outro projeto homônimo na organização Vercel, que não foi usado nem alterado. PostgreSQL remoto foi criado na versão 18; local permanece 17. Considerar essa diferença ao especificar futuras migrations.
+O usuário preencheu a conexão manualmente. Endpoint conferido pela API Neon: projeto `autumn-shadow-97219766`, branch `br-fancy-waterfall-b6tbiwl1`, criada inicialmente com o nome `develpment`; na auditoria da SPEC-006 seu nome já consta como `development`. O endpoint é distinto do associado a `production`. O projeto escolhido no arquivo está na organização pessoal; existe outro projeto homônimo na organização Vercel, que não foi usado nem alterado. PostgreSQL remoto foi criado na versão 18; local permanece 17. Considerar essa diferença ao especificar futuras migrations.
 
 A configuração passou a aceitar o formato de hostname Neon com rótulo de cluster `c-2`. A query TLS do `.env` foi ajustada para `sslmode=verify-full`, preservando credenciais, host e banco. Credenciais não foram registradas na documentação.
 

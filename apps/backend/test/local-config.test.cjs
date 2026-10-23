@@ -81,3 +81,34 @@ for (const override of [
       (error) => !error.message.includes('example@'));
   });
 }
+
+const productionHost = 'ep-round-cell-b66do3rp-pooler.c-2.sa-east-1.aws.neon.tech';
+const production = {
+  ...valid, APP_ENV: 'production', DATABASE_PROVIDER: 'neon', NEON_BRANCH: 'production',
+  NEON_PRODUCTION_HOST: productionHost,
+  DATABASE_URL: `postgresql://fasemarketplace_production_app:synthetic@${productionHost}/neondb?sslmode=verify-full`,
+};
+
+test('production accepts only the approved Neon target, mock mode and isolated runtime role', () => {
+  const config = readLocalConfig(production);
+  assert.equal(config.databaseUrl, production.DATABASE_URL);
+  assert.equal(config.workerCheckIntervalMs, 600000);
+});
+
+test('production refuses crossed endpoints, owner roles and insecure or ambiguous config', () => {
+  for (const changes of [
+    { NEON_BRANCH: 'development' }, { DATABASE_PROVIDER: 'local' }, { MARKETPLACE_MODE: 'real' },
+    { NEON_PRODUCTION_HOST: neon.NEON_DEVELOPMENT_HOST, DATABASE_URL: neon.DATABASE_URL },
+    { NEON_PRODUCTION_HOST: '' },
+    { DATABASE_URL: production.DATABASE_URL.replace('verify-full', 'require') },
+    { DATABASE_URL: production.DATABASE_URL + '&host=other.example' },
+    { DATABASE_URL: production.DATABASE_URL.replace('fasemarketplace_production_app', 'neondb_owner') },
+    { DATABASE_URL: production.DATABASE_URL.replace('/neondb?', '/other?') },
+    { REDIS_URL: 'redis://remote.example:6379' },
+  ]) assert.throws(() => readLocalConfig({ ...production, ...changes }));
+});
+
+test('development cannot opt into the production endpoint by relabeling it', () => {
+  assert.throws(() => readLocalConfig({ ...neon, NEON_DEVELOPMENT_HOST: productionHost,
+    DATABASE_URL: production.DATABASE_URL }));
+});

@@ -50,6 +50,8 @@ SPEC-005 implementa gateway opt-in `compose.preview.yaml` e Function Vercel some
 
 Preview de development está configurado no projeto Vercel fasemarketplace do time nikolasdtesch-4933s-projects. Production usa main e não foi promovida nesta entrega. Autenticação de produto, promoção produtiva, backup/recuperação e rollback continuam pendentes. Não inferir autorização para futuras publicações, merge em main ou escritas de negócio a partir desta ativação de Preview.
 
+Decisão posterior aprovada pelo usuário: preparar e validar backend Production ativo no próprio computador em stack Docker separada (SPEC-006). `compose.production.yaml` é independente: usar explicitamente `--env-file .env.production -p fasemarketplace-production`, nunca mesclar com os Composes anteriores. API/worker compilados, Redis/volume/redes e role Neon exclusivos, gateway e túnel próprios. `.env.production.example` contém somente modelo; arquivo privado não deve ser sobrescrito ou impresso. Configuração produtiva aceita somente endpoint/role aprovados, `MARKETPLACE_MODE=mock` e TLS verify-full. Ver `docs/operations/production-docker.md` e matriz `environment-configuration.md`. Ponte Vercel Production usa exclusivamente `PRODUCTION_BRIDGE_*`; fica desligada até promoção autorizada e nova implantação. Nenhuma credencial de banco/Redis vai para Vercel ou VITE_. O domínio produtivo atual é público; não ampliar rotas/dados sem autenticação. Esta autorização não inclui commit, push, merge, promoção de código ou operações de negócio automáticas.
+
 Não escolha provedor de hospedagem, banco remoto, domínio, armazenamento de objetos, broker hospedado ou plataforma de deploy sem decisão aprovada. Nomes de branches, projetos ou ambientes não provam o destino efetivo de dados.
 
 ## Validação
