@@ -1,0 +1,62 @@
+[
+  {
+    "id": "98f34dee77fe44fda9d2155940824b0b",
+    "title": "Fase Estoque — Painel Analítico de Vendas",
+    "slug": "01-painel-analitico-vendas",
+    "deviceType": "DESKTOP",
+    "width": "2560",
+    "height": "3484",
+    "htmlFile": "01-painel-analitico-vendas.html",
+    "imageFile": "01-painel-analitico-vendas.png"
+  },
+  {
+    "id": "d9f801b02e1b4f7991fdd951a69c62aa",
+    "title": "Fase Estoque — Pedidos e Reservas",
+    "slug": "02-pedidos-reservas",
+    "deviceType": "DESKTOP",
+    "width": "2560",
+    "height": "2842",
+    "htmlFile": "02-pedidos-reservas.html",
+    "imageFile": "02-pedidos-reservas.png"
+  },
+  {
+    "id": "e774e76bb36c444c94d0c6a7adb03d8a",
+    "title": "Fase Estoque — Sincronização e Alertas",
+    "slug": "03-sincronizacao-alertas",
+    "deviceType": "DESKTOP",
+    "width": "2560",
+    "height": "3086",
+    "htmlFile": "03-sincronizacao-alertas.html",
+    "imageFile": "03-sincronizacao-alertas.png"
+  },
+  {
+    "id": "19ddac71d0194f11af78589372e833f9",
+    "title": "Fase Estoque — Histórico e Auditoria",
+    "slug": "04-historico-auditoria",
+    "deviceType": "DESKTOP",
+    "width": "2560",
+    "height": "2470",
+    "htmlFile": "04-historico-auditoria.html",
+    "imageFile": "04-historico-auditoria.png"
+  },
+  {
+    "id": "31ba50e050c4479f8b3c402212e26fe5",
+    "title": "Fase Estoque — Estoque e Saldos",
+    "slug": "05-estoque-saldos",
+    "deviceType": "DESKTOP",
+    "width": "2560",
+    "height": "2426",
+    "htmlFile": "05-estoque-saldos.html",
+    "imageFile": "05-estoque-saldos.png"
+  },
+  {
+    "id": "2a6143c8302a424b9c6768340c3bdb36",
+    "title": "Fase Estoque — Lançar Movimentação de Estoque",
+    "slug": "06-lancar-movimentacao",
+    "deviceType": "DESKTOP",
+    "width": "2560",
+    "height": "2426",
+    "htmlFile": "06-lancar-movimentacao.html",
+    "imageFile": "06-lancar-movimentacao.png"
+  }
+]
