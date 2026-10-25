@@ -1,6 +1,6 @@
 # SPEC-008 — Autenticação no Preview protegido
 
-**Estado:** contrato técnico fechado para implementação e ensaio local após a solicitação de execução do usuário em 24/10/2026. Login local integrado já validado (E01.1). Ativação remota, migration Neon e publicação continuam pendentes de autorização própria. Ver [plano de execução](../superpowers/plans/2026-10-24-preview-access-transport.md).
+**Estado em 25/10/2026:** implementação e ativação autorizadas pelo usuário, migration/role limitada/admin em development aplicados, Preview publicado e homologado tecnicamente em Chromium/Edge. Ver [ativação e limitações](../operations/preview-access-activation-2026-10-25.md). Aceite humano do primeiro acesso permanece com o usuário. Production/main não alterados; futuras publicações/escritas exigem autorização própria.
 
 ## Objetivo e limites
 

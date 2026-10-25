@@ -1,6 +1,6 @@
 # Preparação do login no Preview — E01.2
 
-**Estado:** transporte implementado para ensaio local; não ativado na Vercel ou no Neon. Esta entrega não executou migration, criou role/usuário remoto ou publicou código.
+**Atualização 25/10/2026:** ativação autorizada, migration/role/admin em Neon development e homologação HTTPS Preview concluídas. Ver [registro atual e comandos](preview-access-activation-2026-10-25.md). O restante deste documento registra a preparação anterior e seus gates, cumpridos para esta ativação; futuras operações seguem autorização própria. Production/main preservados.
 
 Fontes: [SPEC-008](../specs/SPEC-008-preview-access.md), [plano da fatia](../superpowers/plans/2026-10-24-preview-access-transport.md) e [plano do MVP](../superpowers/plans/2026-10-24-mvp-integrations.md).
 

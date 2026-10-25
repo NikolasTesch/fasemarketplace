@@ -2,11 +2,11 @@
 
 **Implementação incremental em andamento:** [plano das sete entregas](docs/superpowers/plans/2026-10-24-mvp-integrations.md). A primeira fatia integra login/perfis reais ao protótipo no Docker local; [execução, endereço e validação](docs/operations/mvp-access-integration-2026-10-24.md). Estoque, pedidos e relatórios permanecem simulados até suas respectivas entregas.
 
-Transporte de login para Preview implementado e ensaiado localmente, com ativação remota desligada: [contrato, variáveis e gates pendentes](docs/operations/preview-access-preparation.md). Não aplicar o override de acesso antes da preparação/autorização de banco e publicação.
+**Login ativo no Preview de development:** [acesso, operação e homologação de 25/10/2026](docs/operations/preview-access-activation-2026-10-25.md). Migration/role limitada e administrador aplicados no Neon development; Chromium/Edge e permissões validados. Production/main permanecem sem esta ativação. Preview depende do Docker e túnel do computador.
 
-Manutenção privada Preview preparada: [migration, primeiro administrador e recuperação](docs/operations/preview-access-maintenance.md), com [modelo env exclusivo](config/preview-access-maintenance.env.example). Migration/bootstrap ensaiados em Docker descartável; execução de escrita no Neon continua pendente.
+Manutenção privada Preview: [migration, primeiro administrador e recuperação](docs/operations/preview-access-maintenance.md), com [modelo env exclusivo](config/preview-access-maintenance.env.example). Credenciais de entrega somente em arquivo privado ignorado; troca obrigatória. Futuras escritas/publicações seguem autorização própria.
 
-Backup criptografado e restauração descartável: [guia e política de desenvolvimento](docs/operations/access-backup.md), [modelo da chave privada](config/access-backup-key.env.example). Baseline real Neon development (PostgreSQL 18, public vazio) respaldado e restaurado no Docker 18 em 25/10/2026: [evidências](docs/operations/neon-development-recovery-2026-10-25.md). Guarda somente local por decisão do usuário; não há agendamento ou exclusão automática. Migration/ativação auth remota continuam pendentes.
+Backup criptografado e restauração descartável: [guia e política de desenvolvimento](docs/operations/access-backup.md), [modelo da chave privada](config/access-backup-key.env.example). Baseline real e estado posterior à ativação (cinco tabelas auth) restaurados no Docker 18 em 25/10/2026. Guarda somente local por decisão do usuário; não há agendamento ou exclusão automática.
 
 **Production ativa para diagnóstico:** [fasemarketplace.vercel.app](https://fasemarketplace.vercel.app). Publicação, isolamento e validação registrados na [ativação inicial](docs/operations/production-release-2026-10-23.md). API/worker continuam no Docker do computador; funcionalidades de negócio ainda não existem.
 
