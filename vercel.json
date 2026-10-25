@@ -6,6 +6,6 @@
   "outputDirectory": "apps/web/dist",
   "functions": {
     "api/health/ready.mjs": { "maxDuration": 20 },
-    "api/access/[...path].mjs": { "maxDuration": 20 }
+    "api/access/**/*.mjs": { "maxDuration": 20 }
   }
 }
