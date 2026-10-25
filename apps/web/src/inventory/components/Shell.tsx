@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { ViewScreen } from '../types';
 import logo from '../../assets/fase-sport-logo.svg';
+import { useAccessUser } from '../../Access';
 
 interface ShellProps {
   currentScreen: ViewScreen;
@@ -15,6 +16,7 @@ export function Shell({
   onOpenMovementModal,
   children,
 }: ShellProps) {
+  const user = useAccessUser();
   const isHybrid = import.meta.env.VITE_DEVELOPMENT_MODE === 'hybrid';
   const isPreview = import.meta.env.VITE_DEVELOPMENT_MODE === 'preview';
   const isProduction = import.meta.env.VITE_DEVELOPMENT_MODE === 'production';
@@ -147,8 +149,8 @@ export function Shell({
             </button>
 
             <div className="inv-user-chip">
-              <div className="inv-user-avatar">OP</div>
-              <span>Operador Estoque</span>
+              <div className="inv-user-avatar">{user ? user.name.slice(0, 2).toUpperCase() : 'OP'}</div>
+              <span>{user ? user.name : 'Operador demonstrativo'}</span>
             </div>
           </div>
         </header>

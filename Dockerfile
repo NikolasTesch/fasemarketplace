@@ -13,6 +13,20 @@ COPY --chown=node:node . .
 FROM development AS verify
 RUN npm run lint && npm run typecheck && npm test && npm run build
 
+# Explicit offline maintenance image; neither API nor worker inherit pg clients.
+FROM verify AS access-maintenance
+USER root
+RUN apk add --no-cache postgresql17-client
+USER node
+CMD ["node", "scripts/auth-backup.mjs"]
+
+# Neon development uses 18; keep its recovery tooling separate from local 17.
+FROM verify AS access-maintenance18
+USER root
+RUN apk add --no-cache postgresql18-client
+USER node
+CMD ["node", "scripts/auth-backup.mjs"]
+
 # Compiled immutable backend; no watch, source bind mounts or env files.
 FROM development AS backend-build
 RUN npm run build --workspace @fasemarketplace/backend && npm prune --omit=dev

@@ -64,6 +64,13 @@ services:
     <<: *node
     networks: [local, frontend]
     command: [npm, run, dev:api]
+    environment:
+      <<: *local-env
+      AUTH_ENABLED: ${AUTH_ENABLED:-false}
+      AUTH_SECRET: ${AUTH_SECRET:-}
+      AUTH_DATABASE_URL: ${AUTH_DATABASE_URL:-}
+      AUTH_ORIGIN: ${AUTH_ORIGIN:-}
+      AUTH_COOKIE_PREFIX: ${AUTH_COOKIE_PREFIX:-fm_local_access}
     ports: ["127.0.0.1:${API_PORT:-4174}:3001"]
     healthcheck:
       test: [CMD, node, -e, "fetch('http://127.0.0.1:3001/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
@@ -92,6 +99,7 @@ services:
     command: [npm, run, dev:web]
     environment:
       NODE_ENV: development
+      VITE_AUTH_ENABLED: ${AUTH_ENABLED:-false}
       VITE_TELEMETRY_MODE: ${TELEMETRY_MODE:-off}
       VITE_TELEMETRY_ENVIRONMENT: local
       VITE_APP_RELEASE: ${APP_RELEASE:-development}

@@ -2,15 +2,22 @@
   "name": "fasemarketplace",
   "version": "0.0.0",
   "private": true,
-  "workspaces": ["packages/*", "apps/*"],
-  "engines": { "node": ">=24.15 <25" },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=24.15 <25"
+  },
   "scripts": {
+    "auth:migrate": "npm run build --workspace @fasemarketplace/backend && node scripts/auth-local.mjs migrate",
+    "auth:bootstrap": "npm run build --workspace @fasemarketplace/backend && node scripts/auth-local.mjs bootstrap",
     "dev:web": "npm run dev --workspace @fasemarketplace/web",
     "dev:api": "npm run dev:api --workspace @fasemarketplace/backend",
     "dev:worker": "npm run dev:worker --workspace @fasemarketplace/backend",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces",
-    "lint": "eslint packages/telemetry/index.js apps/backend/src apps/web/src apps/web/vite.config.ts server/*.mjs api/**/*.mjs",
+    "lint": "eslint packages/telemetry/index.js apps/backend/src apps/backend/test/access*.integration.mjs scripts/auth-*.mjs scripts/verify-access-ui.mjs apps/web/src apps/web/vite.config.ts server/*.mjs api/**/*.mjs",
     "test": "npm run test --workspaces --if-present && node --test server/test/*.test.mjs"
   },
   "devDependencies": {
@@ -19,5 +26,10 @@
     "eslint-plugin-react-hooks": "7.1.1",
     "typescript": "~6.0.0",
     "typescript-eslint": "8.72.0"
+  },
+  "overrides": {
+    "@nestjs/platform-express": {
+      "multer": "2.5.0"
+    }
   }
 }
