@@ -1,5 +1,13 @@
 # FaseMarketplace
 
+**Implementação incremental em andamento:** [plano das sete entregas](docs/superpowers/plans/2026-10-24-mvp-integrations.md). A primeira fatia integra login/perfis reais ao protótipo no Docker local; [execução, endereço e validação](docs/operations/mvp-access-integration-2026-10-24.md). Estoque, pedidos e relatórios permanecem simulados até suas respectivas entregas.
+
+Transporte de login para Preview implementado e ensaiado localmente, com ativação remota desligada: [contrato, variáveis e gates pendentes](docs/operations/preview-access-preparation.md). Não aplicar o override de acesso antes da preparação/autorização de banco e publicação.
+
+Manutenção privada Preview preparada: [migration, primeiro administrador e recuperação](docs/operations/preview-access-maintenance.md), com [modelo env exclusivo](config/preview-access-maintenance.env.example). Migration/bootstrap ensaiados em Docker descartável; execução de escrita no Neon continua pendente.
+
+Backup criptografado e restauração descartável: [guia e política de desenvolvimento](docs/operations/access-backup.md), [modelo da chave privada](config/access-backup-key.env.example). Baseline real Neon development (PostgreSQL 18, public vazio) respaldado e restaurado no Docker 18 em 25/10/2026: [evidências](docs/operations/neon-development-recovery-2026-10-25.md). Guarda somente local por decisão do usuário; não há agendamento ou exclusão automática. Migration/ativação auth remota continuam pendentes.
+
 **Production ativa para diagnóstico:** [fasemarketplace.vercel.app](https://fasemarketplace.vercel.app). Publicação, isolamento e validação registrados na [ativação inicial](docs/operations/production-release-2026-10-23.md). API/worker continuam no Docker do computador; funcionalidades de negócio ainda não existem.
 
 Configuração por ambiente: [matriz e explicação dos arquivos env](docs/operations/environment-configuration.md). Production Docker isolada foi aprovada na [SPEC-006](docs/specs/SPEC-006-production-docker.md); consulte [operação produtiva](docs/operations/production-docker.md) para estado, comandos e limites. A promoção desta entrega foi autorizada e validada; futuras publicações seguem os gates do projeto.

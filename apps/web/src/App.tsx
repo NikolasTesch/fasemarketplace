@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { telemetry } from './telemetry';
+import { Access } from './Access';
 
 import './inventory/inventory.css';
 import type { ViewScreen, SkuStockItem } from './inventory/types';
@@ -13,7 +14,11 @@ import { AuditScreen } from './inventory/screens/AuditScreen';
 import { AnalyticsScreen } from './inventory/screens/AnalyticsScreen';
 import { MovementScreen } from './inventory/screens/MovementScreen';
 
-export function App() { return <InventoryApp />; }
+export function App() {
+  return import.meta.env.VITE_AUTH_ENABLED === 'true'
+    ? <Access><InventoryApp /></Access>
+    : <InventoryApp />;
+}
 
 function InventoryApp() {
   const [currentScreen, setCurrentScreen] = useState<ViewScreen>('stock');
