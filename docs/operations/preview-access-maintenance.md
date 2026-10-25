@@ -2,6 +2,8 @@
 
 Ferramenta preparada e ensaiada somente com PostgreSQL Docker descartável. Não executada no Neon; não habilita login remoto. [SPEC-008](../specs/SPEC-008-preview-access.md) e [preparação](preview-access-preparation.md) continuam sendo os gates.
 
+**Atualização 25/10/2026:** operações remotas autorizadas/executadas e Preview homologado; [estado atual](preview-access-activation-2026-10-25.md). A descrição acima corresponde à preparação original. Não repetir bootstrap em banco já administrado; futuras migrations/resets/publicações exigem seu escopo autorizado.
+
 ## Destino e credenciais
 
 Modelo: [preview-access-maintenance.env.example](../../config/preview-access-maintenance.env.example). Futuro arquivo privado: `.env.preview-access-maintenance`, ignorado por Git/Docker build. Não copiar `.env` local inteiro, senha genérica, credenciais produtivas nem chave proprietária para o runtime.

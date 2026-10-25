@@ -46,15 +46,15 @@
 
 **Aceite:** login real protege a interface local; perfil exibido corresponde à sessão, pending não renderiza o produto e backend continua autoridade. Estoque permanece simulado. Nenhuma alteração em Preview/Production nesta fatia.
 
-### E01.2 — Homologar acesso remoto (transporte preparado; ativação pendente)
+### E01.2 — Homologar acesso remoto (ativado e homologado tecnicamente em 25/10/2026)
 
 **Spec:** fechar e aprovar SPEC-008 antes de implementar. **Arquivos candidatos:** configuração auth backend, `server/preview-*`, Function em `api/`, testes de transporte, Compose híbrido e documentação env.
 
 - [x] Fechar transporte na mesma origem, origem canônica, cookies seguros, Set-Cookie, limites, CSRF e identidade verificada até a API; ensaio local conforme SPEC-008.
 - [x] Preparar bootstrap/recuperação privados e modelo de credenciais exclusivas: [manutenção](../../operations/preview-access-maintenance.md). Ensaio local concluído; preenchimento de credenciais e execução remota dependem dos gates de backup/restore e autorização.
 - [x] Escrever testes RED de transporte/isolamento, implementar opt-in remoto desligado e chegar a GREEN sem remover proteções locais.
-- [ ] Ensaiar migração, backup/restore e rollback; publicar/migrar somente após autorização específica de Preview.
-- [ ] Homologar HTTPS com dois perfis, cookies/sessões/revogação, proteção Vercel e diagnóstico; registrar revisão/deployment efetivos.
+- [x] Migração e backup/restore reais executados após autorização específica; rollback não destrutivo documentado. Publicação restrita a development/Preview.
+- [x] Homologar HTTPS com dois perfis, cookies/sessões/revogação, proteção Vercel e diagnóstico; Chromium e Edge, revisão/deployment em [registro de ativação](../../operations/preview-access-activation-2026-10-25.md). Aceite visual humano pendente.
 
 **Aceite:** auth Preview validada de ponta a ponta; Production não alterada. Perfis técnicos admin/user ainda não aprovam automaticamente permissões de catálogo/estoque.
 
@@ -66,7 +66,7 @@
 - [ ] Definir credenciais runtime/migration, destino efetivo por ambiente e comandos que recusam ambiente incorreto. Reaplicação e checksum devem preservar dados.
 - [x] Acordar política de desenvolvimento: manual antes de cada migration, mínimo 30 dias/7 cópias, sem exclusão automática; meta RTO 1h e RPO anterior à migration, com perda possível entre backups. Aprovada pelo usuário em 24/10/2026.
 - [ ] Definir responsável, destino/guarda externa de backup e gestão separada de chaves; não assumir que snapshot/arquivo vazio prova recuperação.
-- [x] Implementar e testar backup/restore em destino descartável com conferência de conteúdo, revogação de sessões e ausência de escrita externa: [SPEC-009](../../specs/SPEC-009-access-backup.md), ensaio exclusivamente Docker local. Backup/restore do Neon ainda pendente.
+- [x] Backup/restore em destino descartável com fingerprints e revogação: [SPEC-009](../../specs/SPEC-009-access-backup.md). Backup real Neon pré/pós-auth restaurado somente no Docker 18 em 25/10/2026; restauração não escreve na origem. Migração auth remota autorizada/executada separadamente.
 - [ ] Definir rollback e runbook de incidente; validar antes de permitir dados importantes.
 
 **Aceite:** esquema versionado e restauração comprovada, sem reset de volumes ou credenciais produtivas no local. Escolhas/custos pendentes são registrados antes de provisionamento.
