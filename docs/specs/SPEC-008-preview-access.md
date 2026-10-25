@@ -94,6 +94,7 @@ O mecanismo de autenticação de metadados está fechado no contrato de execuç�
 - Headers de autorização e identidade de rede não entram em respostas, logs ou telemetria. Erros do upstream normalizados; sem Location, redirects, tokens JSON ou cache. POST limitado a 8 KiB; queries somente offset numérico validado em listagem.
 - Composição remota será um override explícito novo, sem alterar/ativar os Composes de diagnóstico existentes. Nenhuma variável nova é preenchida na Vercel nesta execução.
 - Recuperação do único admin por comando offline restrito a development: valida destino, exige entrada privada, redefine senha e pendência e revoga sessões; sem endpoint público, sem reabrir bootstrap, sem ampliar para Production. Backup antes da migration remota e restore descartável com sessões revogadas são pré-condições. RPO/RTO/retencão precisam ser acordados antes de homologar operação remota.
+- Adapter da Function consome somente um parâmetro reservado `path` quando seu valor é idêntico ao sufixo real de `/api/access/` injetado pelo catch-all Vercel. Ele nunca seleciona rota pelo query param; valor divergente/duplicado não é removido e continua recusado. Outras queries seguem contrato estrito (somente offset em GET users). Gateway/API não relaxam allowlist.
 
 ### Manutenção privada — preparação local
 

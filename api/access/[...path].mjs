@@ -1,6 +1,6 @@
 import process from 'node:process';
-import { createAccessProxy } from '../../server/access-bridge.mjs';
+import { createAccessFunction } from '../../server/access-function.mjs';
 
 export default {
-  fetch(request) { return createAccessProxy({ env: process.env })(request); },
+  fetch(request) { return createAccessFunction({ env: process.env })(request); },
 };

@@ -17,3 +17,7 @@ Executar inline com executing-plans, verificações existentes e revisão indepe
 ## Gates
 
 Publicação somente com lint/typecheck/build/testes/revisão aprovados; erro de migration exige inventário do estado, sem retry cego/reset. Não registrar cookies/headers/config completa/chaves. Owner apenas manutenção; sem segredo em VITE_. Sem desativar proteção de Preview para facilitar testes. Guarda somente local já decidida pelo usuário.
+
+## Ruling durante homologação
+
+Deployment real da branch development revelou GET session 400, diferente do ensaio local da cadeia. O catch-all da plataforma inclui parâmetro reservado path, recusado pela query allowlist. Adapter específico da Function consome somente uma cópia exatamente igual ao sufixo real de pathname; não escolher destino pelo parâmetro, não relaxar queries no gateway/API. Regressão RED400/GREEN401 inclui POST/corpo, mismatch, duplicata e query extra. Verificação HTTPS real repetida depois de publicar a correção.
