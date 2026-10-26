@@ -1,5 +1,13 @@
 # FaseMarketplace
 
+**Implementação incremental em andamento:** [plano das sete entregas](docs/superpowers/plans/2026-10-24-mvp-integrations.md). A primeira fatia integra login/perfis reais ao protótipo no Docker local; [execução, endereço e validação](docs/operations/mvp-access-integration-2026-10-24.md). Estoque, pedidos e relatórios permanecem simulados até suas respectivas entregas.
+
+**Login ativo no Preview de development:** [acesso, operação e homologação de 25/10/2026](docs/operations/preview-access-activation-2026-10-25.md). Migration/role limitada e administrador aplicados no Neon development; Chromium/Edge e permissões validados. Production/main permanecem sem esta ativação. Preview depende do Docker e túnel do computador.
+
+Manutenção privada Preview: [migration, primeiro administrador e recuperação](docs/operations/preview-access-maintenance.md), com [modelo env exclusivo](config/preview-access-maintenance.env.example). Credenciais de entrega somente em arquivo privado ignorado; troca obrigatória. Futuras escritas/publicações seguem autorização própria.
+
+Backup criptografado e restauração descartável: [guia e política de desenvolvimento](docs/operations/access-backup.md), [modelo da chave privada](config/access-backup-key.env.example). Baseline real e estado posterior à ativação (cinco tabelas auth) restaurados no Docker 18 em 25/10/2026. Guarda somente local por decisão do usuário; não há agendamento ou exclusão automática.
+
 **Production ativa para diagnóstico:** [fasemarketplace.vercel.app](https://fasemarketplace.vercel.app). Publicação, isolamento e validação registrados na [ativação inicial](docs/operations/production-release-2026-10-23.md). API/worker continuam no Docker do computador; funcionalidades de negócio ainda não existem.
 
 Configuração por ambiente: [matriz e explicação dos arquivos env](docs/operations/environment-configuration.md). Production Docker isolada foi aprovada na [SPEC-006](docs/specs/SPEC-006-production-docker.md); consulte [operação produtiva](docs/operations/production-docker.md) para estado, comandos e limites. A promoção desta entrega foi autorizada e validada; futuras publicações seguem os gates do projeto.
@@ -16,7 +24,7 @@ Hub de estoque próprio e integração com Mercado Livre e Shopee, em preparaç�
 - PostgreSQL 17 para fatos duráveis; Redis 7.4 preparado para futura fila BullMQ (a biblioteca e os jobs ainda não foram implementados).
 - Node 24 no Docker, npm workspaces e lockfile único. Imagens fixadas por digest.
 - `apps/web`: SPA React e diagnóstico da API no navegador, usando `/api` com proxy local do Vite.
-- `apps/backend`: API HTTP e processo worker separados; sem ORM escolhido nesta etapa.
+- `apps/backend`: API HTTP e processo worker separados; Prisma 7 para persistência de negócio local opt-in, auth/pg independente. Ver [guia de persistência](docs/operations/business-persistence.md).
 - `packages/telemetry`: contrato compartilhado de eventos e sanitização para PostHog, desligado por padrão.
 
 ## Iniciar no Windows / PowerShell

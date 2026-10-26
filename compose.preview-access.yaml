@@ -1,0 +1,24 @@
+# Optional future override ONLY for hybrid Preview. Not applied by this delivery.
+# compose.hybrid.yaml + compose.preview.yaml + this file; never production Compose.
+services:
+  api:
+    environment:
+      # Health checks and auth both use the limited role; no owner URL in the API.
+      DATABASE_URL: ${PREVIEW_AUTH_DATABASE_URL:?Set development auth runtime role with TLS}
+      AUTH_ENABLED: "true"
+      AUTH_CONTEXT: preview
+      AUTH_ORIGIN: ${PREVIEW_ACCESS_ORIGIN:?Set the canonical approved Preview origin}
+      AUTH_COOKIE_PREFIX: fm_preview_access
+      AUTH_SECRET: ${PREVIEW_AUTH_SECRET:?Set a unique Preview session secret}
+      AUTH_DATABASE_URL: ${PREVIEW_AUTH_DATABASE_URL:?Set development auth runtime role with TLS}
+      AUTH_API_KEY: ${PREVIEW_ACCESS_API_KEY:?Set a unique gateway-to-API credential}
+  preview-gateway:
+    environment:
+      APP_ENV: local
+      PREVIEW_ACCESS_ENABLED: "true"
+      PREVIEW_ACCESS_ORIGIN: ${PREVIEW_ACCESS_ORIGIN:?Set canonical approved Preview origin}
+      PREVIEW_ACCESS_BRIDGE_KEY: ${PREVIEW_ACCESS_BRIDGE_KEY:?Set a unique Function-to-gateway credential}
+      PREVIEW_ACCESS_API_KEY: ${PREVIEW_ACCESS_API_KEY:?Set a unique gateway-to-API credential}
+  web:
+    environment:
+      VITE_AUTH_ENABLED: "true"

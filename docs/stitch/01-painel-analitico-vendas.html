@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"focus-ring":"#1F5EFF","on-surface-variant":"#5c403c","border":"#E2E2E8","on-error":"#ffffff","on-surface":"#1c1b1b","surface-container-lowest":"#ffffff","on-primary-fixed-variant":"#93000b","tertiary-fixed":"#a3f5b6","on-tertiary-fixed":"#00210d","surface-dim":"#dcd9d9","status-info-text":"#24559A","on-secondary-fixed":"#001550","control-selected":"#FFF1F1","on-background":"#1c1b1b","surface-bright":"#fcf9f8","brand-dark":"#A51117","tertiary":"#005a2c","on-primary-fixed":"#410002","status-success-text":"#176B3A","primary":"#9f000d","outline":"#916f6b","muted":"#676767","on-tertiary":"#ffffff","inverse-on-surface":"#f3f0ef","secondary-container":"#1d5dfe","inverse-primary":"#ffb4ab","tertiary-fixed-dim":"#88d89c","primary-fixed-dim":"#ffb4ab","status-warning-text":"#8A4D00","on-tertiary-container":"#a4f5b7","nav-active-bg":"#FFF0F0","secondary-fixed-dim":"#b6c4ff","on-error-container":"#93000a","surface-container-low":"#f6f3f2","table-row-hover":"#FAFAFB","primary-container":"#c9151b","status-warning-bg":"#FFF1DF","error":"#ba1a1a","surface":"#FFFFFF","on-secondary-container":"#eeefff","error-container":"#ffdad6","primary-fixed":"#ffdad6","surface-container":"#f0eded","status-info-bg":"#EEF4FF","on-primary":"#ffffff","surface-variant":"#e5e2e1","inverse-surface":"#313030","background":"#F6F6F8","status-success-bg":"#E9F7EE","secondary-fixed":"#dce1ff","secondary":"#0046d2","surface-tint":"#bf0815","control-disabled":"#F1F1F4","on-primary-container":"#ffdbd7","outline-variant":"#e6bdb8","surface-container-highest":"#e5e2e1","surface-container-high":"#eae7e7","on-tertiary-fixed-variant":"#005228","on-secondary":"#ffffff","control-danger-hover":"#FDE8E8","control-danger-border":"#E9B4B6","on-secondary-fixed-variant":"#003ab2","tertiary-container":"#227341"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin":"1rem","margin-tablet":"1.25rem","space-xs":"0.25rem","space-md":"0.75rem","gutter":"1rem","gutter-desktop":"1.5rem","space-lg":"1.375rem","margin-desktop":"2.25rem","space-xl":"1.5rem","space-sm":"0.4375rem"},"fontFamily":{"body-lg":["Inter"],"body-md":["Inter"],"headline-md":["Inter"],"label-button":["Inter"],"headline-lg":["Inter"],"label-lg":["Inter"],"headline-lg-mobile":["Inter"],"overline-id":["Inter"],"headline-sm":["Inter"],"label-sm":["Inter"],"body-sm":["Inter"],"label-md":["Inter"],"caption-table":["Inter"]},"fontSize":{"body-lg":["14px",{"lineHeight":"21px","fontWeight":"400"}],"body-md":["13px",{"lineHeight":"20px","fontWeight":"400"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.03em","fontWeight":"700"}],"label-button":["12px",{"lineHeight":"16px","fontWeight":"750"}],"headline-lg":["30px",{"lineHeight":"36px","letterSpacing":"-0.04em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"18px","fontWeight":"650"}],"headline-lg-mobile":["25px",{"lineHeight":"30px","letterSpacing":"-0.03em","fontWeight":"700"}],"overline-id":["10px",{"lineHeight":"14px","letterSpacing":"0.12em","fontWeight":"700"}],"headline-sm":["16px",{"lineHeight":"22px","letterSpacing":"-0.02em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"16px","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"650"}],"caption-table":["10px",{"lineHeight":"14px","letterSpacing":"0.08em","fontWeight":"650"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface min-h-screen antialiased"><aside class="fixed left-0 top-0 h-screen w-[236px] bg-surface z-50 flex flex-col justify-between border-r border-border box-border pt-[30px] px-[18px] pb-[20px]"><div class="flex flex-col w-full"><div class="w-full flex items-center mb-6"><img alt="Fase Sport Logo" class="w-[170px] h-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WBLdwl51OXKbo36bN-UwaZN3Ynq5CVET_AwmQEsGml9PDsZfCok6oIv_zc1mvhFA0xlNtQ1ux0T3470BPP8WHhi2EZ9OfSL59ktjif8VQ46C4XEoX0fIXwfvhj6cbs-gdwGqlr2VPa4LCh5qwhadv11U_C5sY1bT5jW_LHXR8BRNetUSE-3DNfZJ-GYAJW9GWJDzTiwVdKzQEb9jEiVnOHOV2M6637xErQNDEmIK6EAFi-fuWC8P2T"/></div><div class="mb-5"><span class="font-overline-id text-overline-id text-muted uppercase tracking-wider block">GESTÃO DE ESTOQUE</span></div><div class="mb-6"><button class="w-full h-10 bg-primary-container hover:bg-brand-dark text-on-primary font-label-button text-label-button rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer" type="button"><span class="material-symbols-outlined text-base">add</span><span>+ Lançar movimentação</span></button></div><nav class="flex flex-col gap-1 w-full" data-active-classes="bg-nav-active-bg text-primary-container font-label-lg border-l-[3px] border-primary-container"><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="estoque-e-saldos" href="#"><span>Estoque e Saldos</span></a><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="vinculos-de-anuncios" href="#"><span>Vínculos de Anúncios</span></a><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pedidos-e-reservas" href="#"><span>Pedidos e Reservas</span></a><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="sincronizacao-e-alertas" href="#"><span>Sincronização e Alertas</span></a><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="historico-e-auditoria" href="#"><span>Histórico e Auditoria</span></a><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="painel-analitico" href="#"><span>Painel Analítico</span></a></nav></div><div class="pt-4 border-t border-border flex flex-col gap-1"><span class="font-label-sm text-label-sm text-muted">Fase Sport - Operações de Estoque</span><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-status-success-text"></span><span class="font-label-sm text-label-sm text-status-success-text font-medium">Conexões ativas</span></div></div></aside><div class="pl-[236px] min-h-screen flex flex-col"><header class="fixed top-0 left-[236px] right-0 h-[72px] bg-surface/90 backdrop-blur-xl border-b border-border z-40 flex items-center justify-between px-margin-desktop"><div class="flex items-center gap-4"><div><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight uppercase font-bold">FASE ESTOQUE</h1><p class="font-body-sm text-body-sm text-muted">Controle multicanal Mercado Livre &amp; Shopee</p></div></div><div class="flex items-center gap-space-lg"><div class="hidden lg:flex items-center gap-2"><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-status-success-bg border border-border"><span class="w-1.5 h-1.5 rounded-full bg-status-success-text"></span><span class="font-label-sm text-label-sm text-status-success-text font-semibold">ML: Ativo</span></div><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-status-success-bg border border-border"><span class="w-1.5 h-1.5 rounded-full bg-status-success-text"></span><span class="font-label-sm text-label-sm text-status-success-text font-semibold">Shopee: Ativo</span></div></div><div class="h-5 w-px bg-border hidden sm:block"></div><button aria-label="Notificações" class="relative p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary-container"></span></button><div class="flex items-center gap-3 pl-2"><div class="text-right hidden sm:block"><span class="font-label-md text-label-md text-on-surface block font-bold">Nikolas Dias</span><span class="font-label-sm text-label-sm text-muted block">Gerente de Operações</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover border border-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvw6QJVJ7zeZLXk-mBEs-ssJ2wT-OzeB6y3A3EHNsnEoKt2e_Rp4HYMLMlbA2OujVMU5RQui_CO892rG-rqdfkFn73ivaLiAvZMkLGBw5X4Ao1o0lAPZ_kbEOknN2jlAfyTrkVLndu1VFlvHyxsR_wCESCyS9jN1woG1u7d3CoJYe3MBP64OEfDdnQfm5b8Je9pIqsyXZ_-cW8Sg6SmokhNmyg-rcYzN0EBkeB2GLKOiBBHHnUnt0"/></div></div></header><main class="w-full pt-[72px] bg-background flex-1"><div class="flex flex-col w-full">
+<div class="px-margin-desktop py-space-xl max-w-[1440px] mx-auto w-full flex flex-col gap-space-xl">
+<!-- Top Context & Page Title Section -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg bg-surface p-space-xl rounded-xl shadow-sm relative overflow-hidden">
+<div class="absolute -right-10 -bottom-10 w-64 h-64 bg-nav-active-bg rounded-full blur-3xl pointer-events-none opacity-60"></div>
+<div class="flex flex-col gap-space-xs max-w-2xl z-10">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="font-overline-id text-overline-id text-primary-container uppercase tracking-wider">
+            INTELIGÊNCIA COMERCIAL &amp; MULTICANAL • RF-18 / RF-19 / RF-20
+          </span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">
+          Painel Analítico de Vendas
+        </h2>
+<p class="font-body-md text-body-md text-muted">
+          Acompanhamento consolidado de vendas elegíveis, faturamento bruto, ticket médio e métricas oficiais de audiência fornecidas por Mercado Livre e Shopee.
+        </p>
+</div>
+<!-- Action Toolbar -->
+<div class="flex flex-wrap items-center gap-space-md z-10">
+<!-- Date Filter -->
+<div class="flex flex-col">
+<label class="font-caption-table text-caption-table text-muted uppercase tracking-wider mb-1">Período Selecionado</label>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-lg text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-muted">calendar_today</span>
+<span class="font-label-md text-label-md">Últimos 30 dias (23/09 a 23/10/2026)</span>
+<span class="material-symbols-outlined text-[14px] text-muted">expand_more</span>
+</div>
+</div>
+<!-- Channel Filter -->
+<div class="flex flex-col">
+<label class="font-caption-table text-caption-table text-muted uppercase tracking-wider mb-1">Canal de Venda</label>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-lg text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-muted">hub</span>
+<span class="font-label-md text-label-md">Consolidado (ML &amp; Shopee)</span>
+<span class="material-symbols-outlined text-[14px] text-muted">expand_more</span>
+</div>
+</div>
+<!-- Sync Button & Pill -->
+<div class="flex flex-col justify-end">
+<div class="flex items-center gap-2">
+<button class="h-[38px] px-4 bg-primary-container hover:bg-brand-dark text-on-primary font-label-button text-label-button rounded-lg flex items-center gap-2 transition-all shadow-sm active:scale-95 cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>Atualizar Dados</span>
+</button>
+</div>
+<span class="font-label-sm text-label-sm text-muted mt-1 text-right flex items-center justify-end gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-status-success-text"></span>
+            Última sync: há 4 min
+          </span>
+</div>
+</div>
+</div>
+<!-- Indicator Cards Grid (RF-18) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-lg">
+<!-- Card 1: Unidades Vendidas -->
+<div class="bg-surface rounded-xl p-space-lg shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-[22px] w-[36px] h-[3px] bg-primary-container"></div>
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider">UNIDADES VENDIDAS</span>
+<span class="flex items-center gap-1 font-label-sm text-label-sm text-status-success-text bg-status-success-bg px-2 py-0.5 rounded-full font-bold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+              +14.2%
+            </span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface tabular-nums mb-1">
+            1.428 <span class="font-headline-sm text-headline-sm text-muted font-normal">un</span>
+</div>
+</div>
+<div class="pt-3 mt-3 bg-surface-container-low -mx-space-lg -mb-space-lg px-space-lg py-2.5 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface">ML: 890 un (62%) • Shopee: 538 un (38%)</span>
+</div>
+</div>
+<!-- Card 2: Receita Bruta -->
+<div class="bg-surface rounded-xl p-space-lg shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-[22px] w-[36px] h-[3px] bg-primary-container"></div>
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider">RECEITA BRUTA (PEDIDOS ELEGÍVEIS)</span>
+<span class="material-symbols-outlined text-[18px] text-muted">payments</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface tabular-nums mb-1">
+            R$ 118.640<span class="text-headline-sm font-normal text-muted">,00</span>
+</div>
+</div>
+<div class="pt-3 mt-3 bg-surface-container-low -mx-space-lg -mb-space-lg px-space-lg py-2.5 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface truncate">Moeda: BRL • Apenas pedidos faturados e aprovados</span>
+</div>
+</div>
+<!-- Card 3: Ticket Médio -->
+<div class="bg-surface rounded-xl p-space-lg shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-[22px] w-[36px] h-[3px] bg-primary-container"></div>
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider">TICKET MÉDIO CONSOLIDADO</span>
+<span class="material-symbols-outlined text-[18px] text-muted">shopping_bag</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface tabular-nums mb-1">
+            R$ 83<span class="text-headline-sm font-normal text-muted">,08</span>
+</div>
+</div>
+<div class="pt-3 mt-3 bg-surface-container-low -mx-space-lg -mb-space-lg px-space-lg py-2.5 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface">Mercado Livre: R$ 89,40 | Shopee: R$ 74,15</span>
+</div>
+</div>
+<!-- Card 4: Produto Mais Vendido -->
+<div class="bg-surface rounded-xl p-space-lg shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-[22px] w-[36px] h-[3px] bg-primary-container"></div>
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider">PRODUTO MAIS VENDIDO</span>
+<span class="flex items-center justify-center w-5 h-5 rounded-full bg-status-warning-bg text-status-warning-text font-label-sm">
+              ★
+            </span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface truncate mb-1">
+            Camisa Dry-Fit Preta (M)
+          </div>
+</div>
+<div class="pt-3 mt-3 bg-surface-container-low -mx-space-lg -mb-space-lg px-space-lg py-2.5 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">342 un vendidas (R$ 27.018,00)</span>
+</div>
+</div>
+</div>
+<!-- Section 1: Comparativo por Canal & Distribuição de Vendas -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- Coluna Esquerda: Vendas por Marketplace -->
+<div class="lg:col-span-7 bg-surface rounded-xl p-space-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider block">COMPARATIVO MULTICANAL</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Vendas por Marketplace (Evolução Diária / Semanal)</h3>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-lg">
+<button class="px-2.5 py-1 text-label-sm font-label-sm rounded bg-surface shadow-xs text-on-surface font-bold">Semanal</button>
+<button class="px-2.5 py-1 text-label-sm font-label-sm rounded text-muted hover:text-on-surface">Diário</button>
+</div>
+</div>
+<!-- Channel Share Visual Bar -->
+<div class="flex flex-col gap-2 my-4">
+<div class="flex justify-between items-center font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-status-warning-text"></span>
+                Mercado Livre: R$ 79.566,00 (67.1%)
+              </span>
+<span class="text-on-surface font-semibold flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+                Shopee: R$ 39.074,00 (32.9%)
+              </span>
+</div>
+<div class="w-full h-3 rounded-full bg-surface-container-low overflow-hidden flex">
+<div class="h-full bg-status-warning-text transition-all duration-500" style="width: 67.1%"></div>
+<div class="h-full bg-primary-container transition-all duration-500" style="width: 32.9%"></div>
+</div>
+</div>
+<!-- Custom Inline SVG Chart Representation for Weekly Evolution -->
+<div class="mt-6 mb-2">
+<div class="h-44 w-full flex items-end gap-3 pt-6 pb-2 px-2 bg-surface-container-low/40 rounded-lg">
+<!-- Week 1 -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<div class="w-full flex items-end justify-center gap-1.5 h-[80%]">
+<div class="w-5 bg-status-warning-text/85 rounded-t-sm transition-all hover:opacity-100" style="height: 65%" title="ML: R$ 16.400,00"></div>
+<div class="w-5 bg-primary-container/85 rounded-t-sm transition-all hover:opacity-100" style="height: 40%" title="Shopee: R$ 8.200,00"></div>
+</div>
+<span class="font-caption-table text-caption-table text-muted">Semana 1</span>
+</div>
+<!-- Week 2 -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<div class="w-full flex items-end justify-center gap-1.5 h-[80%]">
+<div class="w-5 bg-status-warning-text/85 rounded-t-sm transition-all hover:opacity-100" style="height: 78%" title="ML: R$ 19.800,00"></div>
+<div class="w-5 bg-primary-container/85 rounded-t-sm transition-all hover:opacity-100" style="height: 48%" title="Shopee: R$ 9.600,00"></div>
+</div>
+<span class="font-caption-table text-caption-table text-muted">Semana 2</span>
+</div>
+<!-- Week 3 -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<div class="w-full flex items-end justify-center gap-1.5 h-[80%]">
+<div class="w-5 bg-status-warning-text/85 rounded-t-sm transition-all hover:opacity-100" style="height: 72%" title="ML: R$ 18.200,00"></div>
+<div class="w-5 bg-primary-container/85 rounded-t-sm transition-all hover:opacity-100" style="height: 55%" title="Shopee: R$ 10.900,00"></div>
+</div>
+<span class="font-caption-table text-caption-table text-muted">Semana 3</span>
+</div>
+<!-- Week 4 -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<div class="w-full flex items-end justify-center gap-1.5 h-[80%]">
+<div class="w-5 bg-status-warning-text rounded-t-sm transition-all shadow-sm" style="height: 98%" title="ML: R$ 25.166,00"></div>
+<div class="w-5 bg-primary-container rounded-t-sm transition-all shadow-sm" style="height: 60%" title="Shopee: R$ 10.374,00"></div>
+</div>
+<span class="font-caption-table text-caption-table text-muted font-bold text-on-surface">Semana 4 (Atual)</span>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-md pt-4 mt-2">
+<div class="bg-surface-container-low p-3 rounded-lg flex items-center justify-between">
+<div>
+<span class="font-caption-table text-caption-table text-muted uppercase">Mercado Livre Volume</span>
+<div class="font-label-lg text-label-lg text-on-surface font-bold tabular-nums">890 pedidos</div>
+</div>
+<span class="font-label-sm text-label-sm text-status-success-text bg-status-success-bg px-2 py-0.5 rounded-full">+18% MoM</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg flex items-center justify-between">
+<div>
+<span class="font-caption-table text-caption-table text-muted uppercase">Shopee Volume</span>
+<div class="font-label-lg text-label-lg text-on-surface font-bold tabular-nums">538 pedidos</div>
+</div>
+<span class="font-label-sm text-label-sm text-status-success-text bg-status-success-bg px-2 py-0.5 rounded-full">+8.4% MoM</span>
+</div>
+</div>
+</div>
+<!-- Coluna Direita: Top 5 SKUs Mais Vendidos -->
+<div class="lg:col-span-5 bg-surface rounded-xl p-space-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider block">PERFORMANCE DE PRODUTOS</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Top 5 SKUs da Fase Sport</h3>
+</div>
+<span class="font-label-sm text-label-sm text-muted">Consolidado 30d</span>
+</div>
+<!-- SKU Ranking List -->
+<div class="flex flex-col gap-2.5">
+<!-- SKU 1 -->
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low/60 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-button text-[11px] flex items-center justify-center shrink-0">1º</span>
+<div class="min-w-0">
+<span class="font-label-md text-label-md text-on-surface block truncate font-bold">Camisa Dry-Fit Preta (M)</span>
+<span class="font-caption-table text-caption-table text-muted block">SKU: FS-DF-BLK-M • Ticket: R$ 79,00</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<span class="font-label-md text-label-md text-on-surface block font-bold tabular-nums">342 un</span>
+<span class="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success-bg text-status-success-text font-semibold">188 un em estoque</span>
+</div>
+</div>
+<!-- SKU 2 -->
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low/60 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="w-6 h-6 rounded-full bg-surface-container text-on-surface font-label-button text-[11px] flex items-center justify-center shrink-0">2º</span>
+<div class="min-w-0">
+<span class="font-label-md text-label-md text-on-surface block truncate font-bold">Shorts Corrida Navy (G)</span>
+<span class="font-caption-table text-caption-table text-muted block">SKU: FS-SH-NVY-G • Ticket: R$ 94,50</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<span class="font-label-md text-label-md text-on-surface block font-bold tabular-nums">264 un</span>
+<span class="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success-bg text-status-success-text font-semibold">92 un em estoque</span>
+</div>
+</div>
+<!-- SKU 3 -->
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low/60 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="w-6 h-6 rounded-full bg-surface-container text-on-surface font-label-button text-[11px] flex items-center justify-center shrink-0">3º</span>
+<div class="min-w-0">
+<span class="font-label-md text-label-md text-on-surface block truncate font-bold">Regata Basqueteira (P)</span>
+<span class="font-caption-table text-caption-table text-muted block">SKU: FS-RG-BSK-P • Ticket: R$ 68,00</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<span class="font-label-md text-label-md text-on-surface block font-bold tabular-nums">215 un</span>
+<span class="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning-bg text-status-warning-text font-semibold">14 un (Estoque Baixo)</span>
+</div>
+</div>
+<!-- SKU 4 -->
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low/60 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="w-6 h-6 rounded-full bg-surface-container text-on-surface font-label-button text-[11px] flex items-center justify-center shrink-0">4º</span>
+<div class="min-w-0">
+<span class="font-label-md text-label-md text-on-surface block truncate font-bold">Meia Compressão Branca</span>
+<span class="font-caption-table text-caption-table text-muted block">SKU: FS-AC-MCP-U • Ticket: R$ 34,90</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<span class="font-label-md text-label-md text-on-surface block font-bold tabular-nums">188 un</span>
+<span class="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success-bg text-status-success-text font-semibold">310 un em estoque</span>
+</div>
+</div>
+<!-- SKU 5 -->
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low/60 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="w-6 h-6 rounded-full bg-surface-container text-on-surface font-label-button text-[11px] flex items-center justify-center shrink-0">5º</span>
+<div class="min-w-0">
+<span class="font-label-md text-label-md text-on-surface block truncate font-bold">Agasalho Corta-Vento (M)</span>
+<span class="font-caption-table text-caption-table text-muted block">SKU: FS-JA-WND-M • Ticket: R$ 169,00</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<span class="font-label-md text-label-md text-on-surface block font-bold tabular-nums">142 un</span>
+<span class="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning-bg text-status-warning-text font-semibold">8 un (Risco Ruptura)</span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-4 mt-2 border-t border-border flex justify-between items-center text-label-sm font-label-sm text-muted">
+<span>Representação acumulada: 80.6% da receita</span>
+<a class="text-primary-container font-semibold hover:underline flex items-center gap-1" href="#">
+            Ver grade completa
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Section 2: Métricas Oficiais de Audiência & Interesse dos Marketplaces (RF-19 e RF-20) -->
+<div class="bg-surface rounded-xl p-space-xl shadow-sm flex flex-col gap-space-lg">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+<div>
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider block">FONTES OFICIAIS • RF-19 &amp; RF-20</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Métricas Oficiais de Audiência &amp; Interesse nos Marketplaces</h3>
+</div>
+<div class="flex items-center gap-1.5 bg-status-info-bg px-3 py-1.5 rounded-full text-status-info-text text-label-sm font-semibold self-start md:self-auto">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>Protocolo Oficial de APIs Integradas</span>
+</div>
+</div>
+<!-- Compliance Notice Box -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-start gap-3">
+<span class="material-symbols-outlined text-status-info-text text-[22px] shrink-0 mt-0.5">shield_with_heart</span>
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md text-on-surface font-bold">Conformidade e Transparência de Dados (RF-20)</span>
+<p class="font-body-sm text-body-sm text-muted leading-relaxed">
+            Métricas oficiais agregadas sem inferência algorítmica de perfil individual. Indicadores indisponíveis por ausência de permissão oficial da conta são explicitamente sinalizados como <strong class="text-on-surface">"Indisponível"</strong>, nunca assumidos como zero.
+          </p>
+</div>
+</div>
+<!-- Comparison of Marketplaces Oficial Data Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+<!-- Mercado Livre Box -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl flex flex-col justify-between shadow-xs">
+<div>
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-border">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-status-warning-text"></span>
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Mercado Livre</span>
+</div>
+<span class="font-caption-table text-caption-table text-muted">API Oficial /items/visits</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-surface-container-low p-3 rounded-lg">
+<span class="font-caption-table text-caption-table text-muted uppercase block">Visitas aos Anúncios</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold tabular-nums block mt-1">42.190</span>
+<span class="font-label-sm text-label-sm text-status-success-text font-semibold">+11.5% vs ciclo ant.</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg">
+<span class="font-caption-table text-caption-table text-muted uppercase block">Taxa de Conversão</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold tabular-nums block mt-1">3,38%</span>
+<span class="font-label-sm text-label-sm text-muted">Consolidado catálogo</span>
+</div>
+</div>
+<div class="space-y-2.5">
+<div class="flex items-center justify-between text-body-sm font-body-sm p-2 rounded bg-surface-container-low/50">
+<span class="text-muted">Impressões em Busca:</span>
+<span class="text-on-surface font-semibold text-right">Disponível via Product Ads (68.400)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm p-2 rounded bg-surface-container-low/50">
+<span class="text-muted">Origem dos Acessos:</span>
+<span class="text-on-surface font-semibold text-right">App Mobile 74% • Desktop 26%</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-border flex items-center justify-between text-caption-table font-caption-table text-muted">
+<span>Sessões autenticadas ML Auth 2.0</span>
+<span class="text-status-success-text font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-status-success-text"></span>
+              Ativo
+            </span>
+</div>
+</div>
+<!-- Shopee Box -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl flex flex-col justify-between shadow-xs">
+<div>
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-border">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Shopee</span>
+</div>
+<span class="font-caption-table text-caption-table text-muted">OpenPlatform Business Insights</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-surface-container-low p-3 rounded-lg">
+<span class="font-caption-table text-caption-table text-muted uppercase block">Visualizações de Página</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold tabular-nums block mt-1">28.940</span>
+<span class="font-label-sm text-label-sm text-status-success-text font-semibold">+6.2% vs ciclo ant.</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg">
+<span class="font-caption-table text-caption-table text-muted uppercase block">Conversão Compradores</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold tabular-nums block mt-1">2,86%</span>
+<span class="font-label-sm text-label-sm text-muted">Funil de loja Shopee</span>
+</div>
+</div>
+<div class="space-y-2.5">
+<div class="flex items-center justify-between text-body-sm font-body-sm p-2 rounded bg-surface-container-low/50">
+<span class="text-muted">Cliques em Busca:</span>
+<span class="text-on-surface font-semibold text-right tabular-nums">34.120 cliques</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm p-2 rounded bg-surface-container-low/50">
+<span class="text-muted">Demografia &amp; Gênero:</span>
+<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-status-warning-bg text-status-warning-text flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+                  Indisponível (Sem permissão de conta piloto)
+                </span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-border flex items-center justify-between text-caption-table font-caption-table text-muted">
+<span>OpenPlatform v2 /v2/shop/performance</span>
+<span class="text-status-success-text font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-status-success-text"></span>
+              Ativo
+            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Rodapé Analítico / Rastreabilidade RNF-13 -->
+<div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-surface rounded-xl text-caption-table font-caption-table text-muted gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-muted">history_edu</span>
+<span>Conformidade RNF-13: Auditoria transacional e imutabilidade dos dados de vendas garantidas via ledger operacional Fase Sport.</span>
+</div>
+<div class="flex items-center gap-3">
+<span>Hash de Integridade: <strong class="text-on-surface">#9b82f-20261023</strong></span>
+<span>Exportar Relatório Oficial (CSV/PDF)</span>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

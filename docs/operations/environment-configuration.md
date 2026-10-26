@@ -2,6 +2,20 @@
 
 **Estado de 23/10/2026:** local, Preview e Production ativos. Código promovido para main com autorização do usuário; ponte Vercel Production ativada e validada no navegador. [Registro da publicação](production-release-2026-10-23.md) e [comandos](production-docker.md).
 
+**Atualização 25/10/2026:** auth ativo somente em Preview/development, após autorização/migration/role/admin/homologação. [Registro e retomada](preview-access-activation-2026-10-25.md). Production/main preservados. Execução híbrida com acesso usa `.env.preview-access-runtime` e override `compose.preview-access.yaml`; não substituir `.env` local nem `.env.production`. Credenciais de entrega em `.env.preview-admin.json` privado.
+
+| Auth Preview | Consumidor | Production |
+| --- | --- | --- |
+| VITE_AUTH_ENABLED=true | Build web Preview/development; pública | Não habilitado por esta entrega |
+| PREVIEW_ACCESS_ENABLED=true | Function Preview/development | Ausente |
+| PREVIEW_ACCESS_ORIGIN | Function/gateway; origem canônica de development | Ausente |
+| PREVIEW_ACCESS_BRIDGE_ORIGIN | Function; URL atual do túnel autenticado | Ausente |
+| PREVIEW_ACCESS_BRIDGE_KEY | Function + gateway; exclusiva de acesso | Ausente |
+| PREVIEW_ACCESS_API_KEY | Somente gateway + API Docker | Nunca Vercel/VITE_ |
+| PREVIEW_AUTH_SECRET / PREVIEW_AUTH_DATABASE_URL | Somente API Docker; sessão/role limitada | Nunca Vercel/VITE_ |
+
+As tabelas e descrições de 23/10 abaixo registram o diagnóstico anterior; o registro de ativação acima define o acréscimo de acesso. Mudança da URL do túnel deve atualizar tanto PREVIEW_BRIDGE_ORIGIN quanto PREVIEW_ACCESS_BRIDGE_ORIGIN, somente Preview/development.
+
 ## Quais ambientes existem
 
 | Uso | Configuração | Banco e Redis | Situação |

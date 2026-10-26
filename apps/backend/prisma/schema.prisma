@@ -1,0 +1,12 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["business"]
+}
+
+// Business models belong to their approved domain specs (E03 onwards).
+// Authentication is managed separately in public and is intentionally excluded.

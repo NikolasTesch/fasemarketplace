@@ -7,3 +7,5 @@
 **/.svelte-kit
 coverage
 backups
+.superpowers
+apps/backend/src/generated

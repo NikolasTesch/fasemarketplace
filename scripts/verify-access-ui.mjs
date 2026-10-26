@@ -1,0 +1,90 @@
+// Local-only browser integration. Credentials come from an ignored fixture file.
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+
+if (!process.env.ACCESS_UI_FIXTURE || !process.env.PLAYWRIGHT_MODULE)
+  throw new Error('Set ACCESS_UI_FIXTURE and PLAYWRIGHT_MODULE privately');
+const fixture = JSON.parse(await readFile(process.env.ACCESS_UI_FIXTURE, 'utf8'));
+const origin = new URL(fixture.origin);
+assert.equal(origin.hostname, '127.0.0.1');
+assert.equal(origin.protocol, 'http:');
+assert.equal(origin.origin, fixture.origin);
+const { chromium } = await import(process.env.PLAYWRIGHT_MODULE);
+const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE });
+const adminContext = await browser.newContext();
+const userContext = await browser.newContext();
+const admin = await adminContext.newPage();
+const user = await userContext.newPage();
+const errors = [];
+for (const page of [admin, user]) page.on('pageerror', error => errors.push(error.name));
+const email = `pilot${Date.now()}@example.test`;
+const provisional = 'Synthetic-Temporary-2026!';
+const permanent = 'Synthetic-Permanent-2026!';
+async function login(page, email, password) {
+  await page.getByRole('heading', { name: 'Entrar no FaseMarketplace' }).waitFor();
+  await page.getByLabel('E-mail', { exact: true }).fill(email);
+  await page.getByLabel('Senha', { exact: true }).fill(password);
+  await page.getByRole('button', { name: 'Entrar', exact: true }).click();
+}
+try {
+  await admin.goto(fixture.origin);
+  await admin.getByRole('heading', { name: 'Entrar no FaseMarketplace' }).waitFor();
+  assert.equal(await admin.locator('.inv-app').count(), 0);
+  assert.equal((await adminContext.request.get(fixture.origin + '/api/access/session')).status(), 401);
+  await login(admin, fixture.email, fixture.password);
+  await admin.locator('.inv-user-chip').getByText(fixture.name, { exact: true }).waitFor();
+  const brand = await admin.locator('.inv-topbar .inv-btn-primary').evaluate(el => getComputedStyle(el).backgroundColor);
+  assert.equal(brand, 'rgb(201, 21, 27)', 'Auth CSS must preserve prototype controls');
+  console.log('PASS anonymous gate, administrator identity and design preservation');
+  await admin.getByRole('button', { name: 'Usuários', exact: true }).click();
+  await admin.getByLabel('Nome', { exact: true }).fill('Operador sintético integrado');
+  await admin.getByLabel('E-mail', { exact: true }).fill(email);
+  await admin.getByLabel('Senha provisória', { exact: true }).fill(provisional);
+  await admin.getByRole('button', { name: 'Criar usuário', exact: true }).click();
+  const row = admin.getByRole('row').filter({ hasText: email });
+  await row.waitFor();
+  await user.goto(fixture.origin);
+  await login(user, email, provisional);
+  await user.getByRole('heading', { name: 'Troque sua senha provisória' }).waitFor();
+  assert.equal(await user.locator('.inv-app').count(), 0);
+  assert.equal((await userContext.request.get(fixture.origin + '/api/access/users')).status(), 403);
+  await user.getByLabel('Senha atual', { exact: true }).fill(provisional);
+  await user.getByLabel('Nova senha', { exact: true }).fill(permanent);
+  await user.getByLabel('Confirmar nova senha', { exact: true }).fill(permanent);
+  await user.getByRole('button', { name: 'Salvar nova senha', exact: true }).click();
+  await user.locator('.inv-user-chip').getByText('Operador sintético integrado', { exact: true }).waitFor();
+  assert.equal(await user.getByRole('button', { name: 'Usuários', exact: true }).count(), 0);
+  assert.equal((await userContext.request.get(fixture.origin + '/api/access/users')).status(), 403);
+  await user.reload();
+  await user.locator('.inv-user-chip').getByText('Operador sintético integrado', { exact: true }).waitFor();
+  console.log('PASS mandatory change, session reload and user/admin separation');
+  admin.on('dialog', dialog => dialog.accept());
+  await row.getByRole('button', { name: 'Bloquear', exact: true }).click();
+  await row.getByText('Bloqueado', { exact: true }).waitFor();
+  await user.reload();
+  await user.getByRole('heading', { name: 'Entrar no FaseMarketplace' }).waitFor();
+  await row.getByRole('button', { name: 'Desbloquear', exact: true }).click();
+  await row.getByText('Ativo', { exact: true }).waitFor();
+  await row.getByRole('button', { name: 'Redefinir senha', exact: true }).click();
+  await admin.getByLabel('Nova senha provisória', { exact: true }).fill(provisional);
+  await admin.getByRole('button', { name: 'Confirmar redefinição', exact: true }).click();
+  await row.getByText('Troca de senha pendente', { exact: true }).waitFor();
+  await login(user, email, provisional);
+  await user.getByRole('heading', { name: 'Troque sua senha provisória' }).waitFor();
+  await user.getByRole('button', { name: 'Sair', exact: true }).click();
+  await user.getByRole('heading', { name: 'Entrar no FaseMarketplace' }).waitFor();
+  console.log('PASS block, reset, forced change and logout');
+  await admin.getByRole('button', { name: 'Início', exact: true }).click();
+  await admin.setViewportSize({ width: 390, height: 844 });
+  await admin.getByLabel('Navegar entre telas').selectOption('analytics');
+  assert.ok(await admin.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  assert.equal((await adminContext.cookies()).some(c => c.name.startsWith('fm_mvp_access') && c.httpOnly), true);
+  assert.deepEqual(await admin.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage) })), { local: [], session: [] });
+  await admin.getByRole('button', { name: 'Sair', exact: true }).click();
+  await admin.getByRole('heading', { name: 'Entrar no FaseMarketplace' }).waitFor();
+  assert.deepEqual(errors, []);
+  console.log('PASS mobile, HttpOnly, no browser storage and no render errors');
+} finally {
+  await Promise.all([adminContext.close(), userContext.close()]);
+  await browser.close();
+}

@@ -1,0 +1,26 @@
+# Independent synthetic-only cluster. Never merge with application or remote stacks.
+services:
+  postgres:
+    image: ${BUSINESS_TEST_POSTGRES_IMAGE:-postgres:17-alpine@sha256:eee6c6e1b0894fa4fe0075eb054af9fd1cf39a35321c2d4110626cfe506411fb}
+    environment:
+      POSTGRES_DB: fm_auth_test_business
+      POSTGRES_USER: fm_business_owner
+      POSTGRES_PASSWORD: ${BUSINESS_TEST_OWNER_PASSWORD:?Private synthetic password required}
+      PGDATA: /var/lib/postgresql/pgdata
+    volumes: [business_test_data:/var/lib/postgresql]
+    networks: [business_test]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: "no"
+  redis:
+    image: redis:7.4-alpine@sha256:57e4255cc971b1c8d6f8a6ca283ac01bc3ecdd914273ef6bfaede87aaecd6541
+    networks: [business_test]
+    restart: "no"
+volumes:
+  business_test_data:
+networks:
+  business_test:
+    internal: true
