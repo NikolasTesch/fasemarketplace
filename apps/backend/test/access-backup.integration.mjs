@@ -41,6 +41,13 @@ test('real encrypted backup and isolated restore with content verification, neve
     await runtimePool.query('INSERT INTO auth_verification(id,identifier,value,"expiresAt","createdAt","updatedAt") VALUES($1,$2,$3,now()+interval \'1 hour\',now(),now())', ['backup-verification', 'synthetic-token', admin.user.id]);
     await ownerPool.query('CREATE TABLE public.backup_probe(id integer PRIMARY KEY,revision integer NOT NULL)');
     await ownerPool.query('INSERT INTO public.backup_probe VALUES(1,0)');
+    await ownerPool.query('CREATE SCHEMA business');
+    await ownerPool.query('CREATE TABLE business.fixture(id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY, value integer NOT NULL UNIQUE CHECK(value>=0))');
+    await ownerPool.query('INSERT INTO business.fixture(value) VALUES(7),(9)');
+    await ownerPool.query('CREATE TABLE business.auth_session(id text PRIMARY KEY)');
+    await ownerPool.query("INSERT INTO business.auth_session VALUES('preserve-business')");
+    await ownerPool.query('CREATE TABLE business._prisma_migrations(id text PRIMARY KEY, checksum text NOT NULL)');
+    await ownerPool.query("INSERT INTO business._prisma_migrations VALUES('fixture-history','fixture-checksum')");
     const before = (await ownerPool.query('SELECT id,email,role,banned,"banReason","mustChangePassword" FROM auth_user ORDER BY id')).rows;
     const accountBefore = (await ownerPool.query('SELECT id,password FROM auth_account ORDER BY id')).rows;
     let artifact;
@@ -52,7 +59,7 @@ test('real encrypted backup and isolated restore with content verification, neve
         artifact = await createAccessBackup({ sourceUrl: base.href, context: 'local-test', file, key });
       } finally { clearInterval(timer); await Promise.all(writes); }
       assert.ok(writes.length > 0);
-      assert.equal(artifact.tables, 6);
+      assert.equal(artifact.tables, 9);
       const encrypted = await readFile(file);
       assert.equal(encrypted.includes(Buffer.from('backup@example.test')), false);
       assert.equal(encrypted.includes(Buffer.from('PGDMP')), false);
@@ -71,6 +78,11 @@ test('real encrypted backup and isolated restore with content verification, neve
       const unknown = file.replace('.fmbackup', '-unknown.fmbackup');
       await writeFile(unknown, sealBackup({ version: 99 }, key), { flag: 'wx', mode: 0o600 });
       await assert.rejects(restoreAccessBackup({ baseUrl: process.env.DATABASE_URL, file: unknown, key }));
+      const outside = file.replace('.fmbackup', '-outside.fmbackup');
+      const outsidePayload = openBackup(await readFile(file), key);
+      outsidePayload.schemas = ['public', 'private'];
+      await writeFile(outside, sealBackup(outsidePayload, key), { flag: 'wx', mode: 0o600 });
+      await assert.rejects(restoreAccessBackup({ baseUrl: process.env.DATABASE_URL, file: outside, key }));
       assert.equal(await count(), oldCount);
     });
     await t.test('cross-major metadata refuses restore before creating a destination', async () => {
@@ -96,6 +108,12 @@ test('real encrypted backup and isolated restore with content verification, neve
       // Source remains unchanged; quarantine cleanup applies only to restored DB.
       assert.equal((await ownerPool.query('SELECT count(*) FROM auth_session')).rows[0].count, '1');
       assert.equal((await ownerPool.query('SELECT count(*) FROM auth_verification')).rows[0].count, '1');
+      assert.deepEqual((await restoredPool.query('SELECT * FROM business.fixture ORDER BY id')).rows, [{id:1,value:7},{id:2,value:9}]);
+      assert.equal((await restoredPool.query('SELECT id FROM business.auth_session')).rows[0].id, 'preserve-business');
+      assert.equal((await restoredPool.query('SELECT checksum FROM business._prisma_migrations')).rows[0].checksum, 'fixture-checksum');
+      assert.equal((await restoredPool.query('INSERT INTO business.fixture(value) VALUES(11) RETURNING id')).rows[0].id, 3);
+      await assert.rejects(restoredPool.query('INSERT INTO business.fixture(value) VALUES(-1)'), e => e.code === '23514');
+      await assert.rejects(restoredPool.query('INSERT INTO business.fixture(value) VALUES(7)'), e => e.code === '23505');
     });
     await t.test('empty pre-auth database can be backed up and restored', async () => {
       const emptyName = 'fm_auth_test_empty_' + randomBytes(8).toString('hex');
@@ -108,8 +126,30 @@ test('real encrypted backup and isolated restore with content verification, neve
       assert.equal(result.contentVerified, true);
     });
     await t.test('unsupported relation refuses backup rather than silently omitting state', async () => {
-      await ownerPool.query('CREATE SEQUENCE public.unsupported_counter');
+      await ownerPool.query('CREATE VIEW public.unsupported_view AS SELECT 1 AS id');
       await assert.rejects(createAccessBackup({ sourceUrl: base.href, context: 'local-test', file: file.replace('.fmbackup', '-unsupported.fmbackup'), key }), /unsupported relations/);
+    });
+    await t.test('legacy v1 public-only archive remains restorable with real data', async () => {
+      const legacyName = 'fm_auth_test_legacy_' + randomBytes(8).toString('hex');
+      await setup.query(`CREATE DATABASE ${legacyName}`);
+      const legacyUrl = new URL(base); legacyUrl.pathname = '/' + legacyName;
+      const legacyPool = new Pool({ connectionString: legacyUrl.href });
+      try {
+        await legacyPool.query('CREATE TABLE public.legacy(id integer PRIMARY KEY, value text NOT NULL)');
+        await legacyPool.query("INSERT INTO public.legacy VALUES(1,'legacy-data')");
+        const modern = resolve(directory, legacyName + '-new.fmbackup');
+        await createAccessBackup({ sourceUrl: legacyUrl.href, context: 'local-test', file: modern, key });
+        const payload = openBackup(await readFile(modern), key);
+        payload.version = 1; delete payload.schemas;
+        payload.tables = payload.tables.map(({ name, count, sha256 }) => ({ name, count, sha256 }));
+        const legacyFile = resolve(directory, legacyName + '-v1.fmbackup');
+        await writeFile(legacyFile, sealBackup(payload, key), { flag: 'wx', mode: 0o600 });
+        const restored = await restoreAccessBackup({ baseUrl: process.env.DATABASE_URL, file: legacyFile, key });
+        const copyUrl = new URL(base); copyUrl.pathname = '/' + restored.database;
+        const copy = new Pool({ connectionString: copyUrl.href });
+        try { assert.equal((await copy.query('SELECT value FROM public.legacy')).rows[0].value, 'legacy-data'); }
+        finally { await copy.end(); }
+      } finally { await legacyPool.end(); }
     });
     console.log(JSON.stringify({ backupRehearsal: 'local-only', source: database, encryptedBytes: artifact.bytes }));
   } finally {

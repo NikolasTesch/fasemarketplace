@@ -59,22 +59,22 @@ async function clientMajor(command, url) {
   return Number(version.toString().match(/^pg_(?:dump|restore) \(PostgreSQL\) (\d+)\./)?.[1]);
 }
 
-async function fingerprints(client) {
-  const unsupported = await client.query("SELECT 1 FROM pg_class WHERE relnamespace='public'::regnamespace AND relkind NOT IN ('r','i') LIMIT 1");
+async function fingerprints(client, schemas = ['public'], legacy = false) {
+  const unsupported = await client.query("SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname=ANY($1) AND c.relkind NOT IN ('r','i','S') LIMIT 1", [schemas]);
   if (unsupported.rowCount) throw new Error('Schema contains unsupported relations');
-  const names = (await client.query("SELECT relname FROM pg_class WHERE relnamespace='public'::regnamespace AND relkind='r' ORDER BY relname COLLATE \"C\"")).rows.map(row => row.relname);
+  const names = (await client.query('SELECT n.nspname AS schema,c.relname AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname=ANY($1) AND c.relkind=\'r\' ORDER BY n.nspname COLLATE "C", c.relname COLLATE "C"', [schemas])).rows;
   if (names.length > 100) throw new Error('Too many tables for this backup scope');
   const result = [];
   let total = 0;
-  for (const name of names) {
-    const table = 'public.' + quote(name);
+  for (const {schema, name} of names) {
+    const table = quote(schema) + '.' + quote(name);
     const length = Number((await client.query(`SELECT coalesce(sum(octet_length(row_to_json(t)::text)),0)::text AS bytes FROM ${table} t`)).rows[0].bytes);
     total += length;
     if (total > MAX_DUMP_BYTES) throw new Error('Data exceeds memory limit');
     const rows = (await client.query(`SELECT row_to_json(t)::text AS value FROM ${table} t ORDER BY (row_to_json(t)::text) COLLATE "C"`)).rows;
     const digest = createHash('sha256');
     for (const row of rows) digest.update(row.value).update('\n');
-    result.push({ name, count: rows.length, sha256: digest.digest('hex') });
+    result.push({ ...(legacy ? {} : { schema }), name, count: rows.length, sha256: digest.digest('hex') });
   }
   return result;
 }
@@ -87,7 +87,7 @@ function makePool(url) {
 }
 
 export async function createAccessBackup({ sourceUrl, context, file, key }) {
-  if (!['local-test', 'preview'].includes(context)) throw new Error('Invalid backup context');
+  if (!['local', 'local-test', 'preview'].includes(context)) throw new Error('Invalid backup context');
   // Exclusive create BEFORE connecting. Existing artifacts are never overwritten.
   const destination = await open(file, 'wx', 0o600);
   const pool = makePool(sourceUrl);
@@ -98,11 +98,12 @@ export async function createAccessBackup({ sourceUrl, context, file, key }) {
     assertMatchingPostgresMajors(major, major, await clientMajor('pg_dump', sourceUrl));
     await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
     const snapshot = (await client.query('SELECT pg_export_snapshot() AS id')).rows[0].id;
-    const tables = await fingerprints(client);
-    const dump = await runPg('pg_dump', ['--format=custom', '--schema=public', '--no-owner', '--no-privileges', '--no-comments', '--no-publications', '--no-subscriptions', '--lock-wait-timeout=10000', '--snapshot=' + snapshot], sourceUrl);
+    const schemas = (await client.query("SELECT nspname FROM pg_namespace WHERE nspname IN ('public','business') ORDER BY nspname COLLATE \"C\"")).rows.map(row => row.nspname);
+    const tables = await fingerprints(client, schemas);
+    const dump = await runPg('pg_dump', ['--format=custom', ...schemas.map(schema => '--schema=' + schema), '--no-owner', '--no-privileges', '--no-comments', '--no-publications', '--no-subscriptions', '--lock-wait-timeout=10000', '--snapshot=' + snapshot], sourceUrl);
     await client.query('COMMIT');
     const url = new URL(sourceUrl);
-    const encrypted = sealBackup({ version: 1, createdAt: new Date().toISOString(), source: { context, host: url.hostname, database: url.pathname.slice(1), serverMajor: major },
+    const encrypted = sealBackup({ version: 2, schemas, createdAt: new Date().toISOString(), source: { context, host: url.hostname, database: url.pathname.slice(1), serverMajor: major },
       tables, dumpSha256: hash(dump), dump: dump.toString('base64') }, key);
     await destination.writeFile(encrypted);
     await destination.sync();
@@ -120,13 +121,26 @@ async function readArchive(file, key) {
     const stat = await handle.stat();
     if (!stat.isFile() || stat.size > MAX_ENVELOPE_BYTES) throw new Error('Invalid archive file');
     const payload = openBackup(await handle.readFile(), key);
-    if (payload?.version !== 1 || ![17, 18].includes(payload.source?.serverMajor) || !['local-test', 'preview'].includes(payload.source.context) ||
+    if (![1, 2].includes(payload?.version) || ![17, 18].includes(payload.source?.serverMajor) || !['local', 'local-test', 'preview'].includes(payload.source.context) ||
         !Array.isArray(payload.tables) || payload.tables.length > 100 || typeof payload.dump !== 'string' || payload.dump.length > Math.ceil(MAX_DUMP_BYTES / 3) * 4)
       throw new Error('Unsupported archive metadata');
+    if (payload.version === 1 && payload.source.context === 'local') throw new Error('Unsupported legacy context');
+    const schemas = payload.version === 1 ? ['public'] : payload.schemas;
+    if (!Array.isArray(schemas) || !['["public"]', '["business","public"]'].includes(JSON.stringify(schemas)) ||
+        (payload.version === 1 && payload.schemas !== undefined)) throw new Error('Unsupported archive schemas');
+    const identities = new Set();
+    for (const table of payload.tables) {
+      const schema = payload.version === 1 ? 'public' : table.schema;
+      if ((payload.version === 1 && table.schema !== undefined) || !schemas.includes(schema) || typeof table.name !== 'string' || !table.name.length || table.name.length > 63 || table.name.includes('\0') ||
+          !Number.isSafeInteger(table.count) || table.count < 0 || !/^[a-f0-9]{64}$/.test(table.sha256)) throw new Error('Unsupported table metadata');
+      const id = JSON.stringify([schema, table.name]);
+      if (identities.has(id)) throw new Error('Duplicate archive table');
+      identities.add(id);
+    }
     const dump = Buffer.from(payload.dump, 'base64');
     if (dump.length > MAX_DUMP_BYTES || dump.toString('base64') !== payload.dump || hash(dump) !== payload.dumpSha256 || dump.subarray(0, 5).toString() !== 'PGDMP')
       throw new Error('Invalid authenticated dump');
-    return { payload, dump };
+    return { payload, dump, schemas };
   } finally { await handle.close(); }
 }
 
@@ -139,7 +153,7 @@ export function validateRestoreBase(value) {
 
 export async function restoreAccessBackup({ baseUrl, file, key }) {
   const url = validateRestoreBase(baseUrl); // Before decrypting or connecting.
-  const { payload, dump } = await readArchive(file, key); // Full GCM verification before any connection/write.
+  const { payload, dump, schemas } = await readArchive(file, key); // Full GCM verification before any connection/write.
   const database = 'fm_auth_restore_' + randomBytes(12).toString('hex');
   const pool = makePool(url.href);
   let restoredPool;
@@ -152,17 +166,21 @@ export async function restoreAccessBackup({ baseUrl, file, key }) {
     // Only this freshly allocated, random-name quarantine DB is touched.
     // No CASCADE: if template assumptions ever change, refuse rather than delete objects.
     await restoredPool.query('DROP SCHEMA public');
-    await runPg('pg_restore', ['--dbname=' + database, '--no-owner', '--no-privileges', '--exit-on-error', '--single-transaction'], url.href, dump);
-    const before = await fingerprints(restoredPool);
+    // pg_restore --schema filters out SCHEMA TOC entries themselves.
+    // Create only the authenticated allowlisted namespaces in this new quarantine DB.
+    for (const schema of schemas) await restoredPool.query(`CREATE SCHEMA ${quote(schema)}`);
+    await runPg('pg_restore', ['--dbname=' + database, ...schemas.map(schema => '--schema=' + schema), '--no-owner', '--no-privileges', '--exit-on-error', '--single-transaction'], url.href, dump);
+    const before = await fingerprints(restoredPool, schemas, payload.version === 1);
     if (JSON.stringify(before) !== JSON.stringify(payload.tables)) throw new Error('Restored content mismatch');
     await restoredPool.query('BEGIN');
     try {
       for (const name of ['auth_session', 'auth_verification']) {
-        if (before.some(table => table.name === name)) await restoredPool.query(`DELETE FROM public.${quote(name)}`);
+        if (before.some(table => (table.schema ?? 'public') === 'public' && table.name === name)) await restoredPool.query(`DELETE FROM public.${quote(name)}`);
       }
-      const after = await fingerprints(restoredPool);
-      const stable = tables => tables.filter(table => !['auth_session', 'auth_verification'].includes(table.name));
-      if (JSON.stringify(stable(after)) !== JSON.stringify(stable(before)) || after.some(table => ['auth_session', 'auth_verification'].includes(table.name) && table.count !== 0))
+      const after = await fingerprints(restoredPool, schemas, payload.version === 1);
+      const revoked = table => (table.schema ?? 'public') === 'public' && ['auth_session', 'auth_verification'].includes(table.name);
+      const stable = tables => tables.filter(table => !revoked(table));
+      if (JSON.stringify(stable(after)) !== JSON.stringify(stable(before)) || after.some(table => revoked(table) && table.count !== 0))
         throw new Error('Restore quarantine verification failed');
       await restoredPool.query('COMMIT');
     } catch (error) { await restoredPool.query('ROLLBACK'); throw error; }

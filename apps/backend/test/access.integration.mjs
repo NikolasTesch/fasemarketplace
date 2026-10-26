@@ -464,7 +464,11 @@ test('local access against disposable PostgreSQL and Redis', async (t) => {
     await t.test(
       'Redis failure refuses login and recovery does not restart shared Redis',
       async () => {
+        const ended = new Promise(resolve => access.redis.once('end', resolve));
         access.redis.disconnect();
+        // disconnect closes its socket asynchronously. Wait for terminal status
+        // before explicitly reconnecting, even when HTTP 503 returns very fast.
+        await ended;
         assert.equal(
           (
             await post('/access/login', {

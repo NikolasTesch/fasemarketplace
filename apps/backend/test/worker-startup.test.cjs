@@ -37,7 +37,10 @@ test('hybrid worker retries initial dependency races before switching to sparse 
       NEON_DEVELOPMENT_HOST: 'ep-synthetic-123-pooler.sa-east-1.aws.neon.tech',
       DATABASE_URL: 'postgresql://dev:example@ep-synthetic-123-pooler.sa-east-1.aws.neon.tech/test?sslmode=verify-full',
       REDIS_URL: 'redis://redis:6379' },
-    encoding: 'utf8', timeout: 10000,
+    // This deadline bounds process startup, not the worker's scheduling delays.
+    // Concurrent suite imports can exceed 10s on a busy Docker Desktop host.
+    encoding: 'utf8', timeout: 30000,
   });
+  assert.equal(result.error, undefined, result.error?.code);
   assert.equal(result.status, 0, result.stdout + result.stderr);
 });

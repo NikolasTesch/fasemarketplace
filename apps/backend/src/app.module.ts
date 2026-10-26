@@ -3,11 +3,14 @@ import { HealthController } from './health.controller.js';
 import { Infrastructure } from './infrastructure.js';
 import { TelemetryService } from './telemetry.js';
 import { readAccessConfig } from './access/config.js';
+import { readBusinessConfig } from './persistence/config.js';
 
 @Module({
-  imports: readAccessConfig()
+  imports: [...(readAccessConfig()
     ? [import('./access/module.js').then(({ LocalAccessModule }) => ({ module: LocalAccessModule }))]
-    : [],
+    : []), ...(readBusinessConfig()
+      ? [import('./persistence/module.js').then(({ BusinessPersistenceModule }) => ({ module: BusinessPersistenceModule }))]
+      : [])],
   controllers: [HealthController],
   providers: [
     Infrastructure,

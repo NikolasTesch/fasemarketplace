@@ -62,12 +62,12 @@
 
 **Pré-requisito:** acesso homologado para o ambiente alvo. **Artefatos:** spec operacional própria, decisões de persistência/migrations e guia de backup/restore.
 
-- [ ] Escolher mecanismo de persistência de negócio com base em transações, constraints e migrations necessárias; comparar opções apenas onde existir decisão material.
-- [ ] Definir credenciais runtime/migration, destino efetivo por ambiente e comandos que recusam ambiente incorreto. Reaplicação e checksum devem preservar dados.
+- [x] Escolher mecanismo de persistência de negócio: Prisma escolhido/aprovado em 26/10/2026, implementado e validado no Docker sintético conforme [SPEC-010](../../specs/SPEC-010-business-persistence.md). Auth permanece independente em public; catálogo ainda não implementado.
+- [x] Definir e validar credenciais runtime/migration e comandos local-only que recusam destinos incorretos, reaplicação e checksum. Aplicação ao Neon/Preview/Production permanece entrega própria autorizada; [guia local](../../operations/business-persistence.md).
 - [x] Acordar política de desenvolvimento: manual antes de cada migration, mínimo 30 dias/7 cópias, sem exclusão automática; meta RTO 1h e RPO anterior à migration, com perda possível entre backups. Aprovada pelo usuário em 24/10/2026.
 - [ ] Definir responsável, destino/guarda externa de backup e gestão separada de chaves; não assumir que snapshot/arquivo vazio prova recuperação.
 - [x] Backup/restore em destino descartável com fingerprints e revogação: [SPEC-009](../../specs/SPEC-009-access-backup.md). Backup real Neon pré/pós-auth restaurado somente no Docker 18 em 25/10/2026; restauração não escreve na origem. Migração auth remota autorizada/executada separadamente.
-- [ ] Definir rollback e runbook de incidente; validar antes de permitir dados importantes.
+- [x] Documentar rollback/runbook de incidente e validar recuperação em quarentena da base sintética com auth+business (SPEC-010). Dados importantes e promoção de banco restaurado exigem completar responsabilidade/guarda e autorização do ambiente correspondente.
 
 **Aceite:** esquema versionado e restauração comprovada, sem reset de volumes ou credenciais produtivas no local. Escolhas/custos pendentes são registrados antes de provisionamento.
 
