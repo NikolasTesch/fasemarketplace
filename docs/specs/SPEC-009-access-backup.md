@@ -1,5 +1,7 @@
 # SPEC-009 — Backup e ensaio de recuperação do acesso
 
+**Atualização 26/10/2026:** a [SPEC-010](SPEC-010-business-persistence.md) amplia o payload para v2, cobrindo `public` + `business` e sequences, com identidade qualificada e leitura retrocompatível de v1. Revogação restrita a `public.auth_session`/`public.auth_verification`. CLI local de negócio separado e validado; restore continua exclusivo em novo banco Docker de quarentena. As descrições public-only abaixo registram o escopo original.
+
 Preparação local autorizada pelo pedido de continuidade. Complementa SPEC-008 e E02; não autoriza conectar ao Neon, executar migration remota, publicar ou alterar Production.
 
 ## Comportamento

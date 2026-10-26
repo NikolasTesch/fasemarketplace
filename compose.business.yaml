@@ -1,0 +1,38 @@
+# Local-only opt-in. Apply with compose.yaml, never with hybrid/Production.
+services:
+  api:
+    # Source bind mount hides image-generated files; a writable disposable child
+    # volume allows offline regeneration on every start, including a clean clone.
+    volumes:
+      - /workspace/apps/backend/src/generated
+    command: [sh, -c, "npm run business:generate && npm run dev:api"]
+    environment:
+      BUSINESS_ENABLED: ${BUSINESS_ENABLED:-false}
+      BUSINESS_LOCAL_DATABASE: ${BUSINESS_LOCAL_DATABASE:-}
+      BUSINESS_DATABASE_URL: ${BUSINESS_DATABASE_URL:-}
+  business-maintenance:
+    profiles: [business-maintenance]
+    image: ${COMPOSE_PROJECT_NAME:-fasemarketplace-local}-business-maintenance
+    build:
+      context: .
+      target: access-maintenance
+    init: true
+    restart: "no"
+    command: [npm, run, "business:check"]
+    # Explicitly persist migrations produced by business:plan for review in Git.
+    volumes:
+      - ./apps/backend/prisma:/workspace/apps/backend/prisma
+      - ./backups:/workspace/backups
+    environment:
+      APP_ENV: local
+      DATABASE_PROVIDER: local
+      BUSINESS_ENABLED: "true"
+      BUSINESS_LOCAL_DATABASE: ${BUSINESS_LOCAL_DATABASE:-}
+      BUSINESS_DATABASE_URL: ${BUSINESS_DATABASE_URL:-}
+      BUSINESS_MIGRATION_DATABASE_URL: ${BUSINESS_MIGRATION_DATABASE_URL:-}
+      BUSINESS_SHADOW_DATABASE_URL: ${BUSINESS_SHADOW_DATABASE_URL:-}
+      BUSINESS_ADMIN_DATABASE_URL: ${BUSINESS_ADMIN_DATABASE_URL:-}
+      ACCESS_BACKUP_KEY: ${ACCESS_BACKUP_KEY:-}
+    networks: [local]
+    depends_on:
+      postgres: { condition: service_healthy }

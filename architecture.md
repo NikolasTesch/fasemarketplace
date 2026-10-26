@@ -586,7 +586,7 @@ Comandos de reserva/expedição para site próprio e PDV serão specs futuras e 
 | Backend | NestJS sobre Express, escolhido no bootstrap | Módulos e DI; API e worker separados; sem necessidade atual de trocar o adapter HTTP |
 | Alternativa | Express | Viável se já houver experiência; exige compor validação, contratos e organização |
 | Banco | PostgreSQL | Transações, locks, constraints, JSONB e consultas operacionais |
-| Acesso ao banco | Prisma ou Drizzle, com SQL explícito onde necessário | Escolher um; garantir suporte a locks, transações e migrações revisáveis |
+| Acesso ao banco | Prisma 7.10.1 escolhido para negócio em 26/10/2026; auth existente permanece pg/Better Auth | SPEC-010 local opt-in, schema business separado, migrações explícitas e backup public/business; ativação remota é entrega própria |
 | Filas | Redis + BullMQ | Agendamento, retries e concorrência; trabalho durável também em PostgreSQL |
 | Contratos | OpenAPI e validação de entrada | Interface explícita e testes de contrato |
 | Testes | Vitest ou Jest + PostgreSQL/Redis isolados | Unidade, integração e falhas concorrentes reais |

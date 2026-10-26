@@ -24,7 +24,7 @@ Hub de estoque próprio e integração com Mercado Livre e Shopee, em preparaç�
 - PostgreSQL 17 para fatos duráveis; Redis 7.4 preparado para futura fila BullMQ (a biblioteca e os jobs ainda não foram implementados).
 - Node 24 no Docker, npm workspaces e lockfile único. Imagens fixadas por digest.
 - `apps/web`: SPA React e diagnóstico da API no navegador, usando `/api` com proxy local do Vite.
-- `apps/backend`: API HTTP e processo worker separados; sem ORM escolhido nesta etapa.
+- `apps/backend`: API HTTP e processo worker separados; Prisma 7 para persistência de negócio local opt-in, auth/pg independente. Ver [guia de persistência](docs/operations/business-persistence.md).
 - `packages/telemetry`: contrato compartilhado de eventos e sanitização para PostHog, desligado por padrão.
 
 ## Iniciar no Windows / PowerShell

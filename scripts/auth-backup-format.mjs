@@ -9,7 +9,8 @@ export function readBackupKey(env = process.env) {
   const value = env.ACCESS_BACKUP_KEY ?? '';
   if (!/^[a-f0-9]{64}$/i.test(value) || ['AUTH_SECRET', 'AUTH_API_KEY', 'PREVIEW_AUTH_SECRET', 'PREVIEW_ACCESS_BRIDGE_KEY', 'PREVIEW_ACCESS_API_KEY']
     .some(name => env[name]?.toLowerCase() === value.toLowerCase())) throw new Error('Independent 32-byte backup key required');
-  for (const name of ['DATABASE_URL', 'AUTH_DATABASE_URL', 'PREVIEW_AUTH_DATABASE_URL', 'PREVIEW_AUTH_OWNER_DATABASE_URL']) {
+  for (const name of ['DATABASE_URL', 'AUTH_DATABASE_URL', 'PREVIEW_AUTH_DATABASE_URL', 'PREVIEW_AUTH_OWNER_DATABASE_URL',
+    'BUSINESS_DATABASE_URL', 'BUSINESS_MIGRATION_DATABASE_URL', 'BUSINESS_SHADOW_DATABASE_URL', 'BUSINESS_ADMIN_DATABASE_URL']) {
     if (env[name] && decodeURIComponent(new URL(env[name]).password).toLowerCase() === value.toLowerCase())
       throw new Error('Backup key must differ from database credentials');
   }

@@ -10,6 +10,13 @@
     "node": ">=24.15 <25"
   },
   "scripts": {
+    "business:generate": "node scripts/business-artifacts.mjs generate",
+    "business:validate": "node scripts/business-artifacts.mjs validate",
+    "business:check": "npm run build --workspace @fasemarketplace/backend && node scripts/business-db.mjs check",
+    "business:provision": "npm run build --workspace @fasemarketplace/backend && node scripts/business-db.mjs provision",
+    "business:migrate": "npm run build --workspace @fasemarketplace/backend && node scripts/business-db.mjs migrate",
+    "business:plan": "npm run build --workspace @fasemarketplace/backend && node scripts/business-db.mjs plan",
+    "business:backup": "npm run build --workspace @fasemarketplace/backend && node scripts/business-backup.mjs",
     "auth:migrate": "npm run build --workspace @fasemarketplace/backend && node scripts/auth-local.mjs migrate",
     "auth:bootstrap": "npm run build --workspace @fasemarketplace/backend && node scripts/auth-local.mjs bootstrap",
     "dev:web": "npm run dev --workspace @fasemarketplace/web",
@@ -17,7 +24,7 @@
     "dev:worker": "npm run dev:worker --workspace @fasemarketplace/backend",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces",
-    "lint": "eslint packages/telemetry/index.js apps/backend/src apps/backend/test/access*.integration.mjs scripts/auth-*.mjs scripts/verify-access-ui.mjs apps/web/src apps/web/vite.config.ts server/*.mjs api/**/*.mjs",
+    "lint": "eslint packages/telemetry/index.js apps/backend/src apps/backend/prisma.config.ts apps/backend/test/access*.integration.mjs apps/backend/test/business.integration.mjs scripts/business-*.mjs scripts/auth-*.mjs scripts/verify-access-ui.mjs apps/web/src apps/web/vite.config.ts server/*.mjs api/**/*.mjs",
     "test": "npm run test --workspaces --if-present && node --test server/test/*.test.mjs"
   },
   "devDependencies": {
