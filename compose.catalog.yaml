@@ -1,0 +1,25 @@
+# Apply ONLY after compose.yaml + compose.business.yaml, never remote Composes.
+services:
+  api:
+    environment:
+      CATALOG_ENABLED: ${CATALOG_ENABLED:-false}
+      INVENTORY_ENABLED: ${INVENTORY_ENABLED:-false}
+      # Readiness uses the auth runtime role too; owner stays in maintenance.
+      DATABASE_URL: ${AUTH_DATABASE_URL:-}
+  web:
+    environment:
+      VITE_CATALOG_ENABLED: ${CATALOG_ENABLED:-false}
+      VITE_INVENTORY_ENABLED: ${INVENTORY_ENABLED:-false}
+  business-maintenance:
+    environment:
+      COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-}
+      DATABASE_URL: ${DATABASE_URL:-}
+      AUTH_ENABLED: ${AUTH_ENABLED:-false}
+      AUTH_DATABASE_URL: ${AUTH_DATABASE_URL:-}
+      AUTH_SECRET: ${AUTH_SECRET:-}
+      AUTH_ORIGIN: ${AUTH_ORIGIN:-}
+      AUTH_COOKIE_PREFIX: ${AUTH_COOKIE_PREFIX:-fm_local_access}
+      CATALOG_ENABLED: ${CATALOG_ENABLED:-false}
+      INVENTORY_ENABLED: ${INVENTORY_ENABLED:-false}
+      REDIS_URL: redis://redis:6379
+      MARKETPLACE_MODE: mock

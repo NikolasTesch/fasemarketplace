@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import logo from '../../../docs/assets/fase-sport-logo.svg';
 import './access.css';
+import {Dialog} from './Dialog';
 
 type User = {
   id: string;
@@ -12,6 +13,10 @@ type User = {
   banned: boolean;
 };
 const AccessUserContext = createContext<User | null>(null);
+const AccessActionsContext = createContext<{logout:()=>Promise<void>;refresh:()=>Promise<void>;busy:boolean}|null>(null);
+export function useAccessActions(){return useContext(AccessActionsContext);}
+const AccessExpiredContext = createContext<(()=>void) | null>(null);
+export function useAccessExpired() { return useContext(AccessExpiredContext); }
 export function useAccessUser() {
   return useContext(AccessUserContext);
 }
@@ -55,8 +60,6 @@ export function Access({ children }: { children: ReactNode }) {
     [password, setPassword] = useState(''),
     [show, setShow] = useState(false),
     [busy, setBusy] = useState(false);
-  const [admin, setAdmin] = useState(false),
-    [changing, setChanging] = useState(false);
   async function session() {
     const data = await api<{ user: User }>('/session');
     setUser(data.user);
@@ -98,8 +101,6 @@ export function Access({ children }: { children: ReactNode }) {
     try {
       await api('/logout', {});
       setUser(null);
-      setAdmin(false);
-      setChanging(false);
     } catch (e) {
       if (e instanceof AccessError && e.status === 401) setUser(null);
       else setError(message(e));
@@ -109,8 +110,6 @@ export function Access({ children }: { children: ReactNode }) {
   }
   const expired = () => {
     setUser(null);
-    setAdmin(false);
-    setChanging(false);
     setError('Sua sessão expirou. Entre novamente.');
   };
   if (loading)
@@ -167,70 +166,28 @@ export function Access({ children }: { children: ReactNode }) {
         </p>
       </main>
     );
-  return (
-    <div className="access-shell">
-      <header className="access-header">
-        <img className="access-logo" src={logo} alt="Fase Sport" />
-        <div>
-          <strong>{user.name}</strong>
-          <small>
-            {user.role === 'admin' ? 'Administrador' : 'Usuário'} • ambiente
-            do piloto
-          </small>
+  return <AccessActionsContext.Provider value={{logout,refresh:session,busy}}>
+    <AccessExpiredContext.Provider value={expired}>
+      <AccessUserContext.Provider value={user}>
+        <div className="access-shell">
+          {error&&<p className="access-banner" role="alert">{error}</p>}
+          {user.mustChangePassword?<><PasswordChange mandatory expired={expired} done={session}/><div className="access-pending-exit"><button className="inv-btn inv-btn-secondary" disabled={busy} onClick={()=>void logout()}>Sair</button></div></>:children}
         </div>
-        <nav aria-label="Conta">
-          <button
-            onClick={() => {
-              setAdmin(false);
-              setChanging(false);
-            }}
-          >
-            Início
-          </button>
-          {user.role === 'admin' && !user.mustChangePassword && (
-            <button
-              onClick={() => {
-                setAdmin(true);
-                setChanging(false);
-              }}
-            >
-              Usuários
-            </button>
-          )}
-          <button
-            onClick={() => {
-              setChanging(true);
-              setAdmin(false);
-            }}
-          >
-            Trocar senha
-          </button>
-          <button disabled={busy} onClick={() => void logout()}>
-            Sair
-          </button>
-        </nav>
-      </header>
-      {error && (
-        <p className="access-banner" role="alert">
-          {error}
-        </p>
-      )}
-      {user.mustChangePassword || changing ? (
-        <PasswordChange
-          mandatory={user.mustChangePassword}
-          expired={expired}
-          done={async () => {
-            await session();
-            setChanging(false);
-          }}
-        />
-      ) : admin && user.role === 'admin' ? (
-        <Users current={user} expired={expired} />
-      ) : (
-        <AccessUserContext.Provider value={user}>{children}</AccessUserContext.Provider>
-      )}
-    </div>
-  );
+      </AccessUserContext.Provider>
+    </AccessExpiredContext.Provider>
+  </AccessActionsContext.Provider>;
+}
+
+export function AccessSettings(){
+  const user=useAccessUser(),actions=useAccessActions(),expired=useAccessExpired();
+  const [createOpen,setCreateOpen]=useState(false);
+  if(!user||!actions||!expired)return <p>Entre no sistema para configurar seu acesso.</p>;
+  return <div className="access-settings">
+    <div className="inv-page-header"><div><div className="inv-page-pretitle">ADMINISTRAÇÃO</div><h1 className="inv-page-title">Usuários</h1><p className="inv-page-desc">{user.role==='admin'?'Cadastre e gerencie os integrantes da equipe.':'Gerencie sua conta e sua senha de acesso.'}</p></div>
+      {user.role==='admin'&&<button className="inv-btn inv-btn-primary" onClick={()=>setCreateOpen(true)}>Cadastrar usuário</button>}</div>
+    {user.role==='admin'?<Users current={user} expired={expired} createOpen={createOpen} closeCreate={()=>setCreateOpen(false)}/>:<section className="access-own-account"><h2>Minha conta</h2><strong>{user.name}</strong><p>{user.email}</p><p>Usuário · acesso de consulta</p></section>}
+    <details className="access-password-settings"><summary>Segurança da conta</summary><PasswordChange mandatory={false} expired={expired} done={actions.refresh}/></details>
+  </div>;
 }
 
 function PasswordChange({
@@ -328,7 +285,7 @@ function PasswordChange({
   );
 }
 
-function Users({ current, expired }: { current: User; expired: () => void }) {
+function Users({ current, expired, createOpen, closeCreate }: { current: User; expired: () => void; createOpen: boolean; closeCreate: () => void }) {
   const [users, setUsers] = useState<User[]>([]),
     [total, setTotal] = useState(0),
     [offset, setOffset] = useState(0),
@@ -341,13 +298,15 @@ function Users({ current, expired }: { current: User; expired: () => void }) {
     [password, setPassword] = useState(''),
     [role, setRole] = useState<'admin' | 'user'>('user'),
     [reset, setReset] = useState<User | null>(null),
-    [resetPassword, setResetPassword] = useState('');
+    [resetPassword, setResetPassword] = useState(''),
+    [search,setSearch]=useState(''),[loadedKey,setLoadedKey]=useState('');
+  const requestKey=offset+':'+version,loading=loadedKey!==requestKey;
   useEffect(() => {
     let active = true;
     api<{ users: User[]; total: number }>('/users?offset=' + offset)
       .then((data) => {
         if (active) {
-          setUsers(data.users);
+          setError('');setUsers(data.users);
           setTotal(data.total);
         }
       })
@@ -356,11 +315,9 @@ function Users({ current, expired }: { current: User; expired: () => void }) {
           if (e instanceof AccessError && e.status === 401) expired();
           else setError(message(e));
         }
-      });
-    return () => {
-      active = false;
-    };
-  }, [offset, version, expired]);
+      }).finally(()=>{if(active)setLoadedKey(requestKey);});
+    return () => {active=false;};
+  }, [offset, version, requestKey, expired]);
   async function action(work: () => Promise<unknown>, success: string) {
     setBusy(true);
     setError('');
@@ -378,6 +335,10 @@ function Users({ current, expired }: { current: User; expired: () => void }) {
       setBusy(false);
     }
   }
+  function cancelCreate() {
+    if(busy)return;
+    setName('');setEmail('');setPassword('');setRole('user');setError('');closeCreate();
+  }
   async function create(event: FormEvent) {
     event.preventDefault();
     const ok = await action(
@@ -389,16 +350,16 @@ function Users({ current, expired }: { current: User; expired: () => void }) {
       setName('');
       setEmail('');
       setRole('user');
+      closeCreate();
     }
   }
   return (
-    <main className="access-users">
-      <h1>Usuários</h1>
-      <p>Somente administradores podem criar, bloquear ou recuperar acessos.</p>
-      {error && <p role="alert">{error}</p>}
+    <div className="access-users">
+      {error && !createOpen && !reset && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
-      <section>
-        <h2>Criar usuário</h2>
+      {createOpen&&<Dialog title="Novo usuário" busy={busy} onClose={cancelCreate}>
+        <p className="access-hint">A senha inicial será fornecida pelo administrador. A troca será obrigatória no primeiro acesso.</p>
+        {error&&<p role="alert">{error}</p>}
         <form className="access-grid" onSubmit={create}>
           <label>
             Nome
@@ -421,8 +382,8 @@ function Users({ current, expired }: { current: User; expired: () => void }) {
             />
           </label>
           <label>
-            Perfil
-            <select
+            Papel
+            <select aria-label="Papel"
               value={role}
               onChange={(e) => setRole(e.target.value as 'admin' | 'user')}
             >
@@ -443,73 +404,22 @@ function Users({ current, expired }: { current: User; expired: () => void }) {
             />
           </label>
           <button className="access-primary" disabled={busy}>
-            Criar usuário
+            Cadastrar usuário
           </button>
+          <button type="button" className="access-secondary" disabled={busy} onClick={cancelCreate}>Cancelar</button>
         </form>
-      </section>
+      </Dialog>}
       <section>
-        <h2>Acessos ({total})</h2>
-        <div className="access-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Nome / e-mail</th>
-                <th>Perfil</th>
-                <th>Estado</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>
-                    {user.name}
-                    <small>{user.email}</small>
-                  </td>
-                  <td>{user.role === 'admin' ? 'Administrador' : 'Usuário'}</td>
-                  <td>
-                    {user.banned
-                      ? 'Bloqueado'
-                      : user.mustChangePassword
-                        ? 'Troca de senha pendente'
-                        : 'Ativo'}
-                  </td>
-                  <td>
-                    <button
-                      disabled={busy || user.id === current.id}
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            (user.banned ? 'Desbloquear' : 'Bloquear') +
-                              ' este usuário?',
-                          )
-                        )
-                          void action(
-                            () =>
-                              api('/users/' + user.id + '/block', {
-                                blocked: !user.banned,
-                              }),
-                            'Acesso atualizado.',
-                          );
-                      }}
-                    >
-                      {user.banned ? 'Desbloquear' : 'Bloquear'}
-                    </button>
-                    <button
-                      disabled={busy || user.id === current.id}
-                      onClick={() => {
-                        setReset(user);
-                        setResetPassword('');
-                      }}
-                    >
-                      Redefinir senha
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <h2>Equipe ({total})</h2>
+        <label className="access-search">Pesquisar nesta página<input placeholder="Nome ou e-mail do usuário" value={search} onChange={event=>setSearch(event.target.value)}/></label>
+        {loading?<p role="status">Carregando equipe…</p>:<div className="access-team">
+          {users.filter(user=>(user.name+' '+user.email).toLocaleLowerCase().includes(search.toLocaleLowerCase())).map(user=><article className="access-member" key={user.id}>
+            <div><strong>{user.name}</strong><span>{user.email}</span><small>{user.role==='admin'?'Administrador':'Usuário'} · {user.banned?'Bloqueado':user.mustChangePassword?'Troca de senha pendente':'Ativo'}</small></div>
+            {user.id!==current.id&&<div className="access-actions"><button disabled={busy} onClick={()=>{if(window.confirm((user.banned?'Desbloquear':'Bloquear')+' este usuário?'))void action(()=>api('/users/'+user.id+'/block',{blocked:!user.banned}),'Acesso atualizado.');}}>{user.banned?'Desbloquear':'Bloquear'}</button>
+              <button disabled={busy} onClick={()=>{setReset(user);setResetPassword('');}}>Redefinir senha</button></div>}
+          </article>)}
+          {!error&&!users.some(user=>(user.name+' '+user.email).toLocaleLowerCase().includes(search.toLocaleLowerCase()))&&<p>Nenhum usuário encontrado nesta página.</p>}
+        </div>}
         <div className="access-pagination">
           <button
             disabled={busy || offset === 0}
@@ -529,8 +439,8 @@ function Users({ current, expired }: { current: User; expired: () => void }) {
         </div>
       </section>
       {reset && (
-        <section>
-          <h2>Redefinir senha de {reset.name}</h2>
+        <Dialog title={"Redefinir senha de "+reset.name} busy={busy} onClose={()=>{setReset(null);setResetPassword('');}}>
+          {error&&<p role="alert">{error}</p>}
           <p>As sessões serão encerradas e a próxima entrada exigirá troca.</p>
           <form
             onSubmit={async (event) => {
@@ -570,6 +480,7 @@ function Users({ current, expired }: { current: User; expired: () => void }) {
               </button>
               <button
                 type="button"
+                disabled={busy}
                 onClick={() => {
                   setReset(null);
                   setResetPassword('');
@@ -579,8 +490,8 @@ function Users({ current, expired }: { current: User; expired: () => void }) {
               </button>
             </div>
           </form>
-        </section>
+        </Dialog>
       )}
-    </main>
+    </div>
   );
 }

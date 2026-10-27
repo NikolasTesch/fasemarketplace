@@ -112,3 +112,5 @@ PostHog está integrado ao React, API e worker para eventos explícitos e erros 
 - [AGENTS.md](AGENTS.md): regras para trabalhar no projeto.
 
 Próxima fatia: especificar cadastro de SKU, escolher persistência/migrations e definir critérios de aceite, antes de implementar regras de estoque. Regras de reserva, estados de pedido e contratos de marketplace continuam exigindo validação.
+
+Catálogo básico local (SPEC-011): produtos, variantes e SKUs com autenticação, persistência Prisma e permissões. Consulte o [guia do catálogo](docs/operations/basic-catalog.md). Habilitação explícita por compose.catalog.yaml; saldo/marketplaces ainda demonstrativos.

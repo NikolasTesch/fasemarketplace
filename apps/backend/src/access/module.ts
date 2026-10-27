@@ -7,5 +7,6 @@ if (!readAccessConfig())
 @Module({
   controllers: [LocalAccessController],
   providers: [LocalAccessService, AccessGuard],
+  exports: [LocalAccessService],
 })
 export class LocalAccessModule {}

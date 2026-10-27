@@ -1,4 +1,7 @@
 export type ViewScreen =
+  | 'catalog'
+  | 'users'
+  | 'settings'
   | 'analytics'
   | 'orders'
   | 'sync'

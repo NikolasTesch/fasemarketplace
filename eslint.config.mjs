@@ -7,7 +7,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['scripts/auth-*.mjs', 'scripts/business-*.mjs', 'scripts/verify-access-ui.mjs', 'apps/backend/test/access*.integration.mjs', 'apps/backend/test/business.integration.mjs'],
+    files: ['scripts/auth-*.mjs', 'scripts/catalog-*.mjs', 'scripts/inventory-*.mjs', 'scripts/business-*.mjs', 'scripts/verify-access-ui.mjs', 'scripts/verify-workspace-ui.mjs', 'apps/backend/test/access*.integration.mjs', 'apps/backend/test/catalog*.mjs', 'apps/backend/test/inventory*.mjs', 'apps/backend/test/business.integration.mjs'],
     languageOptions: {
       globals: {
         process: 'readonly',
@@ -19,7 +19,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['scripts/verify-access-ui.mjs'],
+    files: ['scripts/verify-access-ui.mjs', 'scripts/verify-workspace-ui.mjs'],
     languageOptions: { globals: { getComputedStyle: 'readonly', document: 'readonly', innerWidth: 'readonly', localStorage: 'readonly', sessionStorage: 'readonly' } },
   },
   {

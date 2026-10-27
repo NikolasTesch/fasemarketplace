@@ -166,3 +166,28 @@
     padding: 0 1rem;
   }
 }
+
+/* Access settings embedded in the application shell. */
+.access-settings { min-width: 0; }
+.access-users { max-width: none; margin: 0; padding: 0; }
+.access-users>section,.access-own-account { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+.access-users h2,.access-own-account h2 { font-size: 16px; font-weight: 600; margin: 0 0 12px; }
+.access-users .access-hint { margin: -4px 0 20px; font-size: 12px; }
+.access-users .access-grid { grid-template-columns: minmax(140px,1.1fr) minmax(160px,1.3fr) minmax(130px,.8fr) minmax(140px,1fr) auto; align-items: end; gap: 14px; }
+.access-users label { font-size: 12px; }
+.access-users input,.access-users select { width: 100%; border-color: var(--border); background: var(--surface); color: var(--text); }
+.access-users .access-grid button { min-height: 42px; font-size: 12px; font-weight: 600; }
+.access-users .access-grid .access-secondary { justify-self: start; }
+.access-search { max-width: 470px; margin: 16px 0; }
+.access-member { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--border); }
+.access-member:last-child { border-bottom: none; padding-bottom: 4px; }
+.access-member>div:first-child { display: grid; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.access-member span,.access-member small { color: var(--muted); font-size: 12px; }
+.access-member .access-actions { margin: 0; gap: 8px; }
+.access-users button { border-color: var(--border); font-size: 12px; font-weight: 600; }
+.access-pending-exit { display: flex; justify-content: center; margin: 16px; }
+.access-password-settings { margin-top: 20px; padding: 16px 20px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.access-password-settings summary { cursor: pointer; font-weight: 600; }
+.access-password-settings .access-card { max-width: 44rem; margin: 16px 0 0; padding: 20px; }
+@media(max-width:1200px){.access-users .access-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:600px){.access-users .access-grid{grid-template-columns:minmax(0,1fr);}.access-users>section,.access-own-account{padding:16px;}.access-member{align-items:start;flex-direction:column;}.access-users{padding:0;}}
