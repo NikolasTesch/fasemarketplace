@@ -2,7 +2,7 @@ export interface CatalogVariant {
   id: string; productId: string; name: string; sku: string; active: boolean; effectiveActive: boolean; version: number;
 }
 export interface CatalogProduct {
-  id: string; name: string; description: string; active: boolean; version: number; createdAt: string;
+  id: string; name: string; description: string; iconName: string; salePrice: string|null; cost: string|null; active: boolean; version: number; createdAt: string;
   variantCount: number; variants: CatalogVariant[];
 }
 export interface CatalogPage {items: CatalogProduct[]; total: number; offset: number; limit: number;}

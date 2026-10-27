@@ -25,8 +25,8 @@
     "dev:worker": "npm run dev:worker --workspace @fasemarketplace/backend",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces",
-    "lint": "eslint packages/telemetry/index.js apps/backend/src apps/backend/prisma.config.ts apps/backend/test/access*.integration.mjs apps/backend/test/business.integration.mjs apps/backend/test/catalog*.mjs apps/backend/test/inventory*.mjs scripts/catalog-*.mjs scripts/inventory-*.mjs scripts/business-*.mjs scripts/auth-*.mjs scripts/verify-access-ui.mjs scripts/verify-workspace-ui.mjs apps/web/src apps/web/vite.config.ts server/*.mjs api/**/*.mjs",
-    "test": "npm run test --workspaces --if-present && node --test server/test/*.test.mjs"
+    "lint": "eslint packages/telemetry/index.js apps/backend/src apps/backend/prisma.config.ts apps/backend/test/access*.integration.mjs apps/backend/test/business.integration.mjs apps/backend/test/catalog*.mjs apps/backend/test/inventory*.mjs apps/backend/test/tickets*.mjs scripts/catalog-*.mjs scripts/inventory-*.mjs scripts/business-*.mjs scripts/auth-*.mjs scripts/tickets-*.mjs scripts/verify-access-ui.mjs scripts/verify-workspace-ui.mjs apps/web/src apps/web/vite.config.ts server/*.mjs api/**/*.mjs",
+    "test": "npm run test --workspaces --if-present && node --test scripts/tickets-local.test.mjs server/test/*.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

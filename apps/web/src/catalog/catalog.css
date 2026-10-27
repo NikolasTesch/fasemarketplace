@@ -49,3 +49,10 @@
 .catalog-product .catalog-description { padding-top: 16px; }
 .catalog-product .catalog-variant { margin: 0 16px; padding-left: 4px; padding-right: 4px; }
 .catalog-product .catalog-variant:last-child { margin-bottom: 8px; }
+.catalog-icon-fieldset { margin: 0; }
+.catalog-icon-picker { display: grid; grid-template-columns: repeat(auto-fit,minmax(82px,1fr)); gap: 8px; }
+.catalog-icon-option { display: grid; justify-items: center; gap: 5px; min-height: 72px; padding: 8px; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
+.catalog-icon-option .material-symbols-outlined { font-size: 25px; color: var(--brand); }
+.catalog-icon-option small { font: inherit; font-size: 11px; }
+.catalog-icon-option.is-selected { background: var(--control-selected); border: 2px solid var(--brand); box-shadow: 0 0 0 2px #f9dddd; }
+.catalog-icon-option:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }

@@ -6,7 +6,7 @@ import {inventoryApi,inventoryMessage,InventoryError,type StockPage,type Invento
 
 export function MovementScreen({revision=0,onSaved}:{revision?:number;onSaved?:()=>void}){
   const [open,setOpen]=useState(false),[count,setCount]=useState(0);
-  return <section className="inventory-screen"><header className="inv-page-header"><div><div className="inv-page-pretitle">OPERAÇÕES FÍSICAS</div><h1 className="inv-page-title">Movimentações</h1><p className="inv-page-desc">Registre entradas, saídas, ajustes e transferências entre a reserva e os canais.</p></div><button className="inv-btn inv-btn-primary" onClick={()=>setOpen(true)}>Nova movimentação</button></header>
+  return <section className="inventory-screen"><header className="inv-page-header"><div><div className="inv-page-pretitle">OPERAÇÕES FÍSICAS</div><h1 className="inv-page-title">Movimentações</h1><p className="inv-page-desc">Priorize entradas manuais no estoque físico. Use ajustes ou transferências para registrar alterações na reserva, Shopee e Mercado Livre.</p></div><button className="inv-btn inv-btn-primary" onClick={()=>setOpen(true)}>Nova movimentação</button></header>
     <div className="inventory-state"><span className="material-symbols-outlined" aria-hidden="true">swap_horiz</span><h2>Movimentos auditáveis por SKU</h2><p>Cada lançamento é salvo no histórico com o usuário responsável. Saídas e transferências respeitam o saldo disponível.</p></div>
     {open&&<Dialog title="Lançar movimentação" onClose={()=>setOpen(false)}><MovementForm key={count} onSaved={()=>{setOpen(false);setCount(n=>n+1);onSaved?.();}} onCancel={()=>setOpen(false)} revision={revision}/></Dialog>}
   </section>;
@@ -38,7 +38,7 @@ export function MovementForm({onSaved,onCancel,revision=0}:{onSaved:()=>void;onC
     <label>Quantidade<input type="number" min="1" step="1" value={quantity} onChange={e=>setQuantity(e.target.value)} required/></label>
     {(type==='OUTBOUND'||type==='ADJUSTMENT')&&<label>Justificativa<input maxLength={500} value={reason} onChange={e=>setReason(e.target.value)} required/></label>}
     {type==='TRANSFER'&&<label>Observação (opcional)<input maxLength={500} value={reason} onChange={e=>setReason(e.target.value)}/></label>}
-    {type==='INBOUND'&&<p className="inventory-hint">Entradas são adicionadas à reserva física.</p>}
+    {type==='INBOUND'&&<p className="inventory-hint">Esta entrada aumenta o estoque físico na reserva. Para registrar saldo destinado à Shopee ou ao Mercado Livre, use uma transferência depois da entrada.</p>}
     {page?.total===0&&<p className="inventory-hint">Cadastre uma variante ativa no Catálogo antes de movimentar estoque.</p>}
     <div className="inventory-form-actions"><button type="button" className="inv-btn inv-btn-secondary" disabled={busy} onClick={onCancel}>Cancelar</button><button type="submit" className="inv-btn inv-btn-primary" disabled={busy||!user||!variantId}>{busy?'Salvando…':'Confirmar movimentação'}</button></div>
   </form>;

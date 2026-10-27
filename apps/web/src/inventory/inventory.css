@@ -972,6 +972,11 @@
 .inventory-minimum strong { font-size:16px; }
 .inventory-minimum b { color:var(--status-danger-text); font-size:12px; }
 .inventory-minimum.is-low { color:var(--status-danger-text); }
+.inventory-register-product { background:#b4232a; color:#fff; border-color:#b4232a; box-shadow:0 2px 6px #8c161d33; font-weight:800; }
+.inventory-register-product:hover:not(:disabled) { background:#8f171d; border-color:#8f171d; }
+.inventory-register-product .material-symbols-outlined { font-size:18px; }
+.inventory-stock-identity { display:flex; align-items:center; gap:12px; min-width:0; }
+.inventory-stock-icon { display:grid; place-items:center; width:44px; height:44px; flex:none; border-radius:10px; color:var(--brand); background:var(--control-selected); font-size:26px; }
 .inventory-min-form { display:flex; align-items:flex-end; gap:8px; }
 .inventory-min-form label,.inventory-form label,.inventory-settings-card label { display:grid; gap:5px; font-size:12px; font-weight:650; }
 .inventory-min-form input,.inventory-form input,.inventory-form select,.inventory-settings-card select { min-height:38px; min-width:100px; box-sizing:border-box; padding:8px 10px; border:1px solid var(--border); border-radius:7px; background:#fff; color:var(--text); font:inherit; }

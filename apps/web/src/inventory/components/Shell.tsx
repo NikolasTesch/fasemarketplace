@@ -14,6 +14,7 @@ export function Shell({currentScreen,onNavigate,onOpenMovementModal,children}:Sh
   {id:'audit',label:'Histórico de movimentações',icon:'receipt_long'},
   ...(import.meta.env.VITE_CATALOG_ENABLED==='true'?[{id:'catalog' as const,label:'Catálogo',icon:'category'}]:[]),
   ...(user?[{id:'users' as const,label:'Usuários',icon:'group'}]:[]),
+  ...(user&&(mode===undefined||mode==='local')?[{id:'tickets' as const,label:'Bugs e melhorias',icon:'feedback'}]:[]),
   ...(import.meta.env.VITE_CATALOG_ENABLED==='true'?[{id:'settings' as const,label:'Configurações',icon:'settings'}]:[]),
   {id:'diagnostics',label:'Diagnóstico do sistema',icon:'terminal'},
  ];

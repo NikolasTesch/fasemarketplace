@@ -36,7 +36,7 @@ export class InventoryService {
     const where:Prisma.CatalogVariantWhereInput={active:true,product:{active:true},...(query.variantId?{id:query.variantId}:{}),...(literal?{OR:[{sku:{contains:literal,mode:'insensitive'}},{name:{contains:literal,mode:'insensitive'}},{product:{name:{contains:literal,mode:'insensitive'}}}]}:{})};
     const [total,variants,settings]=await Promise.all([
       this.db.catalogVariant.count({where}),
-      this.db.catalogVariant.findMany({where,skip:query.offset,take:20,orderBy:[{sku:'asc'},{id:'asc'}],include:{product:{select:{name:true}},stockPolicy:true}}),
+      this.db.catalogVariant.findMany({where,skip:query.offset,take:20,orderBy:[{sku:'asc'},{id:'asc'}],include:{product:{select:{name:true,iconName:true}},stockPolicy:true}}),
       this.db.inventorySettings.findUnique({where:{id:1}}),
     ]);
     if(!settings)throw unavailable();
@@ -45,7 +45,7 @@ export class InventoryService {
     for(const row of ledger){const rows=byVariant.get(row.variantId)??[];rows.push({sourceBucket:row.sourceBucket,destinationBucket:row.destinationBucket,quantity:row.quantity});byVariant.set(row.variantId,rows);}
     const mode=settings.mode;
     return {items:variants.map(v=>{const raw=bucketBalances(byVariant.get(v.id)??[]);const balances=projectStockBuckets(raw,mode);const minimum=v.stockPolicy?.minimumQuantity??null;
-      return {variantId:v.id,productId:v.productId,productName:v.product.name,name:v.name,sku:v.sku,...balances,minimumQuantity:minimum,minimumVersion:v.stockPolicy?.version??null,belowMinimum:isBelowMinimum(balances.total,minimum)};
+      return {variantId:v.id,productId:v.productId,productName:v.product.name,iconName:v.product.iconName,name:v.name,sku:v.sku,...balances,minimumQuantity:minimum,minimumVersion:v.stockPolicy?.version??null,belowMinimum:isBelowMinimum(balances.total,minimum)};
     }),total,offset:query.offset,limit:20,mode};
   });}
   async movements(req:Request,input:unknown){return this.read(req,async()=>{

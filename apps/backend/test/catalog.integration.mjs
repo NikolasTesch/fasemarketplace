@@ -41,6 +41,7 @@ test('catalog HTTP with real auth and PostgreSQL, only a new synthetic database'
     await app.listen(0,'0.0.0.0');const root='http://127.0.0.1:'+app.getHttpServer().address().port;
     const get=(query='',cookie='')=>fetch(root+'/catalog/products'+query,{headers:{cookie}});
     const post=(path,body,cookie='',origin=env.AUTH_ORIGIN)=>fetch(root+path,{method:'POST',headers:{cookie,origin,'content-type':'application/json'},body:JSON.stringify(body)});
+    const productBody=(body)=>({description:'Produto sintético',salePrice:'10.00',cost:'5.00',...body});
     assert.equal((await get()).status,401,'Catalog must not expose anonymous data');
     const access=app.get(LocalAccessService),password='Synthetic-Catalog-Access-2026!';
     const add=async(email,role,pending=false)=>(await access.auth.api.createUser({body:{name:'Catalog fixture',email,password,role,data:{mustChangePassword:pending}}})).user;
@@ -57,24 +58,24 @@ test('catalog HTTP with real auth and PostgreSQL, only a new synthetic database'
       assert.equal((await post('/catalog/products',{},adminCookie,'https://foreign.example')).status,403);
     });
     await t.test('atomic product/variants creation returns normalized SKUs and persists actor',async()=>{
-      const r=await post('/catalog/products',{name:' Camiseta ',description:'Treino',variants:[{name:'Preta / M',sku:' tee-m '},{name:'Preta / G',sku:'tee-g'}]},adminCookie);
-      assert.equal(r.status,201);product=await r.json();assert.equal(product.variants.length,2);assert.equal(product.variants[0].sku.startsWith('TEE-'),true);
+      const r=await post('/catalog/products',productBody({name:' Camiseta ',description:'Treino',iconName:'checkroom',variants:[{name:'Preta / M',sku:' tee-m '},{name:'Preta / G',sku:'tee-g'}]}),adminCookie);
+      assert.equal(r.status,201);product=await r.json();assert.equal(product.variants.length,2);assert.equal(product.variants[0].sku.startsWith('TEE-'),true);assert.equal(product.salePrice,'10.00');assert.equal(product.cost,'5.00');assert.equal(product.iconName,'checkroom');
       assert.equal(product.createdBy,undefined);assert.equal((await owner.query('SELECT created_by FROM business.catalog_product WHERE id=$1',[product.id])).rows[0].created_by,admin.id);
       assert.equal((await fresh()).name,'Camiseta');
     });
     await t.test('duplicates including concurrent requests and partial failure never duplicate or orphan',async()=>{
       const before=(await owner.query('SELECT count(*) FROM business.catalog_product')).rows[0].count;
-      assert.equal((await post('/catalog/products',{name:'Rollback',variants:[{name:'A',sku:'ROLLBACK-A'},{name:'B',sku:'tee-m'}]},adminCookie)).status,409);
+      assert.equal((await post('/catalog/products',productBody({name:'Rollback',variants:[{name:'A',sku:'ROLLBACK-A'},{name:'B',sku:'tee-m'}]}),adminCookie)).status,409);
       assert.equal((await owner.query('SELECT count(*) FROM business.catalog_product')).rows[0].count,before);
       assert.equal((await owner.query("SELECT count(*) FROM business.catalog_variant WHERE sku='ROLLBACK-A'")).rows[0].count,'0');
-      const body={name:'Concorrente',variants:[{name:'Padrão',sku:'CONCURRENT'}]};
+      const body=productBody({name:'Concorrente',variants:[{name:'Padrão',sku:'CONCURRENT'}]});
       const codes=await Promise.all([post('/catalog/products',body,adminCookie),post('/catalog/products',body,adminCookie)]);
       assert.deepEqual(codes.map(r=>r.status).sort(),[201,409]);
     });
     await t.test('strict body/query contracts, immutable SKU and optimistic version conflicts',async()=>{
       assert.equal((await post('/catalog/products',{name:'X',variants:[{name:'X',sku:'X'}],createdBy:'spoof'},adminCookie)).status,400);
       assert.equal((await get('?offset=0&offset=20',adminCookie)).status,400);assert.equal((await get('?limit=99999',adminCookie)).status,400);
-      const p=await fresh(),body={name:'Camiseta editada',description:'Nova',active:true,version:p.version};
+      const p=await fresh(),body={name:'Camiseta editada',description:'Nova',salePrice:'12.50',cost:'6.25',active:true,version:p.version};
       const edits=await Promise.all([post('/catalog/products/'+p.id,body,adminCookie),post('/catalog/products/'+p.id,body,adminCookie)]);
       assert.deepEqual(edits.map(r=>r.status).sort(),[200,409]);
       assert.equal((await post('/catalog/variants/'+p.variants[0].id,{name:'X',active:true,version:1,sku:'CHANGED'},adminCookie)).status,400);
@@ -85,7 +86,7 @@ test('catalog HTTP with real auth and PostgreSQL, only a new synthetic database'
       p=await fresh();const v=p.variants[0];assert.equal((await post('/catalog/variants/'+v.id,{name:v.name,active:false,version:v.version},adminCookie)).status,200);
       p=await fresh();assert.equal((await post('/catalog/products/'+p.id,{name:p.name,description:p.description,active:false,version:p.version},adminCookie)).status,200);
       p=await fresh();assert.equal(p.variants.every(v=>v.effectiveActive===false),true);
-      assert.equal((await post('/catalog/products',{name:'Cannot reuse',variants:[{name:'X',sku:v.sku}]},adminCookie)).status,409);
+      assert.equal((await post('/catalog/products',productBody({name:'Cannot reuse',variants:[{name:'X',sku:v.sku}]}),adminCookie)).status,409);
       assert.equal((await post('/catalog/products/'+p.id,{name:p.name,description:p.description,active:true,version:p.version},adminCookie)).status,200);
       assert.equal((await fresh()).variants.find(x=>x.id===v.id).active,false);
     });
@@ -97,7 +98,7 @@ test('catalog HTTP with real auth and PostgreSQL, only a new synthetic database'
       await assert.rejects(runtime.query('SELECT * FROM public.auth_user'),e=>e.code==='42501');
     });
     await t.test('limit is transactional; pagination/search are bounded and literal',async()=>{
-      const response=await post('/catalog/products',{name:'100% algodão',variants:[{name:'Padrão',sku:'LIMIT-0'}]},adminCookie),p=await response.json();assert.equal(response.status,201);
+      const response=await post('/catalog/products',productBody({name:'100% algodão',variants:[{name:'Padrão',sku:'LIMIT-0'}]}),adminCookie),p=await response.json();assert.equal(response.status,201);
       await owner.query(`INSERT INTO business.catalog_variant(id,product_id,name,sku,updated_at,created_by,updated_by)
         SELECT gen_random_uuid(),$1,'Fixture','LIMIT-'||i,now(),$2,$2 FROM generate_series(1,49) i`,[p.id,admin.id]);
       assert.equal((await post('/catalog/products/'+p.id+'/variants',{name:'Too many',sku:'LIMIT-50',version:p.version},adminCookie)).status,400);

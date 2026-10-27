@@ -12,7 +12,7 @@ function variantDto(v: Variant, parentActive: boolean) {
   return {id:v.id,productId:v.productId,name:v.name,sku:v.sku,active:v.active,effectiveActive:v.active&&parentActive,version:v.version};
 }
 function productDto(p: Product) {
-  return {id:p.id,name:p.name,description:p.description,active:p.active,version:p.version,createdAt:p.createdAt.toISOString(),
+  return {id:p.id,name:p.name,description:p.description,iconName:p.iconName,salePrice:p.salePrice?.toFixed(2)??null,cost:p.cost?.toFixed(2)??null,active:p.active,version:p.version,createdAt:p.createdAt.toISOString(),
     variantCount:p._count.variants,variants:p.variants.map(v=>variantDto(v,p.active))};
 }
 function failed(error: unknown): never {
@@ -55,7 +55,7 @@ export class CatalogService {
   create(req: Request, body: unknown) {
     return this.write(req,async actor=>{
       const data=productInput(body);
-      const p=await this.db.catalogProduct.create({data:{name:data.name,description:data.description,createdBy:actor,updatedBy:actor,
+      const p=await this.db.catalogProduct.create({data:{name:data.name,description:data.description,iconName:data.iconName,salePrice:data.salePrice,cost:data.cost,createdBy:actor,updatedBy:actor,
         variants:{create:data.variants.map(v=>({name:v.name,sku:v.sku,createdBy:actor,updatedBy:actor}))}},include});
       return productDto(p);
     });

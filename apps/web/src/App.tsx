@@ -12,6 +12,7 @@ import {StockScreen} from './inventory/StockScreen';
 import {MovementScreen,MovementForm} from './inventory/MovementScreen';
 import {MovementHistoryScreen} from './inventory/MovementHistoryScreen';
 import {InventorySettingsScreen} from './inventory/InventorySettingsScreen';
+import {TicketScreen} from './tickets/TicketScreen';
 
 export function App() {
   return import.meta.env.VITE_AUTH_ENABLED === 'true'
@@ -27,6 +28,7 @@ function InventoryApp() {
   return <Shell currentScreen={currentScreen} onNavigate={setCurrentScreen} onOpenMovementModal={()=>{if(inventoryEnabled)setMovement(true);else setCurrentScreen('movement');}}>
     {currentScreen==='catalog'&&import.meta.env.VITE_CATALOG_ENABLED==='true'&&<CatalogScreen/>}
     {currentScreen==='users'&&<AccessSettings/>}
+    {currentScreen==='tickets'&&<TicketScreen/>}
     {currentScreen==='settings'&&import.meta.env.VITE_CATALOG_ENABLED==='true'&&(inventoryEnabled?<><SettingsScreen/><InventorySettingsScreen revision={inventoryRevision}/></>:<SettingsScreen/>)}
     {currentScreen==='stock'&&(inventoryEnabled?<StockScreen revision={inventoryRevision}/>:<FeatureNotice title="Estoque físico"/>)}
     {currentScreen==='movement'&&(inventoryEnabled?<MovementScreen revision={inventoryRevision} onSaved={saved}/>:<FeatureNotice title="Movimentações"/>)}

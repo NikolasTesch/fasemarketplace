@@ -42,8 +42,8 @@ export function CatalogScreen(){
     const p=editor.product;
     if(p?.active&&!value.active&&!window.confirm('Inativar '+p.name+'? Os SKUs e o cadastro serão preservados.'))return Promise.resolve();
     return mutate(p?'/products/'+p.id:'/products',p?
-      {name:value.name,description:value.description,active:value.active,version:p.version}:
-      {name:value.name,description:value.description,variants:value.variants},p?'Produto atualizado.':'Produto e variantes cadastrados.');
+      {name:value.name,description:value.description,iconName:value.iconName,salePrice:value.salePrice,cost:value.cost,active:value.active,version:p.version}:
+      {name:value.name,description:value.description,iconName:value.iconName,salePrice:value.salePrice,cost:value.cost,variants:value.variants},p?'Produto atualizado.':'Produto e variantes cadastrados.');
   }
   function saveVariant(value:VariantDraft){
     if(editor?.kind!=='variant')return Promise.resolve();
@@ -55,7 +55,7 @@ export function CatalogScreen(){
   }
   function toggleProduct(p:CatalogProduct){
     if(p.active&&!window.confirm('Inativar '+p.name+'? Os SKUs e o cadastro serão preservados.'))return;
-    void mutate('/products/'+p.id,{name:p.name,description:p.description,active:!p.active,version:p.version},p.active?'Produto inativado.':'Produto ativado.');
+    void mutate('/products/'+p.id,{name:p.name,description:p.description,iconName:p.iconName,active:!p.active,version:p.version},p.active?'Produto inativado.':'Produto ativado.');
   }
   function toggleVariant(v:CatalogVariant){
     if(v.active&&!window.confirm('Inativar a variante '+v.sku+'? O SKU será preservado.'))return;
@@ -87,7 +87,7 @@ export function CatalogScreen(){
       {data.items.length===0&&<div className="catalog-empty"><h2>{search||status!=='all'?'Nenhum produto encontrado':'Seu catálogo começa aqui'}</h2>
         <p>{admin?'Cadastre um produto e sua primeira variante para começar.':'Nenhum cadastro disponível para consulta.'}</p></div>}
       <div className="catalog-products">{data.items.map(p=><article className="catalog-product" key={p.id} aria-label={'Produto '+p.name}>
-        <header><div className="catalog-product-identity"><span className="catalog-product-icon material-symbols-outlined" aria-hidden="true">package_2</span><div><h2>{p.name}</h2><span className={'catalog-badge '+(p.active?'is-active':'is-inactive')}>{p.active?'Produto ativo':'Produto inativo'}</span></div></div>
+        <header><div className="catalog-product-identity"><span className="catalog-product-icon material-symbols-outlined" aria-hidden="true">{p.iconName}</span><div><h2>{p.name}</h2><span className={'catalog-badge '+(p.active?'is-active':'is-inactive')}>{p.active?'Produto ativo':'Produto inativo'}</span></div></div>
           {admin&&<div className="catalog-actions"><button className="inv-btn inv-btn-secondary" aria-label={'Editar produto '+p.name} disabled={busy} onClick={()=>open({kind:'product',product:p})}>Editar produto</button>
             <button className="inv-btn inv-btn-secondary" aria-label={(p.active?'Inativar':'Ativar')+' produto '+p.name} disabled={busy} onClick={()=>toggleProduct(p)}>{p.active?'Inativar':'Ativar'} produto</button></div>}</header>
         {p.description&&<p className="catalog-description">{p.description}</p>}

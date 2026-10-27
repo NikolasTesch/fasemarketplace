@@ -107,10 +107,13 @@ PostHog está integrado ao React, API e worker para eventos explícitos e erros 
 - [SPEC-003](docs/specs/SPEC-003-hybrid-development.md): configuração Docker + Neon de desenvolvimento.
 - [SPEC-004](docs/specs/SPEC-004-hybrid-frontend.md): interface local conectada à API híbrida e ao Neon.
 - [SPEC-005](docs/specs/SPEC-005-protected-preview.md): ponte autenticada de diagnóstico para Preview.
+- [SPEC-016](docs/specs/SPEC-016-local-tickets.md): chamados locais de bugs e melhorias para usuários autenticados.
 - [Operação local](docs/operations/local-development.md): configuração, diagnóstico e evidências.
 - [Design](docs/design.md): referência visual da empresa.
 - [AGENTS.md](AGENTS.md): regras para trabalhar no projeto.
 
-Próxima fatia: especificar cadastro de SKU, escolher persistência/migrations e definir critérios de aceite, antes de implementar regras de estoque. Regras de reserva, estados de pedido e contratos de marketplace continuam exigindo validação.
+Regras de reserva, estados de pedido e contratos de marketplace continuam exigindo validação antes de serem implementados.
 
-Catálogo básico local (SPEC-011): produtos, variantes e SKUs com autenticação, persistência Prisma e permissões. Consulte o [guia do catálogo](docs/operations/basic-catalog.md). Habilitação explícita por compose.catalog.yaml; saldo/marketplaces ainda demonstrativos.
+Catálogo básico local (SPEC-011): produtos, variantes e SKUs com autenticação, persistência Prisma e permissões. Consulte o [guia do catálogo](docs/operations/basic-catalog.md). Habilitação explícita por compose.catalog.yaml; marketplaces permanecem demonstrativos.
+
+Estoque físico, movimentações e histórico reais no Docker local (SPEC-012) estão descritos em [estoque físico local](docs/operations/physical-inventory.md). Chamados locais de bugs e melhorias (SPEC-016) usam a autenticação existente e exigem migration explícita após backup/restore; consulte [acesso local](docs/operations/local-access.md). Botão de cadastro e ícones esportivos no estoque estão descritos na [SPEC-017](docs/specs/SPEC-017-product-icons-and-stock-entry.md), e preço/custo em BRL na [SPEC-018](docs/specs/SPEC-018-catalog-pricing.md); migrations permanecem pendentes de backup local. Nenhum recurso acima habilita escrita em marketplace ou publicação remota.

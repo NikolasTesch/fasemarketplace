@@ -8,6 +8,7 @@ export type ViewScreen =
   | 'audit'
   | 'stock'
   | 'movement'
+  | 'tickets'
   | 'diagnostics';
 
 export type ScreenState = 'ready' | 'loading' | 'empty' | 'error' | 'success';

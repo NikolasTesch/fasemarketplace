@@ -1,10 +1,10 @@
 # SPEC-011 — Catálogo básico: produtos, variantes e SKUs
 
-**Data:** 26/10/2026. **Estado:** aprovada pelo usuário e implementada/homologada no Docker local em 27/10/2026, após integração/publicação da SPEC-010. Evidências no [guia operacional](../operations/basic-catalog.md). Catálogo sem publicação.
+**Data:** 26/10/2026. **Estado:** aprovada pelo usuário e implementada/homologada no Docker local em 27/10/2026, após integração/publicação da SPEC-010. Evidências no [guia operacional](../operations/basic-catalog.md). Complementada pelas [SPEC-017](SPEC-017-product-icons-and-stock-entry.md) e [SPEC-018](SPEC-018-catalog-pricing.md). Catálogo sem publicação.
 
 ## Objetivo
 
-Permitir experimentar o cadastro que sustentará o estoque: criar, consultar, editar e inativar produtos e variantes persistidos. Uma empresa piloto, sem integração de marketplace, precificação, imagens, código de barras ou movimentações nesta fatia. Saldo não é campo livre de produto.
+Permitir experimentar o cadastro que sustentará o estoque: criar, consultar, editar e inativar produtos e variantes persistidos. Uma empresa piloto, sem integração de marketplace, imagens, código de barras ou publicação externa nesta fatia. Ícones esportivos e campos de preço/custo foram adicionados pelas SPEC-017/018. Saldo não é campo livre de produto.
 
 Fontes: RF-02 e linguagem de [PRD](../../prd.md), [arquitetura](../../architecture.md), [plano E03](../superpowers/plans/2026-10-24-mvp-integrations.md), [SPEC-010](SPEC-010-business-persistence.md).
 
@@ -14,7 +14,7 @@ Usuário confirmou catálogo simples com nome/descrição de produto e variantes
 
 ## Modelo e regras
 
-- Produto: UUID estável, nome obrigatório (1–120 caracteres após trim), descrição opcional (até 2000), ativo/inativo, versão para concorrência e metadados de criação/alteração.
+- Produto: UUID estável, nome obrigatório (1–120 caracteres após trim), descrição (até 2000), ícone Material Symbols com lista fechada, preço de venda e custo em BRL (ver SPEC-018), ativo/inativo, versão para concorrência e metadados de criação/alteração.
 - Variante: UUID estável, produto obrigatório, nome obrigatório (1–100), SKU obrigatório, ativo/inativo, versão e metadados de criação/alteração. Um produto simples também nasce com uma variante, sugerida como “Padrão”.
 - SKU é identificador interno da variante, independente de anúncios. Normalização aprovada: trim + maiúsculas; 1–64 caracteres ASCII, letras/números e separadores ponto, hífen e sublinhado, começando por letra/número. Exemplo `CAM-PRETA-M`. A unicidade também vale para variantes inativas; código não é reutilizado. Rejeitar caracteres invisíveis e espaços internos.
 - Nome de produto e nome de variante podem se repetir; identidade/uniquidade dependem dos UUIDs e do SKU, sem impor outra regra comercial.
