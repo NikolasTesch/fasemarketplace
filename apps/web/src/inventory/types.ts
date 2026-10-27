@@ -1,10 +1,14 @@
 export type ViewScreen =
+  | 'catalog'
+  | 'users'
+  | 'settings'
   | 'analytics'
   | 'orders'
   | 'sync'
   | 'audit'
   | 'stock'
   | 'movement'
+  | 'tickets'
   | 'diagnostics';
 
 export type ScreenState = 'ready' | 'loading' | 'empty' | 'error' | 'success';

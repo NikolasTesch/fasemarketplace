@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { telemetry } from './telemetry';
-import { Access } from './Access';
+import { Access, AccessSettings } from './Access';
+import { CatalogScreen } from './catalog/CatalogScreen';
 
 import './inventory/inventory.css';
-import type { ViewScreen, SkuStockItem } from './inventory/types';
-import { initialStockItems } from './inventory/mock-data';
+import type { ViewScreen } from './inventory/types';
 import { Shell } from './inventory/components/Shell';
-import { MovementModal } from './inventory/components/MovementModal';
-import { StockScreen } from './inventory/screens/StockScreen';
-import { OrdersScreen } from './inventory/screens/OrdersScreen';
-import { SyncScreen } from './inventory/screens/SyncScreen';
-import { AuditScreen } from './inventory/screens/AuditScreen';
-import { AnalyticsScreen } from './inventory/screens/AnalyticsScreen';
-import { MovementScreen } from './inventory/screens/MovementScreen';
+import {Dialog} from './Dialog';
+import {SettingsScreen} from './settings/SettingsScreen';
+import {StockScreen} from './inventory/StockScreen';
+import {MovementScreen,MovementForm} from './inventory/MovementScreen';
+import {MovementHistoryScreen} from './inventory/MovementHistoryScreen';
+import {InventorySettingsScreen} from './inventory/InventorySettingsScreen';
+import {TicketScreen} from './tickets/TicketScreen';
 
 export function App() {
   return import.meta.env.VITE_AUTH_ENABLED === 'true'
@@ -21,110 +21,24 @@ export function App() {
 }
 
 function InventoryApp() {
-  const [currentScreen, setCurrentScreen] = useState<ViewScreen>('stock');
-  const [stockItems, setStockItems] = useState<SkuStockItem[]>(initialStockItems);
-  const [isMovementModalOpen, setIsMovementModalOpen] = useState(false);
-  const [feedbackBanner, setFeedbackBanner] = useState('');
-
-  function handleMovementCreated(movement: {
-    sku: string;
-    productName: string;
-    type: 'ENTRADA' | 'SAIDA' | 'AJUSTE';
-    quantity: number;
-    reason: string;
-    documentRef: string;
-    operator: string;
-    notes: string;
-  }) {
-    setStockItems((prev) =>
-      prev.map((it) => {
-        if (it.sku === movement.sku) {
-          let newPhysical = it.physicalStock;
-          if (movement.type === 'ENTRADA') newPhysical += movement.quantity;
-          else if (movement.type === 'SAIDA') newPhysical = Math.max(0, newPhysical - movement.quantity);
-          else newPhysical = Math.max(0, movement.quantity);
-
-          // PRD Invariant: Available = max(0, physical - reserved - margin)
-          const newAvailable = Math.max(0, newPhysical - it.reservedStock - it.safetyMargin);
-
-          return {
-            ...it,
-            physicalStock: newPhysical,
-            availableStock: newAvailable,
-            lastUpdated: 'agora mesmo',
-            channelStatus: {
-              ml: { ...it.channelStatus.ml, observedStock: newAvailable },
-              shopee: { ...it.channelStatus.shopee, observedStock: newAvailable },
-            },
-          };
-        }
-        return it;
-      })
-    );
-
-    setFeedbackBanner(
-      `Movimentação física de ${movement.quantity} un no SKU ${movement.sku} processada com sucesso. Disponibilidade multicanal recalculada.`
-    );
-    setTimeout(() => setFeedbackBanner(''), 6000);
-  }
-
-  return (
-    <Shell
-      currentScreen={currentScreen}
-      onNavigate={setCurrentScreen}
-      onOpenMovementModal={() => setIsMovementModalOpen(true)}
-    >
-      {feedbackBanner && (
-        <div className="inv-banner-success" role="status">
-          <span>{feedbackBanner}</span>
-          <button
-            type="button"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}
-            onClick={() => setFeedbackBanner('')}
-          >
-            ✕
-          </button>
-        </div>
-      )}
-
-      {currentScreen === 'stock' && (
-        <StockScreen
-          stockItems={stockItems}
-          onOpenMovementModal={() => setIsMovementModalOpen(true)}
-          onNavigateToAudit={() => setCurrentScreen('audit')}
-        />
-      )}
-
-      {currentScreen === 'orders' && <OrdersScreen />}
-
-      {currentScreen === 'sync' && <SyncScreen />}
-
-      {currentScreen === 'audit' && (
-        <AuditScreen onOpenMovementModal={() => setIsMovementModalOpen(true)} />
-      )}
-
-      {currentScreen === 'analytics' && <AnalyticsScreen />}
-
-      {currentScreen === 'movement' && (
-        <MovementScreen
-          stockItems={stockItems}
-          onMovementCreated={handleMovementCreated}
-          onNavigateToStock={() => setCurrentScreen('stock')}
-        />
-      )}
-
-      {currentScreen === 'diagnostics' && (
-        <Diagnostics onBack={() => setCurrentScreen('stock')} />
-      )}
-
-      <MovementModal
-        isOpen={isMovementModalOpen}
-        onClose={() => setIsMovementModalOpen(false)}
-        stockItems={stockItems}
-        onMovementCreated={handleMovementCreated}
-      />
-    </Shell>
-  );
+  const [currentScreen,setCurrentScreen]=useState<ViewScreen>(import.meta.env.VITE_CATALOG_ENABLED==='true'?'stock':'diagnostics');
+  const [movement,setMovement]=useState(false),[inventoryRevision,setInventoryRevision]=useState(0);
+  const inventoryEnabled=import.meta.env.VITE_INVENTORY_ENABLED==='true';
+  const saved=()=>setInventoryRevision(value=>value+1);
+  return <Shell currentScreen={currentScreen} onNavigate={setCurrentScreen} onOpenMovementModal={()=>{if(inventoryEnabled)setMovement(true);else setCurrentScreen('movement');}}>
+    {currentScreen==='catalog'&&import.meta.env.VITE_CATALOG_ENABLED==='true'&&<CatalogScreen/>}
+    {currentScreen==='users'&&<AccessSettings/>}
+    {currentScreen==='tickets'&&<TicketScreen/>}
+    {currentScreen==='settings'&&import.meta.env.VITE_CATALOG_ENABLED==='true'&&(inventoryEnabled?<><SettingsScreen/><InventorySettingsScreen revision={inventoryRevision}/></>:<SettingsScreen/>)}
+    {currentScreen==='stock'&&(inventoryEnabled?<StockScreen revision={inventoryRevision}/>:<FeatureNotice title="Estoque físico"/>)}
+    {currentScreen==='movement'&&(inventoryEnabled?<MovementScreen revision={inventoryRevision} onSaved={saved}/>:<FeatureNotice title="Movimentações"/>)}
+    {currentScreen==='audit'&&(inventoryEnabled?<MovementHistoryScreen revision={inventoryRevision}/>:<FeatureNotice title="Histórico de movimentações"/>)}
+    {currentScreen==='diagnostics'&&<Diagnostics/>}
+    {movement&&<Dialog title="Lançar movimentação" onClose={()=>setMovement(false)}><MovementForm revision={inventoryRevision} onSaved={()=>{setMovement(false);saved();}} onCancel={()=>setMovement(false)}/></Dialog>}
+  </Shell>;
+}
+function FeatureNotice({title}:{title:string}){
+  return <><div className="inv-page-header"><div><div className="inv-page-pretitle">ESTOQUE FÍSICO</div><h1 className="inv-page-title">{title}</h1></div></div><section className="workspace-unavailable"><span className="material-symbols-outlined" aria-hidden="true">inventory_2</span><h2>Integração local ainda desativada</h2><p>Esta área só fica disponível no ambiente Docker local após a migração e ativação do estoque físico.</p></section></>;
 }
 
 type ApiStatus = 'loading' | 'ready' | 'unavailable';

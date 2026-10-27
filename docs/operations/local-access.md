@@ -89,3 +89,16 @@ docker run --rm --network fasemarketplace-local_local --env-file .env.access-tes
 ```
 
 Execute integração e smoke do navegador em sequência se compartilharem o banco descartável: a integração limpa suas fixtures e revoga suas sessões. As portas 4573/4574 e os containers temporários usados no ensaio já foram encerrados; a aplicação local permanente permanece em 4173/4174.
+
+## Chamados de bugs e melhorias (SPEC-016)
+
+Os chamados estão disponíveis somente com autenticação local habilitada. Antes de alterar o banco persistente, faça um backup criptografado validado e restaure-o em quarentena, conforme a [SPEC-010](../specs/SPEC-010-business-persistence.md) e [guia da persistência](business-persistence.md). A integração desta branch inclui migrations 002, 003 e 004, sem aplicá-las ao banco atual.
+
+Depois do preflight/backup e conferência do alvo Docker local, aplique de forma explícita:
+
+```powershell
+docker compose build api
+docker compose run --rm --no-deps -T api node scripts/tickets-local.mjs migrate
+```
+
+O comando confere os checksums e recusa destino remoto ou autenticação desativada. Migrations 002/003 mantêm o checksum original; 004 amplia as telas aceitas para Catálogo, Usuários e Configurações. A API não migra automaticamente e armazena imagens no PostgreSQL local, limitadas a 5 MiB por chamado. O botão **Bugs e melhorias** aparece após login.

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"focus-ring":"#1F5EFF","on-surface-variant":"#5c403c","border":"#E2E2E8","on-error":"#ffffff","on-surface":"#1c1b1b","surface-container-lowest":"#ffffff","on-primary-fixed-variant":"#93000b","tertiary-fixed":"#a3f5b6","on-tertiary-fixed":"#00210d","surface-dim":"#dcd9d9","status-info-text":"#24559A","on-secondary-fixed":"#001550","control-selected":"#FFF1F1","on-background":"#1c1b1b","surface-bright":"#fcf9f8","brand-dark":"#A51117","tertiary":"#005a2c","on-primary-fixed":"#410002","status-success-text":"#176B3A","primary":"#9f000d","outline":"#916f6b","muted":"#676767","on-tertiary":"#ffffff","inverse-on-surface":"#f3f0ef","secondary-container":"#1d5dfe","inverse-primary":"#ffb4ab","tertiary-fixed-dim":"#88d89c","primary-fixed-dim":"#ffb4ab","status-warning-text":"#8A4D00","on-tertiary-container":"#a4f5b7","nav-active-bg":"#FFF0F0","secondary-fixed-dim":"#b6c4ff","on-error-container":"#93000a","surface-container-low":"#f6f3f2","table-row-hover":"#FAFAFB","primary-container":"#c9151b","status-warning-bg":"#FFF1DF","error":"#ba1a1a","surface":"#FFFFFF","on-secondary-container":"#eeefff","error-container":"#ffdad6","primary-fixed":"#ffdad6","surface-container":"#f0eded","status-info-bg":"#EEF4FF","on-primary":"#ffffff","surface-variant":"#e5e2e1","inverse-surface":"#313030","background":"#F6F6F8","status-success-bg":"#E9F7EE","secondary-fixed":"#dce1ff","secondary":"#0046d2","surface-tint":"#bf0815","control-disabled":"#F1F1F4","on-primary-container":"#ffdbd7","outline-variant":"#e6bdb8","surface-container-highest":"#e5e2e1","surface-container-high":"#eae7e7","on-tertiary-fixed-variant":"#005228","on-secondary":"#ffffff","control-danger-hover":"#FDE8E8","control-danger-border":"#E9B4B6","on-secondary-fixed-variant":"#003ab2","tertiary-container":"#227341"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin":"1rem","margin-tablet":"1.25rem","space-xs":"0.25rem","space-md":"0.75rem","gutter":"1rem","gutter-desktop":"1.5rem","space-lg":"1.375rem","margin-desktop":"2.25rem","space-xl":"1.5rem","space-sm":"0.4375rem"},"fontFamily":{"body-lg":["Inter"],"body-md":["Inter"],"headline-md":["Inter"],"label-button":["Inter"],"headline-lg":["Inter"],"label-lg":["Inter"],"headline-lg-mobile":["Inter"],"overline-id":["Inter"],"headline-sm":["Inter"],"label-sm":["Inter"],"body-sm":["Inter"],"label-md":["Inter"],"caption-table":["Inter"]},"fontSize":{"body-lg":["14px",{"lineHeight":"21px","fontWeight":"400"}],"body-md":["13px",{"lineHeight":"20px","fontWeight":"400"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.03em","fontWeight":"700"}],"label-button":["12px",{"lineHeight":"16px","fontWeight":"750"}],"headline-lg":["30px",{"lineHeight":"36px","letterSpacing":"-0.04em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"18px","fontWeight":"650"}],"headline-lg-mobile":["25px",{"lineHeight":"30px","letterSpacing":"-0.03em","fontWeight":"700"}],"overline-id":["10px",{"lineHeight":"14px","letterSpacing":"0.12em","fontWeight":"700"}],"headline-sm":["16px",{"lineHeight":"22px","letterSpacing":"-0.02em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"16px","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"650"}],"caption-table":["10px",{"lineHeight":"14px","letterSpacing":"0.08em","fontWeight":"650"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface min-h-screen antialiased"><aside class="fixed left-0 top-0 h-screen w-[236px] bg-surface z-50 flex flex-col justify-between border-r border-border box-border pt-[30px] px-[18px] pb-[20px]"><div class="flex flex-col w-full"><div class="w-full flex items-center mb-6"><img alt="Fase Sport Logo" class="w-[170px] h-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WBLdwl51OXKbo36bN-UwaZN3Ynq5CVET_AwmQEsGml9PDsZfCok6oIv_zc1mvhFA0xlNtQ1ux0T3470BPP8WHhi2EZ9OfSL59ktjif8VQ46C4XEoX0fIXwfvhj6cbs-gdwGqlr2VPa4LCh5qwhadv11U_C5sY1bT5jW_LHXR8BRNetUSE-3DNfZJ-GYAJW9GWJDzTiwVdKzQEb9jEiVnOHOV2M6637xErQNDEmIK6EAFi-fuWC8P2T"/></div><div class="mb-5"><span class="font-overline-id text-overline-id text-muted uppercase tracking-wider block">GESTÃO DE ESTOQUE</span></div><div class="mb-6"><button class="w-full h-10 bg-primary-container hover:bg-brand-dark text-on-primary font-label-button text-label-button rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer" type="button"><span class="material-symbols-outlined text-base">add</span><span>+ Lançar movimentação</span></button></div><nav class="flex flex-col gap-1 w-full" data-active-classes="bg-nav-active-bg text-primary-container font-label-lg border-l-[3px] border-primary-container"><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors gap-3" data-path="estoque-e-saldos" href="#"><span class="material-symbols-outlined text-[18px]">inventory_2</span><span>Estoque e Saldos</span></a><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors gap-3" data-path="vinculos-de-anuncios" href="#"><span class="material-symbols-outlined text-[18px]">link</span><span>Vínculos de Anúncios</span></a><a aria-current="page" class="flex items-center h-[38px] px-[14px] rounded-lg transition-colors gap-3 bg-nav-active-bg text-primary-container font-label-lg border-l-[3px] border-primary-container" data-path="pedidos-e-reservas" href="#"><span class="material-symbols-outlined text-[18px]">shopping_bag</span><span>Pedidos e Reservas</span></a><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors gap-3" data-path="sincronizacao-e-alertas" href="#"><span class="material-symbols-outlined text-[18px]">sync_problem</span><span>Sincronização e Alertas</span></a><a class="flex items-center h-[38px] px-[14px] rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors gap-3" data-path="historico-e-auditoria" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span>Histórico e Auditoria</span></a></nav></div><div class="pt-4 border-t border-border flex flex-col gap-1"><span class="font-label-sm text-label-sm text-muted">Fase Sport - Operações de Estoque</span><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-status-success-text"></span><span class="font-label-sm text-label-sm text-status-success-text font-medium">Conexões ativas</span></div></div></aside><div class="pl-[236px] min-h-screen flex flex-col"><header class="fixed top-0 left-[236px] right-0 h-[72px] bg-surface/90 backdrop-blur-xl border-b border-border z-40 flex items-center justify-between px-margin-desktop"><div class="flex items-center gap-4"><div><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight uppercase font-bold">FASE ESTOQUE</h1><p class="font-body-sm text-body-sm text-muted">Controle multicanal Mercado Livre & Shopee</p></div></div><div class="flex items-center gap-space-lg"><div class="hidden lg:flex items-center gap-2"><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-status-success-bg border border-border"><span class="w-1.5 h-1.5 rounded-full bg-status-success-text"></span><span class="font-label-sm text-label-sm text-status-success-text font-semibold">ML: Ativo</span></div><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-status-success-bg border border-border"><span class="w-1.5 h-1.5 rounded-full bg-status-success-text"></span><span class="font-label-sm text-label-sm text-status-success-text font-semibold">Shopee: Ativo</span></div></div><div class="h-5 w-px bg-border hidden sm:block"></div><button aria-label="Notificações" class="relative p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary-container"></span></button><div class="flex items-center gap-3 pl-2"><div class="text-right hidden sm:block"><span class="font-label-md text-label-md text-on-surface block font-bold">Nikolas Dias</span><span class="font-label-sm text-label-sm text-muted block">Gerente de Operações</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover border border-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvw6QJVJ7zeZLXk-mBEs-ssJ2wT-OzeB6y3A3EHNsnEoKt2e_Rp4HYMLMlbA2OujVMU5RQui_CO892rG-rqdfkFn73ivaLiAvZMkLGBw5X4Ao1o0lAPZ_kbEOknN2jlAfyTrkVLndu1VFlvHyxsR_wCESCyS9jN1woG1u7d3CoJYe3MBP64OEfDdnQfm5b8Je9pIqsyXZ_-cW8Sg6SmokhNmyg-rcYzN0EBkeB2GLKOiBBHHnUnt0"/></div></div></header><main class="w-full pt-[72px] bg-background flex-1"><div class="max-w-[1440px] mx-auto px-margin-desktop py-space-xl"><div class="flex flex-col w-full">
+<!-- Sub-header / Page Title Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-border">
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-widest">FLUXO DE EXPEDIÇÃO & RESERVAS</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">Pedidos e Reservas de Estoque</h2>
+<p class="font-body-md text-body-md text-muted mt-1 max-w-3xl">Acompanhe as reservas ativas geradas pelos marketplaces e controle a baixa física por expedição sem duplicidade.</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="h-10 px-4 bg-surface hover:bg-surface-container border border-border text-on-surface font-label-button text-label-button rounded-lg flex items-center gap-2 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-muted">date_range</span>
+<span>Filtrar por Período</span>
+</button>
+<button class="h-10 px-4 bg-primary-container hover:bg-brand-dark text-on-primary font-label-button text-label-button rounded-lg flex items-center gap-2 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>+ Conferência de Expedição</span>
+</button>
+</div>
+</div>
+<!-- 4 KPI Cards with signature red top bar -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg my-6">
+<!-- Card 1 -->
+<div class="bg-surface rounded-xl p-space-lg border border-border shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-[22px] w-[36px] h-[3px] bg-primary-container rounded-b-sm"></div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider">PEDIDOS EM ABERTO (HOJE)</span>
+<span class="p-1.5 rounded-lg bg-surface-container text-muted flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">inbox</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">48</span>
+<span class="font-label-sm text-label-sm text-muted font-medium">pedidos</span>
+</div>
+<p class="font-body-sm text-body-sm text-muted mt-0.5">Importados e aguardando processamento</p>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface rounded-xl p-space-lg border border-border shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-[22px] w-[36px] h-[3px] bg-primary-container rounded-b-sm"></div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider">UNIDADES RESERVADAS</span>
+<span class="p-1.5 rounded-lg bg-status-info-bg text-status-info-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">lock_clock</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">114</span>
+<span class="font-label-sm text-label-sm text-muted font-medium">itens</span>
+</div>
+<p class="font-body-sm text-body-sm text-status-info-text font-medium mt-0.5">Comprometidos no saldo multicanal</p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface rounded-xl p-space-lg border border-border shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-[22px] w-[36px] h-[3px] bg-primary-container rounded-b-sm"></div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider">PRONTOS P/ EXPEDIÇÃO</span>
+<span class="p-1.5 rounded-lg bg-status-success-bg text-status-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">36</span>
+<span class="font-label-sm text-label-sm text-muted font-medium">pedidos</span>
+</div>
+<p class="font-body-sm text-body-sm text-status-success-text font-medium mt-0.5">Reserva garantida para bipagem física</p>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface rounded-xl p-space-lg border border-border shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-[22px] w-[36px] h-[3px] bg-primary-container rounded-b-sm"></div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-overline-id text-overline-id text-muted uppercase tracking-wider">DEMANDA DESCOBERTA (FALTA)</span>
+<span class="p-1.5 rounded-lg bg-status-success-bg text-status-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">gpp_good</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">0</span>
+<span class="font-label-sm text-label-sm text-status-success-text font-medium">ocorrências</span>
+</div>
+<p class="font-body-sm text-body-sm text-status-success-text font-medium mt-0.5">Status 100% coberto pelo estoque físico</p>
+</div>
+</div>
+</div>
+<!-- Flow Status Navigation Tabs -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1 mb-4 border-b border-border scrollbar-none">
+<button class="flex items-center gap-2 py-2.5 px-3.5 border-b-2 border-primary-container text-primary-container font-label-lg text-label-lg font-bold shrink-0" type="button">
+<span>Todos os Pedidos</span>
+<span class="px-2 py-0.5 rounded-full bg-nav-active-bg text-primary font-caption-table text-caption-table font-bold">48</span>
+</button>
+<button class="flex items-center gap-2 py-2.5 px-3.5 border-b-2 border-transparent text-muted hover:text-on-surface font-label-lg text-label-lg font-medium transition-colors shrink-0" type="button">
+<span>Aguardando Separação</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-muted font-caption-table text-caption-table font-bold">12</span>
+</button>
+<button class="flex items-center gap-2 py-2.5 px-3.5 border-b-2 border-transparent text-muted hover:text-on-surface font-label-lg text-label-lg font-medium transition-colors shrink-0" type="button">
+<span>Reservados / Prontos</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-muted font-caption-table text-caption-table font-bold">36</span>
+</button>
+<button class="flex items-center gap-2 py-2.5 px-3.5 border-b-2 border-transparent text-muted hover:text-on-surface font-label-lg text-label-lg font-medium transition-colors shrink-0" type="button">
+<span>Expedidos Hoje</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-muted font-caption-table text-caption-table font-bold">82</span>
+</button>
+<button class="flex items-center gap-2 py-2.5 px-3.5 border-b-2 border-transparent text-muted hover:text-on-surface font-label-lg text-label-lg font-medium transition-colors shrink-0" type="button">
+<span>Cancelamentos / Devoluções</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-muted font-caption-table text-caption-table font-bold">3</span>
+</button>
+</div>
+<!-- Filter Bar -->
+<div class="bg-surface rounded-xl p-3.5 border border-border shadow-sm flex flex-wrap lg:flex-nowrap items-center gap-3 mb-6">
+<div class="relative flex-1 min-w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-muted">search</span>
+<input class="w-full h-10 pl-9 pr-3 text-body-md font-body-md bg-surface border border-border rounded-lg placeholder-muted focus:outline-none focus:border-focus-ring" placeholder="Buscar por número do pedido, cliente ou código de rastreio..." type="text"/>
+</div>
+<div class="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+<div class="flex items-center gap-2">
+<label class="font-label-md text-label-md text-muted whitespace-nowrap">Canal:</label>
+<select class="h-10 px-3 bg-surface border border-border rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-focus-ring cursor-pointer">
+<option>Todos os Canais</option>
+<option>Mercado Livre</option>
+<option>Shopee</option>
+</select>
+</div>
+<div class="flex items-center gap-2">
+<label class="font-label-md text-label-md text-muted whitespace-nowrap">Status Reserva:</label>
+<select class="h-10 px-3 bg-surface border border-border rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-focus-ring cursor-pointer">
+<option>Todos os Status</option>
+<option>Reserva Efetivada</option>
+<option>Reserva Provisória</option>
+<option>Reserva Consumida</option>
+<option>Reserva Liberada</option>
+</select>
+</div>
+<div class="flex items-center gap-2">
+<label class="font-label-md text-label-md text-muted whitespace-nowrap">Data:</label>
+<div class="relative">
+<input class="h-10 px-3 bg-surface border border-border rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-focus-ring cursor-pointer" type="date" value="2026-10-23"/>
+</div>
+</div>
+<button class="h-10 px-3 bg-surface-container hover:bg-surface-variant text-on-surface rounded-lg font-label-md text-label-md flex items-center justify-center transition-colors cursor-pointer" title="Limpar Filtros" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+</button>
+</div>
+</div>
+<!-- Operational Orders Table Container -->
+<div class="bg-surface rounded-xl border border-border shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface border-b border-border h-10 text-muted font-caption-table text-caption-table tracking-wider uppercase">
+<th class="py-2 px-4 whitespace-nowrap">NÚMERO DO PEDIDO</th>
+<th class="py-2 px-3 whitespace-nowrap">CANAL</th>
+<th class="py-2 px-3 whitespace-nowrap">DATA & HORA</th>
+<th class="py-2 px-3 whitespace-nowrap">CLIENTE</th>
+<th class="py-2 px-4 whitespace-nowrap">ITENS & SKU</th>
+<th class="py-2 px-3 whitespace-nowrap text-right">QTD RESERVADA</th>
+<th class="py-2 px-3 whitespace-nowrap">STATUS DO PEDIDO</th>
+<th class="py-2 px-3 whitespace-nowrap">STATUS DA RESERVA</th>
+<th class="py-2 px-4 whitespace-nowrap text-right">AÇÕES</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border font-body-md text-body-md">
+<!-- Row 1 -->
+<tr class="hover:bg-table-row-hover transition-colors">
+<td class="py-3 px-4 font-label-md text-label-md font-bold text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-muted">receipt_long</span>
+<span class="font-mono text-on-surface">PED-ML-8819203</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 font-label-md text-label-md font-medium text-on-surface">
+<span class="w-2 h-2 rounded-full bg-[#FFE600] inline-block shadow-sm"></span>
+<span>Mercado Livre</span>
+</span>
+</td>
+<td class="py-3 px-3 text-muted text-body-sm whitespace-nowrap">
+              23/10/2026 <span class="text-on-surface font-medium">14:22</span>
+</td>
+<td class="py-3 px-3 font-medium text-on-surface whitespace-nowrap">
+              Rodrigo Mendonça
+            </td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-mono text-body-sm font-semibold text-on-surface">FS-CAM-DRY-BLK-M</span>
+<span class="text-label-sm text-muted">Camiseta Dry Fit Preta (M)</span>
+</div>
+</td>
+<td class="py-3 px-3 text-right tabular-nums font-bold text-on-surface">
+              2 un
+            </td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-status-info-bg text-status-info-text border border-status-info-text/20">
+<span class="w-1.5 h-1.5 rounded-full bg-status-info-text"></span>
+                Pago / Aprovado
+              </span>
+</td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-status-success-bg text-status-success-text border border-status-success-text/20">
+<span class="material-symbols-outlined text-[13px]">lock</span>
+                Reserva Efetivada
+              </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-2">
+<button class="h-8 px-2.5 bg-primary-container hover:bg-brand-dark text-on-primary font-label-button text-label-button rounded-md flex items-center gap-1 transition-colors cursor-pointer shadow-sm" type="button">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+<span>Confirmar Expedição</span>
+</button>
+<button class="h-8 px-2.5 bg-surface hover:bg-surface-container border border-border text-on-surface font-label-md text-label-md rounded-md flex items-center gap-1 transition-colors cursor-pointer" type="button">
+<span>Ver Itens</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-table-row-hover transition-colors">
+<td class="py-3 px-4 font-label-md text-label-md font-bold text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-muted">receipt_long</span>
+<span class="font-mono text-on-surface">PED-SHP-1092831</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 font-label-md text-label-md font-medium text-on-surface">
+<span class="w-2 h-2 rounded-full bg-[#EE4D2D] inline-block shadow-sm"></span>
+<span>Shopee</span>
+</span>
+</td>
+<td class="py-3 px-3 text-muted text-body-sm whitespace-nowrap">
+              23/10/2026 <span class="text-on-surface font-medium">13:45</span>
+</td>
+<td class="py-3 px-3 font-medium text-on-surface whitespace-nowrap">
+              Juliana Costa e Silva
+            </td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-mono text-body-sm font-semibold text-on-surface">FS-SHR-RUN-NVY-G</span>
+<span class="text-label-sm text-muted">Shorts Corrida Marinho (G)</span>
+</div>
+</td>
+<td class="py-3 px-3 text-right tabular-nums font-bold text-on-surface">
+              1 un
+            </td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-status-info-bg text-status-info-text border border-status-info-text/20">
+<span class="w-1.5 h-1.5 rounded-full bg-status-info-text"></span>
+                Pago / Aprovado
+              </span>
+</td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-status-success-bg text-status-success-text border border-status-success-text/20">
+<span class="material-symbols-outlined text-[13px]">lock</span>
+                Reserva Efetivada
+              </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-2">
+<button class="h-8 px-2.5 bg-primary-container hover:bg-brand-dark text-on-primary font-label-button text-label-button rounded-md flex items-center gap-1 transition-colors cursor-pointer shadow-sm" type="button">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+<span>Confirmar Expedição</span>
+</button>
+<button class="h-8 px-2.5 bg-surface hover:bg-surface-container border border-border text-on-surface font-label-md text-label-md rounded-md flex items-center gap-1 transition-colors cursor-pointer" type="button">
+<span>Ver Itens</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-table-row-hover transition-colors bg-surface-container-low/40">
+<td class="py-3 px-4 font-label-md text-label-md font-bold text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-muted">receipt_long</span>
+<span class="font-mono text-on-surface">PED-ML-8819190</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 font-label-md text-label-md font-medium text-on-surface">
+<span class="w-2 h-2 rounded-full bg-[#FFE600] inline-block shadow-sm"></span>
+<span>Mercado Livre</span>
+</span>
+</td>
+<td class="py-3 px-3 text-muted text-body-sm whitespace-nowrap">
+              23/10/2026 <span class="text-on-surface font-medium">12:10</span>
+</td>
+<td class="py-3 px-3 font-medium text-on-surface whitespace-nowrap">
+              Felipe Alencar
+            </td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-mono text-body-sm font-semibold text-on-surface">FS-AGK-TRN-RED-M</span>
+<span class="text-label-sm text-muted">Agasalho Treino Vermelho (M)</span>
+</div>
+</td>
+<td class="py-3 px-3 text-right tabular-nums font-bold text-on-surface">
+              1 un
+            </td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-status-success-bg text-status-success-text border border-status-success-text/20">
+<span class="material-symbols-outlined text-[13px]">check</span>
+                Expedido
+              </span>
+</td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-surface-container text-muted border border-border">
+<span class="material-symbols-outlined text-[13px]">inventory_2</span>
+                Reserva Consumida / Baixa Fís.
+              </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end">
+<button class="h-8 px-3 bg-surface hover:bg-surface-container border border-border text-on-surface font-label-md text-label-md rounded-md flex items-center gap-1.5 transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px] text-muted">assignment_turned_in</span>
+<span>Ver Comprovante</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-table-row-hover transition-colors">
+<td class="py-3 px-4 font-label-md text-label-md font-bold text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-muted">receipt_long</span>
+<span class="font-mono text-on-surface">PED-SHP-1092770</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 font-label-md text-label-md font-medium text-on-surface">
+<span class="w-2 h-2 rounded-full bg-[#EE4D2D] inline-block shadow-sm"></span>
+<span>Shopee</span>
+</span>
+</td>
+<td class="py-3 px-3 text-muted text-body-sm whitespace-nowrap">
+              23/10/2026 <span class="text-on-surface font-medium">11:30</span>
+</td>
+<td class="py-3 px-3 font-medium text-on-surface whitespace-nowrap">
+              Camila Fernandes
+            </td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-mono text-body-sm font-semibold text-on-surface">FS-REG-BAS-GRY-P</span>
+<span class="text-label-sm text-muted">Regata Básica Cinza (P)</span>
+</div>
+</td>
+<td class="py-3 px-3 text-right tabular-nums font-bold text-on-surface">
+              3 un
+            </td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-status-warning-bg text-status-warning-text border border-status-warning-text/20">
+<span class="material-symbols-outlined text-[13px]">hourglass_top</span>
+                Aguardando Pagamento
+              </span>
+</td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-status-warning-bg text-status-warning-text border border-status-warning-text/20">
+<span class="material-symbols-outlined text-[13px]">pending</span>
+                Reserva Provisória
+              </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end">
+<button class="h-8 px-3 bg-surface hover:bg-surface-container border border-border text-on-surface font-label-md text-label-md rounded-md flex items-center gap-1 transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px] text-muted">visibility</span>
+<span>Detalhes</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-table-row-hover transition-colors opacity-80">
+<td class="py-3 px-4 font-label-md text-label-md font-bold text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-muted">receipt_long</span>
+<span class="font-mono text-on-surface">PED-ML-8819004</span>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 font-label-md text-label-md font-medium text-on-surface">
+<span class="w-2 h-2 rounded-full bg-[#FFE600] inline-block shadow-sm"></span>
+<span>Mercado Livre</span>
+</span>
+</td>
+<td class="py-3 px-3 text-muted text-body-sm whitespace-nowrap">
+              23/10/2026 <span class="text-on-surface font-medium">09:15</span>
+</td>
+<td class="py-3 px-3 font-medium text-on-surface whitespace-nowrap">
+              Marcos Vinicius Barros
+            </td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-mono text-body-sm font-semibold text-on-surface">FS-CAM-DRY-BLK-G</span>
+<span class="text-label-sm text-muted">Camiseta Dry Fit Preta (G)</span>
+</div>
+</td>
+<td class="py-3 px-3 text-right tabular-nums font-bold text-on-surface">
+              1 un
+            </td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-control-danger-hover text-brand-dark border border-control-danger-border">
+<span class="material-symbols-outlined text-[13px]">cancel</span>
+                Cancelado pelo Comprador
+              </span>
+</td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-surface-container text-muted border border-border">
+<span class="material-symbols-outlined text-[13px]">lock_open</span>
+                Reserva Liberada
+              </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end">
+<button class="h-8 px-3 bg-surface hover:bg-surface-container border border-border text-on-surface font-label-md text-label-md rounded-md flex items-center gap-1 transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px] text-muted">history</span>
+<span>Histórico</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination / Status Count -->
+<div class="p-3.5 bg-surface border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm font-body-sm text-muted">
+<div class="flex items-center gap-2">
+<span>Exibindo <strong>5</strong> de <strong>48</strong> pedidos ativos</span>
+<span class="text-border">|</span>
+<span class="inline-flex items-center gap-1 text-status-success-text font-medium">
+<span class="w-2 h-2 rounded-full bg-status-success-text"></span>
+          Fila de sincronização sincronizada há 12s
+        </span>
+</div>
+<div class="flex items-center gap-1">
+<button class="h-8 px-3 bg-surface border border-border rounded-lg text-muted hover:text-on-surface disabled:opacity-40" disabled="" type="button">Anterior</button>
+<button class="h-8 w-8 bg-primary-container text-on-primary font-bold rounded-lg flex items-center justify-center text-label-sm" type="button">1</button>
+<button class="h-8 w-8 bg-surface border border-border rounded-lg text-on-surface hover:bg-surface-container flex items-center justify-center text-label-sm" type="button">2</button>
+<button class="h-8 w-8 bg-surface border border-border rounded-lg text-on-surface hover:bg-surface-container flex items-center justify-center text-label-sm" type="button">3</button>
+<button class="h-8 px-3 bg-surface border border-border rounded-lg text-on-surface hover:bg-surface-container" type="button">Próximo</button>
+</div>
+</div>
+</div>
+<!-- Operational Invariant Rules Explanatory Card -->
+<div class="mt-6 p-4 rounded-xl bg-surface-container-low border border-border flex items-start gap-3.5">
+<div class="p-2 rounded-lg bg-primary-container text-on-primary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">shield</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-bold text-on-surface flex items-center gap-2">
+        Regra de Integridade de Estoque & Baixa Multicanal
+        <span class="px-2 py-0.5 rounded-full bg-status-info-bg text-status-info-text font-caption-table text-caption-table font-semibold uppercase">Invariante Operacional</span>
+</span>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+<strong>Invariante:</strong> O pagamento confirmado garante a retenção do saldo por meio de <strong>Reserva Efetivada</strong> e <em>não gera segunda baixa de estoque</em>. A baixa física no saldo real ocorre <strong>exclusivamente</strong> no acionamento do comando de <strong>"Confirmar Expedição"</strong> (bipagem ou conferência em doca), prevenindo furos de inventário e duplicidade em vendas cruzadas entre Mercado Livre e Shopee.
+      </p>
+</div>
+</div>
+</div></div></main></div></body></html>

@@ -70,3 +70,8 @@ Decisão posterior autorizada/executada em 25/10/2026: os quatro passos de migra
 
 Quando houver código e comandos definidos, use as validações declaradas pelo projeto: testes automatizados, lint, typecheck, build, verificações de migração e inspeção do diff, conforme aplicável. Para mudanças exclusivamente documentais, confira links, consistência entre documentos, status das decisões e o diff disponível. Não alegue que comandos de aplicação foram executados se ainda não existem.
 
+
+Atualização 27/10/2026: SPEC-010 publicada em development/main (PRs 13/14), Production diagnóstica validada; sem migration business remota. SPEC-011 catálogo implementada/homologada somente na stack fasemarketplace-catalog-local, portas 4873/4874, compose.catalog.yaml sobre compose.yaml + compose.business.yaml. Ler docs/operations/basic-catalog.md. Flags exigem auth local e business no mesmo banco; catálogo não amplia Functions/gateway. SKU imutável/único inclusive inativo, admin escreve e usuário consulta; saldos ainda simulados. Fixtures restritas bloqueadas após QA, administrador de entrega pendente de troca, credenciais somente em arquivo privado. Não publicar ou migrar Neon por inferência desta entrega.
+
+SPEC-012 (27/10/2026): usuário pediu área local sem simulações e confirmou movimentações reais só próxima entrega. Navegação/conta no Shell, Usuários com acesso/senha, catálogo em Dialog nativo. App não importa/renderiza mocks de estoque/pedidos/sync/analytics; estoque/histórico indisponíveis explicitamente. Não reintroduzir mock ou afirmar gravação de movimentações. Ler docs/operations/local-workspace-ui.md. Sem publicação remota por esta entrega.
+

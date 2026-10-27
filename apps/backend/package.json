@@ -10,7 +10,7 @@
     "dev:worker": "tsx watch src/worker.ts",
     "start:api": "node dist/main.js",
     "start:worker": "node dist/worker.js",
-    "test": "npm run build && node --test test/*.test.cjs"
+    "test": "npm run build && node --test test/*.test.cjs test/tickets-*.test.mjs"
   },
   "dependencies": {
     "@fasemarketplace/telemetry": "*",

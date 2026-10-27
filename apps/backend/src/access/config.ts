@@ -61,3 +61,8 @@ export function readAccessConfig(env: NodeJS.ProcessEnv = process.env) {
     );
   }
 }
+
+export function readLocalTicketsConfig(env: NodeJS.ProcessEnv = process.env) {
+  const access = readAccessConfig(env);
+  return access?.context === 'local' ? access : undefined;
+}

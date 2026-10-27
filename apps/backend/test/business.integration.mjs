@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { Pool } from 'pg';
 import { readFile, mkdtemp, mkdir, writeFile, readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -40,7 +40,29 @@ test('Prisma infrastructure only in disposable local databases, auth preserved',
       await runBusinessMaintenance({ action: 'migrate', config });
       await runBusinessMaintenance({ action: 'migrate', config });
       assert.equal((await owner.query('SELECT value FROM public.auth_probe')).rows[0].value, 'preserve me');
-      assert.equal((await owner.query('SELECT count(*) FROM business._prisma_migrations WHERE finished_at IS NOT NULL')).rows[0].count, '1');
+      assert.equal((await owner.query('SELECT count(*) FROM business._prisma_migrations WHERE finished_at IS NOT NULL')).rows[0].count, '3');
+      const inventory = await owner.query(`SELECT to_regclass('business.inventory_settings') AS settings,
+        to_regclass('business.variant_stock_policy') AS policies,to_regclass('business.stock_movement') AS movements`);
+      assert.deepEqual(Object.values(inventory.rows[0]).map(Boolean), [true,true,true]);
+      assert.equal((await owner.query('SELECT mode FROM business.inventory_settings WHERE id=1')).rows[0].mode, 'SEPARATE');
+      const now = new Date();
+      const productId = randomUUID(), variantId = randomUUID();
+      await owner.query(`INSERT INTO business.catalog_product(id,name,description,updated_at,created_by,updated_by)
+        VALUES($1,'Inventory probe','', $2,'integration','integration')`, [productId,now]);
+      await owner.query(`INSERT INTO business.catalog_variant(id,product_id,name,sku,updated_at,created_by,updated_by)
+        VALUES($1,$2,'Default',$3,$4,'integration','integration')`, [variantId,productId,'INV-PROBE-'+suffix.slice(0,8).toUpperCase(),now]);
+      await owner.query(`INSERT INTO business.variant_stock_policy(variant_id,minimum_quantity,updated_at,updated_by)
+        VALUES($1,3,now(),'integration')`, [variantId]);
+      const movement = {id:randomUUID(),variantId,key:'integration:'+suffix};
+      await runtime.query(`INSERT INTO business.stock_movement(id,variant_id,movement_type,source_bucket,destination_bucket,quantity,reason,idempotency_key,created_by)
+        VALUES($1,$2,'INBOUND',NULL,'PHYSICAL_RESERVE',10,'business integration',$3,'integration')`, [movement.id,movement.variantId,movement.key]);
+      assert.equal((await runtime.query('SELECT quantity FROM business.stock_movement WHERE id=$1',[movement.id])).rows[0].quantity,10);
+      await assert.rejects(runtime.query(`INSERT INTO business.stock_movement(id,variant_id,movement_type,source_bucket,destination_bucket,quantity,reason,idempotency_key,created_by)
+        VALUES($1,$2,'INBOUND',NULL,'PHYSICAL_RESERVE',10,'duplicate',$3,'integration')`, [randomUUID(),movement.variantId,movement.key]), e=>e.code==='23505');
+      await assert.rejects(runtime.query(`UPDATE business.stock_movement SET reason='changed' WHERE id=$1`,[movement.id]), e=>e.code==='42501');
+      await assert.rejects(runtime.query(`DELETE FROM business.stock_movement WHERE id=$1`,[movement.id]), e=>e.code==='42501');
+      await assert.rejects(owner.query(`INSERT INTO business.stock_movement(id,variant_id,movement_type,source_bucket,destination_bucket,quantity,reason,idempotency_key,created_by)
+        VALUES($1,$2,'INBOUND',NULL,'PHYSICAL_RESERVE',0,'invalid',$3,'integration')`, [randomUUID(),variantId,'invalid:'+suffix]), e=>e.code==='23514');
     });
     await t.test('runtime cannot DDL, migration history, truncate or read auth; migrator cannot touch auth', async () => {
       for (const sql of ['CREATE TABLE business.forbidden(id int)', 'SELECT * FROM business._prisma_migrations',

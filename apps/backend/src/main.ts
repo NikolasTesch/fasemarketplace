@@ -13,6 +13,10 @@ async function bootstrap() {
     res.setHeader('cache-control', 'no-store');
     next();
   });
+  app.use('/tickets', (_req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('cache-control', 'no-store');
+    next();
+  });
   app.useBodyParser('json', { limit: '8kb' });
   const origins = readBrowserOrigins();
   if (origins.length) app.enableCors({ origin: origins, methods: ['GET'], credentials: false });

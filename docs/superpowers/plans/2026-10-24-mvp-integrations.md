@@ -62,7 +62,7 @@
 
 **Pré-requisito:** acesso homologado para o ambiente alvo. **Artefatos:** spec operacional própria, decisões de persistência/migrations e guia de backup/restore.
 
-- [x] Escolher mecanismo de persistência de negócio: Prisma escolhido/aprovado em 26/10/2026, implementado e validado no Docker sintético conforme [SPEC-010](../../specs/SPEC-010-business-persistence.md). Auth permanece independente em public; catálogo ainda não implementado.
+- [x] Escolher mecanismo de persistência de negócio: Prisma escolhido/aprovado em 26/10/2026, implementado e validado no Docker sintético conforme [SPEC-010](../../specs/SPEC-010-business-persistence.md). Auth permanece independente em public; catálogo entregue posteriormente pela SPEC-011 somente local.
 - [x] Definir e validar credenciais runtime/migration e comandos local-only que recusam destinos incorretos, reaplicação e checksum. Aplicação ao Neon/Preview/Production permanece entrega própria autorizada; [guia local](../../operations/business-persistence.md).
 - [x] Acordar política de desenvolvimento: manual antes de cada migration, mínimo 30 dias/7 cópias, sem exclusão automática; meta RTO 1h e RPO anterior à migration, com perda possível entre backups. Aprovada pelo usuário em 24/10/2026.
 - [ ] Definir responsável, destino/guarda externa de backup e gestão separada de chaves; não assumir que snapshot/arquivo vazio prova recuperação.
@@ -73,13 +73,13 @@
 
 ## E03 — Produtos, variantes e SKUs
 
-**Pré-requisito:** E02. **Spec nova:** RF-02, sem confundir SKU com anúncio externo. **Arquivos candidatos:** `apps/backend/src/catalog/`, migration de catálogo, contrato/testes de API, cliente React e tela de cadastro/consulta.
+**Estado:** concluído somente no Docker local em 27/10/2026 conforme [SPEC-011](../../specs/SPEC-011-basic-catalog.md) e [evidências](../../operations/basic-catalog.md). Sem publicação do catálogo. **Pré-requisito:** E02. **Spec nova:** RF-02, sem confundir SKU com anúncio externo. **Arquivos candidatos:** `apps/backend/src/catalog/`, migration de catálogo, contrato/testes de API, cliente React e tela de cadastro/consulta.
 
-- [ ] Confirmar campos obrigatórios, produto simples/variantes, normalização/unicidade, renomeação/inativação e quem pode criar/consultar; usar exemplos sintéticos.
-- [ ] Especificar endpoints de criação/consulta/edição e DTOs paginados; organização deriva do contexto autorizado, não de um campo arbitrário do cliente.
-- [ ] Testar duplicidade concorrente, payload inválido, usuário sem permissão e vínculo entre produto/variante; depois implementar constraints e transações mínimas.
-- [ ] Integrar a tela correspondente com estados de carregamento/vazio/erro/sucesso; retirar mocks apenas desse fluxo.
-- [ ] Homologar criação → consulta → edição/inativação conforme regra aprovada, preservando identidade/histórico.
+- [x] Confirmar campos obrigatórios, produto simples/variantes, normalização/unicidade, renomeação/inativação e quem pode criar/consultar; usar exemplos sintéticos.
+- [x] Especificar endpoints de criação/consulta/edição e DTOs paginados; organização deriva do contexto autorizado, não de um campo arbitrário do cliente.
+- [x] Testar duplicidade concorrente, payload inválido, usuário sem permissão e vínculo entre produto/variante; depois implementar constraints e transações mínimas.
+- [x] Integrar a tela correspondente com estados de carregamento/vazio/erro/sucesso; retirar mocks apenas desse fluxo.
+- [x] Homologar criação → consulta → edição/inativação conforme regra aprovada, preservando identidade/histórico.
 
 **Aceite:** catálogo persiste e reaparece após recarga, duplicidade é recusada e não há escrita em marketplaces. Saldo de estoque não é um campo livre do produto.
 
