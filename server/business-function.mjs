@@ -9,6 +9,11 @@ export function createBusinessFunction(options){
       if(!/^(catalog|inventory)\/[a-zA-Z0-9/-]{1,180}$/.test(rewrite[0]))return new Response(null,{status:404});
       const path='/api/'+rewrite[0];
       if(url.pathname!=='/api/business'&&url.pathname!==path)return new Response(null,{status:400});
+      const segment=url.searchParams.getAll('path');
+      if(segment.length){
+        if(segment.length!==1||segment[0]!==rewrite[0].slice(rewrite[0].indexOf('/')+1))return new Response(null,{status:400});
+        url.searchParams.delete('path');
+      }
       url.pathname=path;url.searchParams.delete('fm_path');request=new Request(url,request);
     }
     const params=url.searchParams.getAll('id');

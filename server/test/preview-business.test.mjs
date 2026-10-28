@@ -28,9 +28,11 @@ test('rewrite resolves one bounded business path without allowing duplicates or 
   let calls=0;const handler=createBusinessFunction({env,fetchImpl:async(url)=>{calls++;assert.equal(url,env.PREVIEW_ACCESS_BRIDGE_ORIGIN+'/catalog/products?offset=0');return Response.json({items:[]});}});
   const make=q=>new Request(PREVIEW_ORIGIN+'/api/business?'+q,{headers:{'x-vercel-forwarded-for':'203.0.113.5'}});
   assert.equal((await handler(make('fm_path=catalog%2Fproducts&offset=0'))).status,200);
+  assert.equal((await handler(make('fm_path=catalog%2Fproducts&path=products&offset=0'))).status,200);
   assert.equal((await handler(make('fm_path=access%2Fusers'))).status,404);
   assert.equal((await handler(make('fm_path=catalog%2Fproducts&fm_path=inventory%2Fstock'))).status,400);
-  assert.equal(calls,1);
+  assert.equal((await handler(make('fm_path=catalog%2Fproducts&path=other&offset=0'))).status,400);
+  assert.equal(calls,2);
 });
 test('business bridge rejects oversized bodies and invalid credentials before forwarding',async()=>{
   let calls=0;const proxy=createBusinessProxy({env,fetchImpl:async()=>{calls++;}});
