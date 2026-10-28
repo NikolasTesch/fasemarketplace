@@ -20,7 +20,7 @@ function checked(config) {
     BUSINESS_MIGRATION_DATABASE_URL: config.migrationUrl, BUSINESS_SHADOW_DATABASE_URL: config.shadowUrl });
 }
 
-async function assertRole(client, name) {
+export async function assertRole(client, name) {
   const roles = await client.query(`SELECT rolcanlogin AND NOT (rolsuper OR rolcreatedb OR rolcreaterole OR rolreplication OR rolbypassrls OR rolinherit) AS safe
     FROM pg_roles WHERE rolname=$1`, [name]);
   const memberships = await client.query('SELECT 1 FROM pg_auth_members WHERE member=(SELECT oid FROM pg_roles WHERE rolname=$1)', [name]);

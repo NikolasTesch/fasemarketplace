@@ -6,6 +6,7 @@ import process from 'node:process';
 import console from 'node:console';
 import { validKey, jsonResponse, fetchReadiness } from './preview-contract.mjs';
 import { createAccessGatewayHandler, nodeAccessRequest } from './access-bridge.mjs';
+import { createBusinessGateway } from './business-bridge.mjs';
 
 export function createGateway({ key, fetchImpl = globalThis.fetch, accessEnv }) {
   if (!validKey(key)) throw new Error('A valid private diagnostic bridge key is required');
@@ -13,14 +14,16 @@ export function createGateway({ key, fetchImpl = globalThis.fetch, accessEnv }) 
   let active = 0;
   let activeAccess = 0;
   const access = accessEnv ? createAccessGatewayHandler({ env: accessEnv, fetchImpl }) : null;
+  const business = accessEnv ? createBusinessGateway({ env: accessEnv, fetchImpl }) : null;
   const server = createServer(async (request, response) => {
-    if (access && request.url?.startsWith('/access/')) {
+    if (access && (request.url?.startsWith('/access/') || request.url?.startsWith('/catalog/') || request.url?.startsWith('/inventory/'))) {
       if (activeAccess >= 4) {
         response.writeHead(503, { 'cache-control': 'no-store' }); response.end(); return;
       }
       activeAccess++;
       try {
-        const result = await access(await nodeAccessRequest(request));
+        const handler = request.url.startsWith('/access/') ? access : business;
+        const result = await handler(await nodeAccessRequest(request));
         const headers = Object.fromEntries(result.headers);
         const cookies = result.headers.getSetCookie();
         delete headers['set-cookie'];

@@ -23,7 +23,7 @@ function money(value: unknown) {
   const [units, cents=''] = value.split('.');
   return `${units}.${cents.padEnd(2,'0')}`;
 }
-const productIcons = ['checkroom','sports','sports_soccer','water_bottle','sports_tennis','sprint','apparel','sports_basketball','sports_volleyball','fitness_center','pool','backpack','sports_martial_arts'] as const;
+const productIcons = ['checkroom','sports','sports_soccer','water_bottle','sports_tennis','sprint','apparel','sports_basketball','sports_volleyball','fitness_center','pool','backpack','sports_martial_arts','sports_baseball','sports_football','sports_golf','sports_handball','sports_hockey','sports_rugby','sports_mma','sports_cricket','hiking','directions_bike','skateboarding','sports_gymnastics','product_cap','product_shorts','product_socks'] as const;
 function iconName(value: unknown, optional = false) {
   if (optional && value === undefined) return undefined;
   if (typeof value !== 'string' || !productIcons.includes(value as typeof productIcons[number])) return invalid();

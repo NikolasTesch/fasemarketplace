@@ -2,13 +2,18 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client.js';
 import { readBusinessConfig } from './config.js';
 
+export function businessPoolSettings(runtimeUrl: string) {
+  const url = new URL(runtimeUrl), local = url.hostname === 'postgres';
+  if (local) url.search = '';
+  return { connectionString: url.href, max: 3, connectionTimeoutMillis: 5000, query_timeout: 10000,
+    ...(local ? { options: '-c search_path=business -c statement_timeout=10000 -c lock_timeout=5000' } : {}) };
+}
+
 export function createBusinessClient(env: NodeJS.ProcessEnv = process.env) {
   const config = readBusinessConfig(env);
   if (!config) return null;
-  const url = new URL(config.runtimeUrl); url.search = '';
   return new PrismaClient({
-    adapter: new PrismaPg({ connectionString: url.href, max: 3, connectionTimeoutMillis: 5000,
-      options: '-c search_path=business -c statement_timeout=10000 -c lock_timeout=5000' },
+    adapter: new PrismaPg(businessPoolSettings(config.runtimeUrl),
     { schema: 'business', onPoolError: () => {}, onConnectionError: () => {} }),
     log: [], errorFormat: 'minimal',
   });

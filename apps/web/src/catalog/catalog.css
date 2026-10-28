@@ -44,6 +44,10 @@
 }
 
 .catalog-product-identity { display: flex; gap: 14px; align-items: center; min-width: 0; }
+.product-prices { display:flex; align-items:flex-start; flex-wrap:wrap; gap:20px; }
+.product-prices>div { display:grid; gap:4px; }
+.product-prices span { color:var(--muted); font-size:11px; font-weight:600; }
+.product-prices strong { color:var(--brand); font-size:18px; font-variant-numeric:tabular-nums; }
 .catalog-product-icon { display: grid; place-items: center; width: 52px; height: 52px; flex-shrink: 0; color: var(--brand); background: var(--control-selected); border: 1px solid #f4d4d5; border-radius: 12px; font-size: 28px; }
 .catalog-product header { border-bottom: 1px solid var(--border); background: linear-gradient(115deg,#fff8f8,var(--surface)); }
 .catalog-product .catalog-description { padding-top: 16px; }

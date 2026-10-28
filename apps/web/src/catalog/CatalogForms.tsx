@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import type {FormEvent} from 'react';
 import type {CatalogProduct,CatalogVariant} from './api';
+import {ProductIcon} from './ProductIcon';
 
 export type ProductDraft={name:string;description:string;iconName:string;salePrice:string;cost:string;active:boolean;variants:{name:string;sku:string}[]};
 export type VariantDraft={name:string;sku:string;active:boolean};
@@ -17,7 +18,7 @@ export function ProductForm({product,busy,cancel,save}:{product?:CatalogProduct;
       <label>Descrição<textarea aria-label="Descrição" maxLength={2000} rows={3} value={description} onChange={e=>setDescription(e.target.value)} required/></label>
       <div className="catalog-form-row catalog-money-fields"><label>Preço de venda (R$)<input type="number" min="0" max="9999999999.99" step="0.01" inputMode="decimal" required value={salePrice} onChange={e=>setSalePrice(e.target.value)}/></label><label>Custo (R$)<input type="number" min="0" max="9999999999.99" step="0.01" inputMode="decimal" required value={cost} onChange={e=>setCost(e.target.value)}/></label></div>
       <fieldset className="catalog-icon-fieldset"><legend>Ícone do produto</legend><div className="catalog-icon-picker" role="group" aria-label="Ícones esportivos">
-        {productIconOptions.map(icon=><button key={icon.name} type="button" className={iconName===icon.name?'catalog-icon-option is-selected':'catalog-icon-option'} aria-label={icon.label} aria-pressed={iconName===icon.name} onClick={()=>setIconName(icon.name)}><span className="material-symbols-outlined" aria-hidden="true">{icon.name}</span><small>{icon.label}</small></button>)}
+        {productIconOptions.map(icon=><button key={icon.name} type="button" className={iconName===icon.name?'catalog-icon-option is-selected':'catalog-icon-option'} aria-label={icon.label} aria-pressed={iconName===icon.name} onClick={()=>setIconName(icon.name)}><ProductIcon name={icon.name}/><small>{icon.label}</small></button>)}
       </div></fieldset>
       {product?<label className="catalog-checkbox"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/>Produto ativo</label>:<>
         <p className="catalog-help">Cada unidade vendável tem um SKU único. Para produto simples, mantenha uma variante “Padrão”.</p>
@@ -37,11 +38,16 @@ export function ProductForm({product,busy,cancel,save}:{product?:CatalogProduct;
   </section>;
 }
 export const productIconOptions=[
-  {name:'checkroom',label:'Camisa'}, {name:'sports',label:'Short'}, {name:'sports_soccer',label:'Bola'},
-  {name:'water_bottle',label:'Garrafa'}, {name:'sprint',label:'Meia'}, {name:'apparel',label:'Calça'},
+  {name:'product_cap',label:'Boné'}, {name:'product_shorts',label:'Short'}, {name:'product_socks',label:'Meia'},
+  {name:'checkroom',label:'Cabide'}, {name:'sports',label:'Apito'}, {name:'sports_soccer',label:'Bola'},
+  {name:'water_bottle',label:'Garrafa'}, {name:'sprint',label:'Corrida'}, {name:'apparel',label:'Camiseta'},
   {name:'sports_tennis',label:'Raquete'}, {name:'sports_basketball',label:'Basquete'},
   {name:'sports_volleyball',label:'Vôlei'}, {name:'fitness_center',label:'Treino'},
   {name:'pool',label:'Natação'}, {name:'backpack',label:'Mochila'}, {name:'sports_martial_arts',label:'Artes marciais'},
+  {name:'sports_baseball',label:'Beisebol'}, {name:'sports_football',label:'Futebol americano'}, {name:'sports_golf',label:'Golfe'},
+  {name:'sports_handball',label:'Handebol'}, {name:'sports_hockey',label:'Hóquei'}, {name:'sports_rugby',label:'Rúgbi'},
+  {name:'sports_mma',label:'Luta'}, {name:'sports_cricket',label:'Críquete'}, {name:'hiking',label:'Trilha'},
+  {name:'directions_bike',label:'Ciclismo'}, {name:'skateboarding',label:'Skate'}, {name:'sports_gymnastics',label:'Ginástica'},
 ] as const;
 export function VariantForm({variant,busy,cancel,save}:{product:CatalogProduct;variant?:CatalogVariant;save:(value:VariantDraft)=>Promise<void>} & Common){
   const [name,setName]=useState(variant?.name??''),[sku,setSku]=useState(variant?.sku??''),[active,setActive]=useState(variant?.active??true);
