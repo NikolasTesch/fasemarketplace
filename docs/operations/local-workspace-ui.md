@@ -4,6 +4,8 @@ SPEC-012 implementada por pedido direto do usuário, seguindo sua referência de
 
 ## Comportamento
 
+**Atualização posterior — 27/10/2026:** os bullets abaixo registram o estado homologado da SPEC-012 naquele momento. A entrega local posterior de estoque físico e a ativação na branch `development` estão descritas em [physical-inventory.md](physical-inventory.md) e substituem a indisponibilidade antiga de estoque/movimentações. A carga atual de visualização contém 10 produtos, 23 SKUs, 500 unidades sintéticas e mínimos por SKU somando 100; não há unidades alocadas a marketplaces.
+
 - A barra de acesso anterior foi removida. A navegação da stack local começa por Estoque físico, seguida de Movimentações, Histórico de movimentações e Catálogo. Gate de login e troca obrigatória permanecem anteriores ao shell.
 - Usuários integra o menu e concentra cadastro, consulta, bloqueio/desbloqueio e redefinição existentes. A troca da própria senha continua nessa seção, inclusive para usuário comum, que não recebe controles administrativos.
 - Atualização solicitada em 27/10: formulário de cadastro aparece somente no modal aberto por **Cadastrar usuário**, no cabeçalho à direita. A tela mostra a equipe sem o formulário. O botão **Trocar minha senha** foi removido; a função continua recolhida em **Segurança da conta**.

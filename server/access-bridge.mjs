@@ -24,7 +24,7 @@ export function normalizeClientIP(value) {
   if (isIP(value) === 4) return value;
   return new URL('http://[' + value + ']').hostname.slice(1, -1).toLowerCase();
 }
-function settings(env, gateway) {
+export function settings(env, gateway) {
   if (env.PREVIEW_ACCESS_ENABLED !== 'true') return null;
   if (env.PREVIEW_ACCESS_ORIGIN !== PREVIEW_ORIGIN || !validKey(env.PREVIEW_ACCESS_BRIDGE_KEY)) throw new Error('Invalid access bridge configuration');
   if (env.PREVIEW_ACCESS_BRIDGE_KEY === env.PREVIEW_BRIDGE_KEY) throw new Error('Access bridge requires separate credentials');
@@ -52,7 +52,7 @@ function route(request, gateway) {
   }
   return { path, search: url.search };
 }
-async function bounded(body, limit) {
+export async function bounded(body, limit) {
   if (!body) return Buffer.alloc(0);
   const reader = body.getReader();
   const chunks = [];
@@ -68,7 +68,7 @@ async function bounded(body, limit) {
   } finally { await reader.cancel().catch(() => {}); }
   return Buffer.concat(chunks);
 }
-function filteredCookies(value) {
+export function filteredCookies(value) {
   if (value.length > 4096) throw new Refusal(400);
   const output = [], seen = new Set();
   for (const field of value.split(';')) {
@@ -127,7 +127,7 @@ function dto(data, path, method) {
   if (data.success !== true) throw new Refusal(503);
   return { success: true };
 }
-function secureCookie(value) {
+export function secureCookie(value) {
   const parts = value.split(';').map(part => part.trim());
   const name = parts[0].slice(0, parts[0].indexOf('='));
   if (!cookieName.test(name)) return null;

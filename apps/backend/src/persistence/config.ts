@@ -1,4 +1,5 @@
-const refused = () => new Error('Business persistence requires separate Docker-local credentials and explicit target');
+import { readAccessConfig } from '../access/config.js';
+const refused = () => new Error('Business persistence requires separate credentials and an explicit Docker-local or Preview target');
 
 function connection(value: string | undefined, database: string, role: string) {
   const url = new URL(value ?? '');
@@ -11,6 +12,17 @@ function connection(value: string | undefined, database: string, role: string) {
 export function readBusinessConfig(env: NodeJS.ProcessEnv = process.env) {
   if (!env.BUSINESS_ENABLED || env.BUSINESS_ENABLED === 'false') return null;
   try {
+    if (env.AUTH_CONTEXT === 'preview') {
+      const access = readAccessConfig(env);
+      const url = new URL(env.BUSINESS_DATABASE_URL ?? '');
+      const auth = new URL(access?.databaseUrl ?? '');
+      if (env.BUSINESS_ENABLED !== 'true' || access?.context !== 'preview' || url.protocol !== 'postgresql:' ||
+          url.hostname !== 'ep-soft-bird-b61xykn1-pooler.c-2.sa-east-1.aws.neon.tech' ||
+          url.hostname !== auth.hostname || url.pathname !== '/neondb' || url.pathname !== auth.pathname || url.username !== 'fm_business_runtime' ||
+          !url.password || url.password === auth.password || (url.port && url.port !== '5432') || url.hash ||
+          url.searchParams.toString() !== 'sslmode=verify-full') throw refused();
+      return { database: url.pathname.slice(1), runtimeUrl: url.href };
+    }
     const database = env.BUSINESS_LOCAL_DATABASE ?? '';
     if (env.BUSINESS_ENABLED !== 'true' || env.APP_ENV !== 'local' ||
         (env.DATABASE_PROVIDER && env.DATABASE_PROVIDER !== 'local') ||

@@ -1,4 +1,6 @@
 import {useEffect,useState} from 'react';
+import {ProductPrices} from './ProductPrices';
+import {ProductIcon} from './ProductIcon';
 import type {FormEvent} from 'react';
 import {useAccessUser,useAccessExpired} from '../Access';
 import {catalogApi,CatalogError,catalogMessage} from './api';
@@ -87,7 +89,7 @@ export function CatalogScreen(){
       {data.items.length===0&&<div className="catalog-empty"><h2>{search||status!=='all'?'Nenhum produto encontrado':'Seu catálogo começa aqui'}</h2>
         <p>{admin?'Cadastre um produto e sua primeira variante para começar.':'Nenhum cadastro disponível para consulta.'}</p></div>}
       <div className="catalog-products">{data.items.map(p=><article className="catalog-product" key={p.id} aria-label={'Produto '+p.name}>
-        <header><div className="catalog-product-identity"><span className="catalog-product-icon material-symbols-outlined" aria-hidden="true">{p.iconName}</span><div><h2>{p.name}</h2><span className={'catalog-badge '+(p.active?'is-active':'is-inactive')}>{p.active?'Produto ativo':'Produto inativo'}</span></div></div>
+        <header><div className="catalog-product-identity"><ProductIcon name={p.iconName} className="catalog-product-icon material-symbols-outlined"/><div><h2>{p.name}</h2><span className={'catalog-badge '+(p.active?'is-active':'is-inactive')}>{p.active?'Produto ativo':'Produto inativo'}</span></div></div><ProductPrices salePrice={p.salePrice} cost={p.cost} showCost={admin}/>
           {admin&&<div className="catalog-actions"><button className="inv-btn inv-btn-secondary" aria-label={'Editar produto '+p.name} disabled={busy} onClick={()=>open({kind:'product',product:p})}>Editar produto</button>
             <button className="inv-btn inv-btn-secondary" aria-label={(p.active?'Inativar':'Ativar')+' produto '+p.name} disabled={busy} onClick={()=>toggleProduct(p)}>{p.active?'Inativar':'Ativar'} produto</button></div>}</header>
         {p.description&&<p className="catalog-description">{p.description}</p>}

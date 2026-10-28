@@ -23,6 +23,10 @@ test('product and variant contracts normalize names/SKUs, enforce bounds and rej
   assert.deepEqual(productInput(priced({name:' Camiseta ',description:'Produto',variants:[{name:' Preta / M ',sku:' cam-preta-m '}]})),
     {name:'Camiseta',description:'Produto',iconName:'sports_soccer',salePrice:'10.00',cost:'5.00',variants:[{name:'Preta / M',sku:'CAM-PRETA-M'}]});
   assert.equal(productInput(priced({name:'Bola',iconName:'sports_tennis',variants:[{name:'Padrão',sku:'BOLA-1'}]})).iconName,'sports_tennis');
+  for(const iconName of ['product_cap','product_shorts','product_socks']) {
+    assert.equal(productInput(priced({name:'Item',iconName,variants:[{name:'Padrão',sku:'ITEM-1'}]})).iconName,iconName);
+    assert.equal(productEdit({name:'Item',description:'Produto',iconName,active:true,version:1}).iconName,iconName);
+  }
   assert.throws(()=>productInput(priced({name:'Bola',iconName:'javascript:alert(1)',variants:[{name:'Padrão',sku:'BOLA-2'}]})));
   for(const sku of ['', 'A B','Ç-01','_ABC','A\u200bB','x'.repeat(65)])assert.throws(()=>variantInput({name:'Padrão',sku}));
   for(const body of [priced({name:'',variants:[{name:'X',sku:'A'}]}), priced({name:'X',variants:[]}),

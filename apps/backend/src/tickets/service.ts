@@ -39,7 +39,7 @@ function ticketDto(row: TicketRow) {
 @Injectable()
 export class TicketService {
   constructor(
-    private readonly access: LocalAccessService,
+    @Inject(LocalAccessService) private readonly access: LocalAccessService,
     @Inject(TICKET_IMAGE_STORAGE) private readonly images: TicketImageStorage,
   ) {}
 

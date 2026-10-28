@@ -1,10 +1,46 @@
 # Estoque físico local — SPEC de 27/10/2026
 
-Implementado e homologado somente na stack Docker local em 27/10/2026. A API NestJS persiste o ledger no schema `business`; saldos são derivados dos movimentos. A interface React tem estoque físico, lançamentos, histórico e configurações. O modo local começa separado por canal. A integração com marketplaces, Neon, Preview e Production não foi alterada.
+Implementado e homologado somente na stack Docker local em 27/10/2026. A API NestJS persiste o ledger no schema `business`; saldos são derivados dos movimentos. A interface React tem estoque físico agrupado por produto, busca por produto/variante/SKU, lançamentos, histórico e configurações. As variantes de cada produto exibem seus saldos e mínimos. O modo local começa separado por canal. A integração com marketplaces, Neon, Preview e Production não foi alterada.
 
-## Dados locais de abertura
+O cabeçalho de cada produto apresenta o preço de venda e, para administradores, o custo unitário. Abaixo das variantes, o valor ao custo e o potencial de venda multiplicam o preço atual do produto pelas quantidades das variantes exibidas, incluindo os saldos físicos destinados aos canais. Uma busca por SKU limita o cálculo às variantes encontradas. Valores ausentes aparecem como não informados; o total ao custo não é uma avaliação contábil histórica.
 
-Foi criada uma abertura sintética para as seis variantes ativas, em `PHYSICAL_RESERVE`, na ordem crescente de SKU. O mínimo inicial é 20% arredondado para cima, por SKU. Esses valores servem para homologação e devem ser substituídos por uma contagem real antes de operação de negócio.
+## Compose local da branch development — 4173
+
+O Compose `fasemarketplace-local` está com `INVENTORY_ENABLED=true`. A população local solicitada pelo usuário totaliza **10 produtos, 23 variantes/SKUs, 500 unidades físicas e 100 unidades de mínimo**. Cada produto tem exatamente 50 unidades somadas entre suas variantes; cada mínimo corresponde a 20% da quantidade do respectivo SKU. As quantidades foram escolhidas em múltiplos de cinco para não arredondar.
+
+As aberturas sintéticas estão em `PHYSICAL_RESERVE`; não há unidades em Shopee ou Mercado Livre. Não foram criados preços/custos nem pedidos. `system:local-seed` identifica as 23 aberturas e políticas. Estes valores servem para visualização local e precisam ser substituídos por contagem física antes de uso comercial. A origem em `fasemarketplace-catalog-local` permanece preservada.
+
+Antes da população, foi criado `backups/catalog/development-before-ten-product-stock-20261027-225341.fmbackup` e validado o restore em quarentena `fm_auth_restore_fcb8a6d043038efb114ce7f0` (PostgreSQL 17).
+
+| Produto | Variante | SKU | Reserva física | Mínimo |
+| --- | --- | --- | ---: | ---: |
+| Bola de futebol | Tamanho 4 | `BOLA-FUT-4` | 20 | 4 |
+| Bola de futebol | Tamanho 5 | `BOLA-FUT-5` | 30 | 6 |
+| Boné esportivo | Azul | `BONE-SPORT-AZUL` | 25 | 5 |
+| Boné esportivo | Preto | `BONE-SPORT-PRETO` | 25 | 5 |
+| Camiseta treino | Azul / M | `CAM-AZ-M` | 15 | 3 |
+| Camiseta treino | Preta / G | `CAM-PRETA-G` | 15 | 3 |
+| Camiseta treino | Preta / M | `CAM-PRETA-M` | 20 | 4 |
+| Corda de pular | Padrão | `CORDA-PULAR-PADRAO` | 30 | 6 |
+| Corda de pular | Profissional | `CORDA-PULAR-PRO` | 20 | 4 |
+| Garrafa esportiva | Padrão | `GAR-SPORT-750` | 50 | 10 |
+| Luva de goleiro | G | `LUVA-GOL-G` | 20 | 4 |
+| Luva de goleiro | M | `LUVA-GOL-M` | 15 | 3 |
+| Luva de goleiro | P | `LUVA-GOL-P` | 15 | 3 |
+| Meia esportiva | Branca / 39–42 | `MEIA-BR-39` | 25 | 5 |
+| Meia esportiva | Preta / 39–42 | `MEIA-PR-39` | 25 | 5 |
+| Mochila esportiva | Azul | `MOCHILA-AZUL` | 20 | 4 |
+| Mochila esportiva | Preta | `MOCHILA-PRETA` | 30 | 6 |
+| Short de treino | G | `SHORT-TREINO-G` | 15 | 3 |
+| Short de treino | M | `SHORT-TREINO-M` | 15 | 3 |
+| Short de treino | P | `SHORT-TREINO-P` | 20 | 4 |
+| Tênis de corrida | Preto / 38 | `TEN-COR-PRETO-38` | 15 | 3 |
+| Tênis de corrida | Preto / 40 | `TEN-COR-PRETO-40` | 20 | 4 |
+| Tênis de corrida | Preto / 42 | `TEN-COR-PRETO-42` | 15 | 3 |
+
+## Dados locais de abertura da demonstração isolada — 4873
+
+Esta tabela pertence ao projeto isolado `fasemarketplace-catalog-local`, não ao Compose atual de development. Foi criada uma abertura sintética para as seis variantes ativas, em `PHYSICAL_RESERVE`, na ordem crescente de SKU. O mínimo inicial é 20% arredondado para cima, por SKU. Esses valores servem para homologação e devem ser substituídos por uma contagem real antes de operação de negócio.
 
 | SKU | Reserva física | Mínimo |
 | --- | ---: | ---: |
@@ -15,7 +51,7 @@ Foi criada uma abertura sintética para as seis variantes ativas, em `PHYSICAL_R
 | MEIA-BR-39 | 53 | 11 |
 | MEIA-PR-39 | 60 | 12 |
 
-## Subir a stack
+## Subir a demonstração isolada
 
 O arquivo `.env.catalog-local` é privado e ignorado pelo Git. O flag `INVENTORY_ENABLED=true` e a flag de UI `VITE_INVENTORY_ENABLED=true` são somente locais. Para iniciar ou reconstruir a stack, na raiz do repositório:
 

@@ -1,6 +1,6 @@
 export type InventoryMode='SHARED'|'SEPARATE';
 export type InventoryBucket='PHYSICAL_RESERVE'|'SHARED_CHANNEL'|'SHOPEE'|'MERCADO_LIVRE';
-export interface StockItem {variantId:string;productId:string;productName:string;iconName:string;name:string;sku:string;physicalReserve:number;sharedChannel:number|null;shopee:number|null;mercadoLivre:number|null;total:number;minimumQuantity:number|null;minimumVersion:number|null;belowMinimum:boolean|null;}
+export interface StockItem {variantId:string;productId:string;productName:string;iconName:string;salePrice:string|null;cost:string|null;name:string;sku:string;physicalReserve:number;sharedChannel:number|null;shopee:number|null;mercadoLivre:number|null;total:number;minimumQuantity:number|null;minimumVersion:number|null;belowMinimum:boolean|null;}
 export interface StockPage {items:StockItem[];total:number;offset:number;limit:number;mode:InventoryMode;}
 export interface InventoryMovement {id:string;variantId:string;sku:string;variantName:string;productName:string;type:'OPENING'|'INBOUND'|'OUTBOUND'|'ADJUSTMENT'|'TRANSFER';sourceBucket:InventoryBucket|null;destinationBucket:InventoryBucket|null;quantity:number;reason:string|null;createdBy:string;createdAt:string;}
 export interface MovementPage {items:InventoryMovement[];total:number;offset:number;limit:number;}

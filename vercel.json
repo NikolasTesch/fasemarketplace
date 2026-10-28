@@ -6,6 +6,11 @@
   "outputDirectory": "apps/web/dist",
   "functions": {
     "api/health/ready.mjs": { "maxDuration": 20 },
-    "api/access/**/*.mjs": { "maxDuration": 20 }
-  }
+    "api/access/**/*.mjs": { "maxDuration": 20 },
+    "api/business.mjs": { "maxDuration": 20 }
+  },
+  "rewrites": [
+    { "source": "/api/catalog/:path*", "destination": "/api/business?fm_path=catalog/:path*" },
+    { "source": "/api/inventory/:path*", "destination": "/api/business?fm_path=inventory/:path*" }
+  ]
 }

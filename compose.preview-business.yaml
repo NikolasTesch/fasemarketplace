@@ -1,0 +1,17 @@
+# Opt-in only: hybrid Preview, never Production or the default local stack.
+services:
+  api:
+    environment:
+      BUSINESS_ENABLED: 'true'
+      BUSINESS_DATABASE_URL: ${PREVIEW_BUSINESS_DATABASE_URL:?Set the restricted development business runtime}
+      CATALOG_ENABLED: 'true'
+      INVENTORY_ENABLED: 'true'
+    command: [sh, -c, 'npm run business:generate && npm run dev:api']
+    volumes:
+      - preview_business_generated:/workspace/apps/backend/src/generated
+  web:
+    environment:
+      VITE_CATALOG_ENABLED: 'true'
+      VITE_INVENTORY_ENABLED: 'true'
+volumes:
+  preview_business_generated:

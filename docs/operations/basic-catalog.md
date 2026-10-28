@@ -66,3 +66,13 @@ Recuperação segue [backup de acesso](access-backup.md): major 17, base de ensa
 - Revisão independente estática sem achados P1/P2; revisão própria incluiu diff, permissões e limites de autenticação.
 
 Próxima fatia: especificar entradas/saídas/ajustes de estoque e regras de saldo antes de substituir as simulações. Publicar o catálogo ou migrar bancos remotos exige autorização própria.
+
+## Estado no Compose local de development — 27/10/2026
+
+A demonstração existente foi copiada da stack isolada `fasemarketplace-catalog-local` (porta 4873) para a base local da branch `development`, servida em `http://127.0.0.1:4173`. A origem foi preservada. Os 3 produtos/6 variantes originais mantiveram IDs, descrições e SKUs; 7 produtos novos completaram o catálogo para 10 produtos e 23 variantes.
+
+Foi criada uma abertura sintética local de 50 unidades físicas por produto, distribuídas entre variantes/SKUs, totalizando 500 unidades. Cada mínimo foi definido como 20% da quantidade inicial da variante; como as quantidades são múltiplas de cinco, o total dos mínimos é 100 unidades. Os 23 movimentos estão somente em `PHYSICAL_RESERVE`; Shopee e Mercado Livre permanecem zerados e sem integração real. `INVENTORY_ENABLED=true` está ativo apenas no Compose local de development.
+
+Em 28/10/2026, os dez produtos receberam preços e custos fictícios para visualização local. São valores de demonstração, não preços comerciais. A lista de ícones passou a ter 28 opções, incluindo desenhos próprios para boné, short e meia, aplicados aos respectivos produtos locais. As migrations locais foram precedidas de backups criptografados e restaurações validadas em quarentena. Alguns outros produtos usam ícones de categoria.
+
+Antes das escritas, o banco local recebeu backup criptografado novo e restauração em quarentena validada. O catálogo e a tela de estoque foram abertos com a sessão local autenticada. Estes saldos são sintéticos para visualização; devem ser substituídos por contagem física antes de qualquer operação comercial.
